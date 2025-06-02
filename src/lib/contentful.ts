@@ -1,143 +1,41 @@
-import { createClient, Entry, EntryFieldTypes } from 'contentful'
-import type { 
-  ContentfulProduct,
-  ContentfulBlogPost,
-  ContentfulPage,
-  ContentfulQuery,
-  ContentfulAsset 
-} from '@/types'
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// File: src/lib/contentful.ts
+import { createClient } from 'contentful'
+import { Product } from '@/types/product'
 
-// Define Contentful entry skeletons that match our content models
-interface ProductSkeleton {
-  contentTypeId: 'product'
-  fields: {
-    name: EntryFieldTypes.Text
-    slug: EntryFieldTypes.Text
-    brand: EntryFieldTypes.Text
-    category: EntryFieldTypes.Text
-    model: EntryFieldTypes.Text
-    description: EntryFieldTypes.RichText
-    specifications?: EntryFieldTypes.Object
-    images?: EntryFieldTypes.Array<EntryFieldTypes.AssetLink>
-    datasheet?: EntryFieldTypes.AssetLink
-    price?: EntryFieldTypes.Number
-    priceNote?: EntryFieldTypes.Text
-    showPrice?: EntryFieldTypes.Boolean
-    inStock?: EntryFieldTypes.Boolean
-    featured?: EntryFieldTypes.Boolean
-    seoTitle?: EntryFieldTypes.Text
-    seoDescription?: EntryFieldTypes.Text
-  }
-}
-
-interface BlogPostSkeleton {
-  contentTypeId: 'blogPost'
-  fields: {
-    title: EntryFieldTypes.Text
-    slug: EntryFieldTypes.Text
-    excerpt: EntryFieldTypes.Text
-    content: EntryFieldTypes.RichText
-    featuredImage?: EntryFieldTypes.AssetLink
-    author: EntryFieldTypes.Text
-    publishDate: EntryFieldTypes.Date
-    tags?: EntryFieldTypes.Array<EntryFieldTypes.Text>
-    seoTitle?: EntryFieldTypes.Text
-    seoDescription?: EntryFieldTypes.Text
-  }
-}
-
-interface PageSkeleton {
-  contentTypeId: 'page'
-  fields: {
-    title: EntryFieldTypes.Text
-    slug: EntryFieldTypes.Text
-    content: EntryFieldTypes.RichText
-    seoTitle?: EntryFieldTypes.Text
-    seoDescription?: EntryFieldTypes.Text
-  }
-}
-
-// Initialize Contentful client
+// Create Contentful client
 const client = createClient({
   space: process.env.CONTENTFUL_SPACE_ID!,
   accessToken: process.env.CONTENTFUL_ACCESS_TOKEN!,
 })
 
-// Helper function to transform Contentful entry to our type
-function transformProduct(entry: Entry<ProductSkeleton>): ContentfulProduct {
-  return {
-    sys: {
-      id: entry.sys.id,
-      createdAt: entry.sys.createdAt,
-      updatedAt: entry.sys.updatedAt,
-    },
-    fields: {
-      name: entry.fields.name,
-      slug: entry.fields.slug,
-      brand: entry.fields.brand,
-      category: entry.fields.category,
-      model: entry.fields.model,
-      description: entry.fields.description,
-      specifications: entry.fields.specifications,
-      images: entry.fields.images,
-      datasheet: entry.fields.datasheet,
-      price: entry.fields.price,
-      priceNote: entry.fields.priceNote,
-      showPrice: entry.fields.showPrice,
-      inStock: entry.fields.inStock,
-      featured: entry.fields.featured,
-      seoTitle: entry.fields.seoTitle,
-      seoDescription: entry.fields.seoDescription,
-    }
-  }
-}
-
-function transformBlogPost(entry: Entry<BlogPostSkeleton>): ContentfulBlogPost {
-  return {
-    sys: {
-      id: entry.sys.id,
-      createdAt: entry.sys.createdAt,
-      updatedAt: entry.sys.updatedAt,
-    },
-    fields: {
-      title: entry.fields.title,
-      slug: entry.fields.slug,
-      excerpt: entry.fields.excerpt,
-      content: entry.fields.content,
-      featuredImage: entry.fields.featuredImage,
-      author: entry.fields.author,
-      publishDate: entry.fields.publishDate,
-      tags: entry.fields.tags,
-      seoTitle: entry.fields.seoTitle,
-      seoDescription: entry.fields.seoDescription,
-    }
-  }
-}
-
-function transformPage(entry: Entry<PageSkeleton>): ContentfulPage {
-  return {
-    sys: {
-      id: entry.sys.id,
-      createdAt: entry.sys.createdAt,
-      updatedAt: entry.sys.updatedAt,
-    },
-    fields: {
-      title: entry.fields.title,
-      slug: entry.fields.slug,
-      content: entry.fields.content,
-      seoTitle: entry.fields.seoTitle,
-      seoDescription: entry.fields.seoDescription,
-    }
-  }
-}
-
-// Product Functions
-export async function getProducts(query: ContentfulQuery = {}): Promise<ContentfulProduct[]> {
+// Simple approach - let Contentful handle the types automatically
+export async function getProducts(options: {
+  limit?: number
+  skip?: number
+  category?: string
+  featured?: boolean
+} = {}): Promise<Product[]> {
   try {
-    const response = await client.getEntries<ProductSkeleton>({
+    const query: any = {
       content_type: 'product',
-      ...query,
-    })
+      limit: options.limit || 100,
+    }
+
+    if (options.category) {
+      query['fields.category'] = options.category
+    }
+
+    if (options.featured !== undefined) {
+      query['fields.featured'] = options.featured
+    }
+
+    if (options.skip) {
+      query.skip = options.skip
+    }
+
+    const response = await client.getEntries(query)
     return response.items.map(transformProduct)
   } catch (error) {
     console.error('Error fetching products:', error)
@@ -145,43 +43,75 @@ export async function getProducts(query: ContentfulQuery = {}): Promise<Contentf
   }
 }
 
-export async function getProductBySlug(slug: string): Promise<ContentfulProduct | null> {
+export async function getProductBySlug(slug: string): Promise<Product | null> {
   try {
-    const response = await client.getEntries<ProductSkeleton>({
+    const response = await client.getEntries({
       content_type: 'product',
       'fields.slug': slug,
       limit: 1,
     })
-    const item = response.items[0]
-    return item ? transformProduct(item) : null
+
+    if (response.items.length === 0) return null
+    return transformProduct(response.items[0])
   } catch (error) {
     console.error('Error fetching product by slug:', error)
     return null
   }
 }
 
-export async function getFeaturedProducts(limit: number = 6): Promise<ContentfulProduct[]> {
+export async function getFeaturedProducts(limit: number = 6): Promise<Product[]> {
   try {
-    const response = await client.getEntries<ProductSkeleton>({
-      content_type: 'product',
-      'fields.featured': true,
-      order: ['-sys.createdAt'],
-      limit,
-    })
-    return response.items.map(transformProduct)
+    // Try different possible field names for featured
+    let response;
+    try {
+      // First try 'featured'
+      response = await client.getEntries({
+        content_type: 'product',
+        'fields.featured': true,
+        order: ['-sys.createdAt'],
+        limit,
+      })
+    } catch (error) {
+      // If 'featured' fails, try other possible names
+      console.log('Trying alternative field names for featured...')
+      try {
+        response = await client.getEntries({
+          content_type: 'product',
+          'fields.isFeatured': true,
+          order: ['-sys.createdAt'],
+          limit,
+        })
+      } catch (error2) {
+        // If both fail, just get all products and filter manually
+        console.log('Getting all products and filtering manually...')
+        response = await client.getEntries({
+          content_type: 'product',
+          order: ['-sys.createdAt'],
+          limit: limit * 3, // Get more to filter from
+        })
+      }
+    }
+
+    const products = response.items.map(transformProduct)
+    
+    // Filter for featured products if we couldn't query directly
+    const featuredProducts = products.filter(product => product.feature === true)
+    
+    return featuredProducts.slice(0, limit)
   } catch (error) {
     console.error('Error fetching featured products:', error)
     return []
   }
 }
 
-export async function getProductsByCategory(category: string): Promise<ContentfulProduct[]> {
+export async function getProductsByCategory(category: string): Promise<Product[]> {
   try {
-    const response = await client.getEntries<ProductSkeleton>({
+    const response = await client.getEntries({
       content_type: 'product',
       'fields.category': category,
       order: ['-sys.createdAt'],
     })
+
     return response.items.map(transformProduct)
   } catch (error) {
     console.error('Error fetching products by category:', error)
@@ -189,125 +119,169 @@ export async function getProductsByCategory(category: string): Promise<Contentfu
   }
 }
 
-// Blog Functions
-export async function getBlogPosts(query: ContentfulQuery = {}): Promise<ContentfulBlogPost[]> {
+export async function getBlogPosts(limit: number = 10) {
   try {
-    const response = await client.getEntries<BlogPostSkeleton>({
+    const response = await client.getEntries({
       content_type: 'blogPost',
       order: ['-fields.publishDate'],
-      ...query,
+      limit,
     })
-    return response.items.map(transformBlogPost)
+
+    return response.items
   } catch (error) {
     console.error('Error fetching blog posts:', error)
     return []
   }
 }
 
-export async function getBlogPostBySlug(slug: string): Promise<ContentfulBlogPost | null> {
+export async function getBlogPostBySlug(slug: string) {
   try {
-    const response = await client.getEntries<BlogPostSkeleton>({
+    const response = await client.getEntries({
       content_type: 'blogPost',
       'fields.slug': slug,
       limit: 1,
     })
-    const item = response.items[0]
-    return item ? transformBlogPost(item) : null
+
+    if (response.items.length === 0) return null
+    return response.items[0]
   } catch (error) {
     console.error('Error fetching blog post by slug:', error)
     return null
   }
 }
 
-export async function getRecentBlogPosts(limit: number = 5): Promise<ContentfulBlogPost[]> {
+export async function getPageBySlug(slug: string) {
   try {
-    const response = await client.getEntries<BlogPostSkeleton>({
-      content_type: 'blogPost',
-      order: ['-fields.publishDate'],
-      limit,
-    })
-    return response.items.map(transformBlogPost)
-  } catch (error) {
-    console.error('Error fetching recent blog posts:', error)
-    return []
-  }
-}
-
-// Page Functions
-export async function getPageBySlug(slug: string): Promise<ContentfulPage | null> {
-  try {
-    const response = await client.getEntries<PageSkeleton>({
+    const response = await client.getEntries({
       content_type: 'page',
       'fields.slug': slug,
       limit: 1,
     })
-    const item = response.items[0]
-    return item ? transformPage(item) : null
+
+    if (response.items.length === 0) return null
+    return response.items[0]
   } catch (error) {
     console.error('Error fetching page by slug:', error)
     return null
   }
 }
 
-// Search Functions
-export async function searchContent(query: string): Promise<{
-  products: ContentfulProduct[]
-  blogPosts: ContentfulBlogPost[]
-}> {
+// Transform Contentful entry to our Product type
+function transformProduct(item: any): Product {
+  const fields = item.fields || {}
+  
+  // Helper function to safely get field values
+  const getField = (fieldName: string, defaultValue: any = '') => {
+    return fields[fieldName] ?? defaultValue
+  }
+
+  // Helper function to safely get string field
+  const getStringField = (fieldName: string, defaultValue: string = ''): string => {
+    const value = fields[fieldName]
+    if (typeof value === 'string') return value
+    if (value && typeof value === 'object' && value.content) {
+      // Handle rich text content
+      return extractTextFromRichText(value)
+    }
+    return defaultValue
+  }
+
+  // Helper function to extract text from Contentful rich text
+  const extractTextFromRichText = (richText: any): string => {
+    if (!richText || !richText.content) return ''
+    
+    let text = ''
+    const traverse = (nodes: any[]) => {
+      nodes.forEach(node => {
+        if (node.value) {
+          text += node.value
+        }
+        if (node.content) {
+          traverse(node.content)
+        }
+      })
+    }
+    
+    traverse(richText.content)
+    return text.trim()
+  }
+
+  // Helper function to safely get asset URL
+  const getAssetUrl = (asset: any): string => {
+    if (!asset || !asset.fields || !asset.fields.file) return ''
+    return `https:${asset.fields.file.url}`
+  }
+
+  // Helper function to safely get images array
+  const getImages = (images: any[]): string[] => {
+    if (!Array.isArray(images)) return []
+    return images
+      .filter(img => img && img.fields && img.fields.file)
+      .map(img => `https:${img.fields.file.url}`)
+  }
+
+  return {
+    id: item.sys?.id || '',
+    name: getStringField('name', 'Unnamed Product'),
+    slug: getStringField('slug', ''),
+    brand: getStringField('brand', ''),
+    category: getStringField('category', ''),
+    model: getStringField('model', ''),
+    description: getStringField('description', ''),
+    specification: getField('specifications', []),
+    images: getImages(getField('images', [])),
+    datasheet: getField('datasheets') ? getAssetUrl(getField('datasheets')) : undefined,
+    price: getField('price'),
+    priceNote: getStringField('priceNote'),
+    showPrice: Boolean(getField('showPrice', false)),
+    inStock: Boolean(getField('inStock', false)),
+    feature: Boolean(getField('featured', false) || getField('isFeatured', false)),
+    seoTitle: getStringField('seoTitle'),
+    seoDescription: getStringField('seoDescription'),
+    createdAt: item.sys?.createdAt || new Date().toISOString(),
+    updateAt: item.sys?.updatedAt || item.sys?.createdAt || new Date().toISOString(),
+  }
+}
+
+// Search function for products
+export async function searchProducts(searchTerm: string): Promise<Product[]> {
   try {
-    const [productsResponse, blogPostsResponse] = await Promise.all([
-      client.getEntries<ProductSkeleton>({
-        content_type: 'product',
-        query,
-        limit: 10,
-      }),
-      client.getEntries<BlogPostSkeleton>({
-        content_type: 'blogPost',
-        query,
-        limit: 5,
-      }),
-    ])
+    const response = await client.getEntries({
+      content_type: 'product',
+      query: searchTerm,
+    })
 
-    return {
-      products: productsResponse.items.map(transformProduct),
-      blogPosts: blogPostsResponse.items.map(transformBlogPost),
-    }
+    return response.items.map(transformProduct)
   } catch (error) {
-    console.error('Error searching content:', error)
-    return {
-      products: [],
-      blogPosts: [],
-    }
+    console.error('Error searching products:', error)
+    return []
   }
 }
 
-// Utility Functions
-export function getImageUrl(asset: ContentfulAsset, width?: number, height?: number): string {
-  if (!asset?.fields?.file?.url) return ''
-  
-  let url = `https:${asset.fields.file.url}`
-  
-  // Add image optimization parameters if provided
-  const params = new URLSearchParams()
-  if (width) params.append('w', width.toString())
-  if (height) params.append('h', height.toString())
-  params.append('fm', 'webp')
-  params.append('q', '80')
-  
-  if (params.toString()) {
-    url += `?${params.toString()}`
+// Get product categories with counts
+export async function getProductCategories() {
+  try {
+    const response = await client.getEntries({
+      content_type: 'product',
+    })
+
+    // Count products by category
+    const categoryCounts: Record<string, number> = {}
+    response.items.forEach(item => {
+      // Safely extract category as string
+      const categoryField = item.fields?.category
+      const category = typeof categoryField === 'string' ? categoryField : 'Uncategorized'
+      
+      categoryCounts[category] = (categoryCounts[category] || 0) + 1
+    })
+
+    return Object.entries(categoryCounts).map(([category, count]) => ({
+      name: category,
+      slug: category.toLowerCase().replace(/\s+/g, '-'),
+      count,
+    }))
+  } catch (error) {
+    console.error('Error fetching product categories:', error)
+    return []
   }
-  
-  return url
 }
-
-export function formatContentfulDate(dateString: string): string {
-  return new Date(dateString).toLocaleDateString('id-ID', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  })
-}
-
-// Export client for advanced usage
-export { client }

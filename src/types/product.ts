@@ -1,3 +1,4 @@
+// File: src/types/product.ts
 export interface Product {
   id: string;
   name: string;
@@ -11,9 +12,9 @@ export interface Product {
   datasheet?: string;
   price?: number;
   priceNote?: string;
-  showPrice?: boolean;
-  inStock: boolean;
-  feature: boolean;
+  showPrice: boolean; // Default to false if not set
+  inStock: boolean; // Default to false if not set
+  feature: boolean; // Default to false if not set
   seoTitle?: string;
   seoDescription?: string;
   createdAt: string;
@@ -40,14 +41,14 @@ export interface QuoteRequest {
     contactPerson : string
     email: string
     phone: string
-    product : QouteProduct[]
+    product : QuoteProduct[]
     message?: string
     urgency: "low" | "medium" | "high"
     status?: "pending" | "quoted" | "closed"
     createdAt?: string
 }
 
-export interface QouteProduct {
+export interface QuoteProduct {
     productId: string
     productName: string
     quantity: number
