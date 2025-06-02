@@ -3,8 +3,8 @@ import { ProductSpecification } from "./product";
 export interface ContentfulSys {
   id: string
   createdAt: string
-  updatedAt: string
-  contentType: {
+  updatedAt: string // Fixed: was "updateAt"
+  contentType?: {
     sys: {
       id: string
     }
@@ -33,39 +33,38 @@ export interface ContentfulAsset {
 }
 
 export interface ContentfulProduct {
-    sys:{
-        id:string
-        createdAt : string
-        updateAt: string
+    sys: {
+        id: string
+        createdAt: string
+        updatedAt: string // Fixed: was "updateAt"
     }
-    fields:{
+    fields: {
         name: string
-        slug:string
-        brand:string
+        slug: string
+        brand: string
         category: string
         model: string
-        description:string
-        specification: ProductSpecification[]
-        images: ContentfulAsset[]
-        datasheets?: ContentfulAsset
+        description: string
+        specifications?: ProductSpecification[] // Made optional
+        images?: ContentfulAsset[] // Made optional
+        datasheet?: ContentfulAsset
         price?: number
         priceNote?: string
         showPrice?: boolean
-        inStock: boolean
-        featured: boolean
+        inStock?: boolean // Made optional
+        featured?: boolean // Made optional
         seoTitle?: string
         seoDescription?: string
-
     }
 }
 
-export interface ContentfulBlogPost{
-    sys:{
+export interface ContentfulBlogPost {
+    sys: {
         id: string
         createdAt: string
-        updatedAt: string
+        updatedAt: string // Fixed: was "updateAt"
     }
-    fields:{
+    fields: {
         title: string
         slug: string
         excerpt: string
@@ -73,12 +72,12 @@ export interface ContentfulBlogPost{
         featuredImage?: ContentfulAsset
         author: string
         publishDate: string
-        tags: string[]
+        tags?: string[] // Made optional
         seoTitle?: string
         seoDescription?: string
     }
-
 }
+
 export interface RichTextContent {
   nodeType: string
   content: RichTextNode[]
@@ -117,7 +116,8 @@ export interface ContentfulQuery {
   'fields.slug'?: string
   'fields.category'?: string
   'fields.featured'?: boolean
-  order?: string
+  order?: string[]
   limit?: number
   skip?: number
+  query?: string
 }

@@ -1,49 +1,36 @@
-import { Metadata } from "next";
+// src/app/page.tsx
+import { getFeaturedProducts } from '@/lib/contentful'
 
-export const metadata: Metadata = {
-  title: "Supplier Industrial Automation Parts - PLC, HMI, VFD Indonesia",
-  description:
-    "Distributor PLC Mitsubishi, HMI Proface, VFD, Safety Relay, Power Meter di jakarta",
-};
+interface SimpleProduct {
+  sys: { id: string }
+  fields: {
+    name: string
+    brand: string
+    category: string
+    model: string
+  }
+}
 
-export default function HomePage() {
+export default async function HomePage() {
+  const products = await getFeaturedProducts()
+  
   return (
     <main className="flex-1">
-      {/* */}
-      <div className="container-industrial py-20">
-        <div className="text-center space-y-8">
-          <h1 className="heading-primary">Mederi Karya Indonesia</h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Supplier Industrial Automation Parts - PLC, HMI, VFD, Safety Relay,
-            Power Meter
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
-            <div className="card-industrial p-8 text-center">
-              <h3 className="text-xl font-semibold mb-4 text-primary-600">
-                PLC Controllers
-              </h3>
-              <p>Mitsubishi, Omron, Siemens - All major brands available</p>
-            </div>
-            <div className="card-industrial p-8 text-center">
-              <h3 className="text-xl font-semibold mb-4 text-primary-600">
-                HMI Panels
-              </h3>
-              <p className="text-gray-600">
-                Proface, Weintek, Delta, Siemens , Allen Bradley - Touch Panels
-                and displays
-              </p>
-            </div>
-            <div className="card-industrial p-8 text-center">
-              <h3 className="text-xl font-semibold mb-4 text-primary-600">
-                Safety System
-              </h3>
-              <p className="text-gray-600">
-                Pilz Safety Relays, Safety Sensors, Emergency Stop Solutions
-              </p>
-            </div>
-          </div>
+      <div className="container mx-auto py-20">
+        <h1 className="text-4xl font-bold text-center mb-8">MKI Automation</h1>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {products.map((product) => {
+            const typedProduct = product as unknown as SimpleProduct
+            return (
+              <div key={typedProduct.sys.id} className="border p-6 rounded">
+                <h3 className="text-xl font-semibold">{typedProduct.fields.name}</h3>
+                <p>{typedProduct.fields.brand} - {typedProduct.fields.category}</p>
+                <p className="text-sm">{typedProduct.fields.model}</p>
+              </div>
+            )
+          })}
         </div>
       </div>
     </main>
-  );
+  )
 }
