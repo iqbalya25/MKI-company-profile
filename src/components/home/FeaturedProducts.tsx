@@ -19,9 +19,8 @@ const FeaturedProducts = ({ products }: FeaturedProductsProps) => {
             Featured Products + Technical Support
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Produk automation pilihan dengan{" "}
-            <strong>engineering services</strong> komprehensif - parameter
-            setting, commissioning, troubleshooting
+            Produk automation pilihan dengan <strong>engineering services</strong> komprehensif - 
+            parameter setting, commissioning, troubleshooting
           </p>
         </div>
 
@@ -44,12 +43,10 @@ const FeaturedProducts = ({ products }: FeaturedProductsProps) => {
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center bg-primary-50">
-                        <span className="text-primary-400 text-sm">
-                          No Image Available
-                        </span>
+                        <span className="text-primary-400 text-sm">No Image Available</span>
                       </div>
                     )}
-
+                    
                     {/* Featured Badge */}
                     <div className="absolute top-3 left-3">
                       <span className="bg-accent-500 text-white text-xs px-2 py-1 rounded-full font-medium">
@@ -59,14 +56,12 @@ const FeaturedProducts = ({ products }: FeaturedProductsProps) => {
 
                     {/* Stock Status */}
                     <div className="absolute top-3 right-3">
-                      <span
-                        className={`text-xs px-2 py-1 rounded-full font-medium ${
-                          product.inStock
-                            ? "bg-success-100 text-success-700"
-                            : "bg-orange-100 text-orange-700"
-                        }`}
-                      >
-                        {product.inStock ? "Available" : "Quote"}
+                      <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                        product.inStock 
+                          ? 'bg-success-100 text-success-700' 
+                          : 'bg-orange-100 text-orange-700'
+                      }`}>
+                        {product.inStock ? 'Available' : 'Quote'}
                       </span>
                     </div>
                   </div>
@@ -95,9 +90,7 @@ const FeaturedProducts = ({ products }: FeaturedProductsProps) => {
 
                     {/* Services Available */}
                     <div className="mb-4 p-3 bg-primary-50 rounded-lg">
-                      <div className="text-xs font-semibold text-primary-900 mb-2">
-                        Services Available:
-                      </div>
+                      <div className="text-xs font-semibold text-primary-900 mb-2">Services Available:</div>
                       <div className="flex items-center gap-4 text-xs text-primary-700">
                         <div className="flex items-center gap-1">
                           <Settings className="h-3 w-3" />
@@ -114,7 +107,7 @@ const FeaturedProducts = ({ products }: FeaturedProductsProps) => {
                     <div className="mb-4">
                       {product.showPrice && product.price ? (
                         <span className="text-lg font-bold text-primary-600">
-                          Rp {product.price.toLocaleString("id-ID")}
+                          Rp {product.price.toLocaleString('id-ID')}
                         </span>
                       ) : (
                         <span className="text-sm text-muted-foreground">
@@ -160,13 +153,10 @@ const FeaturedProducts = ({ products }: FeaturedProductsProps) => {
                 Featured Products Coming Soon
               </h3>
               <p className="text-gray-500 mb-4">
-                Tambahkan produk sebagai featured di Contentful CMS untuk
-                menampilkannya disini
+                Tambahkan produk sebagai featured di Contentful CMS untuk menampilkannya disini
               </p>
               <div className="text-sm text-gray-600 mb-4">
-                <p>
-                  <strong>Cara menambahkan:</strong>
-                </p>
+                <p><strong>Cara menambahkan:</strong></p>
                 <ol className="list-decimal list-inside text-left mt-2 space-y-1">
                   <li>Login ke Contentful</li>
                   <li>Edit produk yang ada</li>
@@ -175,7 +165,9 @@ const FeaturedProducts = ({ products }: FeaturedProductsProps) => {
                 </ol>
               </div>
               <Button variant="outline" asChild>
-                <Link href="/products">Browse All Products</Link>
+                <Link href="/products">
+                  Browse All Products
+                </Link>
               </Button>
             </div>
           </div>
@@ -187,16 +179,19 @@ const FeaturedProducts = ({ products }: FeaturedProductsProps) => {
             Butuh Technical Support?
           </h3>
           <p className="text-primary-700 mb-6 max-w-2xl mx-auto">
-            Tim engineering kami siap membantu parameter setting, commissioning,
-            dan troubleshooting untuk semua produk automation. Konsultasi
-            gratis!
+            Tim engineering kami siap membantu parameter setting, commissioning, dan troubleshooting 
+            untuk semua produk automation. Konsultasi gratis!
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" asChild>
-              <Link href="/services">Engineering Services</Link>
+              <Link href="/services">
+                Engineering Services
+              </Link>
             </Button>
             <Button size="lg" variant="outline" asChild>
-              <Link href="/contact">Konsultasi Gratis</Link>
+              <Link href="/contact">
+                Konsultasi Gratis
+              </Link>
             </Button>
           </div>
         </div>
