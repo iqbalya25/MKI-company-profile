@@ -1,0 +1,14 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// src/types/gtag.d.ts
+export {};
+
+declare global {
+  interface Window {
+    gtag: (
+      command: 'config' | 'event' | 'js' | 'set',
+      targetId: string | Date,
+      config?: Record<string, any>
+    ) => void;
+    dataLayer: any[];
+  }
+}
