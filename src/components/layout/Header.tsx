@@ -1,9 +1,18 @@
-// src/components/layout/Header.tsx - REDESIGNED TO MATCH BRAND
+/* eslint-disable @typescript-eslint/no-unused-vars */
+// src/components/layout/Header.tsx - CLEAN & SIMPLE DROPDOWN
 "use client";
 
 import { useState } from "react";
 import Link from "next/link";
-import { Menu, X, Phone, Mail, Search, ChevronDown } from "lucide-react";
+import {
+  Menu,
+  X,
+  Phone,
+  Mail,
+  Search,
+  ChevronDown,
+  ChevronRight,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PRODUCT_CATEGORIES, SITE_CONFIG } from "@/lib/contants";
 import Image from "next/image";
@@ -26,15 +35,19 @@ const Header = () => {
       <div className="container mx-auto px-4">
         <div className="flex h-16 lg:h-20 items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-3 group">
-            {/* Logo Image - Replace with your actual logo */}
-
-            <div className="relative w-52 h-52 lg:w-64 lg:h-64">
+          <Link
+            href="/"
+            className="flex items-center gap-3 group focus:outline-none"
+            tabIndex={-1}
+          >
+            <div className="relative w-52 h-52 lg:w-64 lg:h-64 pointer-events-none select-none">
               <Image
-                src="/Images/mkilogo.png" // make sure this file is placed in /public/logo.png
+                src="/Images/mkilogo.png"
                 alt="MKI Logo"
                 fill
                 className="object-contain"
+                priority
+                draggable={false}
               />
             </div>
           </Link>
@@ -45,7 +58,7 @@ const Header = () => {
               <div key={item.name} className="relative group">
                 <Link
                   href={item.href}
-                  className="flex items-center px-4 py-2 text-sm font-medium text-slate-700 hover:text-teal-600 transition-colors rounded-lg hover:bg-slate-50"
+                  className="flex items-center px-4 py-2 text-sm font-medium text-slate-700 hover:text-teal-600 transition-colors rounded-lg hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
                 >
                   {item.name}
                   {item.hasDropdown && (
@@ -53,40 +66,31 @@ const Header = () => {
                   )}
                 </Link>
 
-                {/* Products Dropdown */}
+                {/* Products Dropdown - SIMPLIFIED */}
                 {item.name === "Products" && (
-                  <div className="absolute top-full left-0 mt-2 w-80 bg-white rounded-xl shadow-2xl border border-slate-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
-                    <div className="p-6">
-                      <h3 className="text-sm font-bold text-slate-900 mb-4">
-                        Product Categories
-                      </h3>
+                  <div className="absolute top-full left-0 mt-2 w-72 bg-white rounded-xl shadow-2xl border border-slate-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
+                    <div className="py-3 max-h-[70vh] overflow-y-auto">
+                      {/* View All Products Link */}
+                      <Link
+                        href="/products"
+                        className="flex items-center justify-between px-4 py-2 text-sm font-semibold text-teal-600 hover:bg-teal-50 mx-2 rounded-lg mb-2"
+                      >
+                        <span>All Products</span>
+                        <ChevronRight className="h-4 w-4" />
+                      </Link>
 
-                      <div className="space-y-2">
-                        {PRODUCT_CATEGORIES.map((category) => (
-                          <Link
-                            key={category.slug}
-                            href={`/products?category=${category.slug}`}
-                            className="block p-3 rounded-lg hover:bg-gradient-to-r hover:from-teal-50 hover:to-blue-50 transition-colors group/item"
-                          >
-                            <div className="font-medium text-slate-900 group-hover/item:text-teal-600">
-                              {category.name}
-                            </div>
-                            <div className="text-xs text-slate-500 mt-1">
-                              {category.description.split(" - ")[0]}
-                            </div>
-                          </Link>
-                        ))}
-                      </div>
+                      <div className="h-px bg-slate-100 mb-2" />
 
-                      <div className="mt-4 pt-4 border-t border-slate-100">
+                      {/* Category Links */}
+                      {PRODUCT_CATEGORIES.map((category, index) => (
                         <Link
-                          href="/products"
-                          className="flex items-center justify-between p-3 text-sm font-semibold text-teal-600 hover:bg-teal-50 rounded-lg"
+                          key={category.slug}
+                          href={`/products?category=${category.slug}`}
+                          className="block px-4 py-2.5 text-sm text-slate-700 hover:text-teal-600 hover:bg-slate-50 transition-colors mx-2 rounded-lg"
                         >
-                          <span>View All Products</span>
-                          <span>→</span>
+                          {category.name}
                         </Link>
-                      </div>
+                      ))}
                     </div>
                   </div>
                 )}
@@ -134,7 +138,7 @@ const Header = () => {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="lg:hidden bg-white border-t border-slate-100">
+        <div className="lg:hidden bg-white border-t border-slate-100 max-h-[calc(100vh-64px)] overflow-y-auto">
           <div className="container mx-auto px-4 py-6 space-y-4">
             {navigation.map((item) => (
               <div key={item.name}>

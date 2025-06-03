@@ -2,8 +2,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Phone } from "lucide-react";
-import { SITE_CONFIG } from "@/lib/contants";
+import { ArrowRight } from "lucide-react";
+//import { SITE_CONFIG } from "@/lib/contants";
 
 const HeroSection = () => {
   return (
@@ -81,7 +81,7 @@ const HeroSection = () => {
           </div>
 
           {/* Quick Contact */}
-          <div className="inline-flex items-center gap-3 p-4 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
+          {/* <div className="inline-flex items-center gap-3 p-4 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
             <div className="p-3 bg-white/20 rounded-lg">
               <Phone className="h-5 w-5 text-white" />
             </div>
@@ -91,7 +91,7 @@ const HeroSection = () => {
                 {SITE_CONFIG.company.phone}
               </p>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
 
