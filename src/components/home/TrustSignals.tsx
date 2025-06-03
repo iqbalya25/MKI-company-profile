@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// File: src/components/home/TrustSignals.tsx
+// File: src/components/home/TrustSignals.tsx - CLEAN & PROFESSIONAL DESIGN
 import { BRANDS, TRUST_SIGNALS } from "@/lib/contants";
 import {
   Shield,
@@ -13,6 +13,8 @@ import {
   Cog,
   MapPin,
 } from "lucide-react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 import {
   ReactElement,
@@ -36,27 +38,42 @@ const TrustSignals = () => {
     MapPin,
   };
 
-  const certifications = [
-    "Engineering Expertise",
-    "Quality Assurance",
-    "Technical Certification",
-    "Professional Service",
-  ];
-
   const brandLogos = BRANDS.slice(0, 6).map((brand: any) => ({
     name: brand,
-    width: "w-20",
   }));
 
+  const services = [
+    {
+      icon: Settings,
+      title: "Parameter Setting",
+      desc: "Inverter & PLC configuration",
+    },
+    {
+      icon: Headphones,
+      title: "Technical Support",
+      desc: "24/7 engineering consultation",
+    },
+    {
+      icon: Wrench,
+      title: "Commissioning",
+      desc: "Installation & testing services",
+    },
+    {
+      icon: Cog,
+      title: "Training",
+      desc: "Operator & maintenance training",
+    },
+  ];
+
   return (
-    <section className="py-16 bg-gray-50">
+    <section className="py-20 bg-gray-50">
       <div className="container mx-auto px-4">
         {/* Section Header */}
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-primary-900 mb-4">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
             Kenapa Pilih Mederi Karya Indonesia?
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             Engineering excellence dan customer satisfaction adalah prioritas
             utama kami dalam menyediakan solusi industrial automation
           </p>
@@ -124,17 +141,17 @@ const TrustSignals = () => {
               return (
                 <div
                   key={index}
-                  className="bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow"
+                  className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow"
                 >
                   <div className="flex items-start space-x-4">
-                    <div className="p-3 rounded-lg bg-primary-50 text-primary-600">
-                      <IconComponent className="h-6 w-6" />
+                    <div className="p-3 bg-teal-100 rounded-lg">
+                      <IconComponent className="h-6 w-6 text-teal-600" />
                     </div>
                     <div className="flex-1">
-                      <h3 className="font-semibold text-lg text-primary-900 mb-2">
+                      <h3 className="font-semibold text-lg text-gray-900 mb-2">
                         {point.title}
                       </h3>
-                      <p className="text-muted-foreground text-sm leading-relaxed">
+                      <p className="text-gray-600 text-sm leading-relaxed">
                         {point.description}
                       </p>
                     </div>
@@ -145,16 +162,51 @@ const TrustSignals = () => {
           )}
         </div>
 
+        {/* Services Section */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 mb-16">
+          <div className="text-center mb-8">
+            <h3 className="text-2xl font-bold text-gray-900 mb-2">
+              Engineering Services
+            </h3>
+            <p className="text-gray-600">
+              Comprehensive technical support for your automation needs
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {services.map((service, index) => {
+              const IconComponent = service.icon;
+              return (
+                <div
+                  key={index}
+                  className="text-center p-4 bg-gray-50 rounded-lg"
+                >
+                  <div className="p-3 bg-teal-100 rounded-lg w-fit mx-auto mb-4">
+                    <IconComponent className="h-6 w-6 text-teal-600" />
+                  </div>
+                  <h4 className="font-semibold text-gray-900 mb-2">
+                    {service.title}
+                  </h4>
+                  <p className="text-sm text-gray-600">{service.desc}</p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
         {/* Brand Partners */}
-        <div className="mb-12">
-          <h3 className="text-2xl font-bold text-center text-primary-900 mb-8">
-            Trusted Brand Partners
-          </h3>
-          <div className="flex flex-wrap justify-center items-center gap-8 opacity-70">
+        <div className="mb-16">
+          <div className="text-center mb-8">
+            <h3 className="text-2xl font-bold text-gray-900 mb-2">
+              Trusted Brand Partners
+            </h3>
+            <p className="text-gray-600">
+              Kami bekerja sama dengan brand-brand terpercaya dunia
+            </p>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
             {brandLogos.map(
               (
                 brand: {
-                  width: any;
                   name:
                     | string
                     | number
@@ -184,129 +236,63 @@ const TrustSignals = () => {
               ) => (
                 <div
                   key={index}
-                  className={`bg-white p-4 rounded-lg shadow-sm ${brand.width} h-16 flex items-center justify-center hover:opacity-100 transition-opacity`}
+                  className="bg-white p-4 rounded-lg border border-gray-200 text-center hover:shadow-sm transition-shadow"
                 >
-                  <span className="text-gray-600 font-semibold text-sm">
+                  <span className="text-gray-700 font-medium text-sm">
                     {brand.name}
                   </span>
                 </div>
               )
             )}
           </div>
-          <div className="text-center mt-4">
-            <span className="text-sm text-muted-foreground">
-              Dan brand terpercaya lainnya...
-            </span>
-          </div>
-        </div>
-
-        {/* Services Highlight */}
-        <div className="bg-white rounded-xl p-8 shadow-sm mb-12">
-          <h3 className="text-xl font-bold text-center text-primary-900 mb-6">
-            Engineering Services
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="text-center p-4 bg-primary-50 rounded-lg">
-              <Settings className="h-8 w-8 text-primary-600 mx-auto mb-2" />
-              <span className="text-sm font-medium text-primary-900 block">
-                Parameter Setting
-              </span>
-              <span className="text-xs text-muted-foreground">
-                Inverter, PLC, HMI
-              </span>
-            </div>
-            <div className="text-center p-4 bg-success-50 rounded-lg">
-              <Wrench className="h-8 w-8 text-success-600 mx-auto mb-2" />
-              <span className="text-sm font-medium text-primary-900 block">
-                Commissioning
-              </span>
-              <span className="text-xs text-muted-foreground">
-                Installation & Testing
-              </span>
-            </div>
-            <div className="text-center p-4 bg-accent-50 rounded-lg">
-              <Headphones className="h-8 w-8 text-accent-600 mx-auto mb-2" />
-              <span className="text-sm font-medium text-primary-900 block">
-                Technical Support
-              </span>
-              <span className="text-xs text-muted-foreground">
-                Troubleshooting 24/7
-              </span>
-            </div>
-            <div className="text-center p-4 bg-orange-50 rounded-lg">
-              <Cog className="h-8 w-8 text-orange-600 mx-auto mb-2" />
-              <span className="text-sm font-medium text-primary-900 block">
-                Training
-              </span>
-              <span className="text-xs text-muted-foreground">
-                Operator & Maintenance
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Certifications */}
-        <div className="bg-white rounded-xl p-8 shadow-sm mb-12">
-          <h3 className="text-xl font-bold text-center text-primary-900 mb-6">
-            Our Credentials
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {certifications.map((cert, index) => (
-              <div
-                key={index}
-                className="text-center p-4 bg-primary-50 rounded-lg"
-              >
-                <Shield className="h-8 w-8 text-primary-600 mx-auto mb-2" />
-                <span className="text-sm font-medium text-primary-900">
-                  {cert}
-                </span>
-              </div>
-            ))}
-          </div>
         </div>
 
         {/* Statistics */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-          <div className="bg-white p-6 rounded-lg shadow-sm">
-            <div className="text-3xl font-bold text-primary-600 mb-2">8+</div>
-            <div className="text-sm text-muted-foreground">
-              Years Experience
-            </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
+          <div className="bg-white p-6 rounded-lg border border-gray-200 text-center">
+            <div className="text-3xl font-bold text-teal-600 mb-2">8+</div>
+            <div className="text-sm text-gray-600">Years Experience</div>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow-sm">
-            <div className="text-3xl font-bold text-success-600 mb-2">500+</div>
-            <div className="text-sm text-muted-foreground">
-              Products Available
-            </div>
+          <div className="bg-white p-6 rounded-lg border border-gray-200 text-center">
+            <div className="text-3xl font-bold text-blue-600 mb-2">500+</div>
+            <div className="text-sm text-gray-600">Products Available</div>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow-sm">
-            <div className="text-3xl font-bold text-accent-600 mb-2">15+</div>
-            <div className="text-sm text-muted-foreground">Brand Partners</div>
+          <div className="bg-white p-6 rounded-lg border border-gray-200 text-center">
+            <div className="text-3xl font-bold text-gray-600 mb-2">15+</div>
+            <div className="text-sm text-gray-600">Brand Partners</div>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow-sm">
-            <div className="text-3xl font-bold text-purple-600 mb-2">100+</div>
-            <div className="text-sm text-muted-foreground">Happy Customers</div>
+          <div className="bg-white p-6 rounded-lg border border-gray-200 text-center">
+            <div className="text-3xl font-bold text-slate-600 mb-2">100+</div>
+            <div className="text-sm text-gray-600">Happy Customers</div>
           </div>
         </div>
 
         {/* Call to Action */}
-        <div className="mt-12 text-center">
-          <div className="bg-primary-600 text-white p-8 rounded-2xl">
+        <div className="text-center">
+          <div className="bg-teal-600 text-white p-10 rounded-lg">
             <h3 className="text-2xl font-bold mb-4">
               Ready untuk Engineering Excellence?
             </h3>
-            <p className="text-primary-100 mb-6 max-w-2xl mx-auto">
+            <p className="text-teal-100 mb-6 max-w-2xl mx-auto">
               Dapatkan automation parts berkualitas dengan technical support
-              terbaik. Tim engineering kami siap membantu project Anda dari
-              consultation hingga commissioning.
+              terbaik. Tim engineering kami siap membantu project Anda.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-white text-primary-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-50 transition-colors">
-                Konsultasi Gratis
-              </button>
-              <button className="border border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white/10 transition-colors">
-                Lihat Products
-              </button>
+              <Button
+                size="lg"
+                className="bg-white text-teal-600 hover:bg-gray-50 font-medium"
+                asChild
+              >
+                <Link href="/contact">Konsultasi Gratis</Link>
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                className="border-white text-white hover:bg-white hover:text-teal-600 font-medium"
+                asChild
+              >
+                <Link href="/products">Lihat Products</Link>
+              </Button>
             </div>
           </div>
         </div>
