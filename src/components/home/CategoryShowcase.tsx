@@ -104,7 +104,7 @@ const CategoryShowcase = ({ categories }: CategoryShowcaseProps) => {
 
         {/* Secondary Categories */}
         {PRODUCT_CATEGORIES.length > 4 && (
-          <div className="bg-gray-50 rounded-xl p-6">
+          <div className="bg-teal-50 rounded-xl p-6">
             <h3 className="font-semibold text-gray-900 mb-4">
               More Categories
             </h3>
