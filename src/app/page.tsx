@@ -36,7 +36,7 @@ export default async function HomePage() {
       <HeroSection />
 
       {/* SECTION 2: Trust Indicators (Move up for credibility) */}
-      <section className="py-8 bg-gray-50 border-b">
+      {/* <section className="py-8 bg-gray-50 border-b">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
             <div>
@@ -57,7 +57,7 @@ export default async function HomePage() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* SECTION 3: Product Categories (Primary focus) */}
       <CategoryShowcase categories={categories} />

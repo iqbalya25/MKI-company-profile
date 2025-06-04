@@ -38,7 +38,7 @@ const HeroSection = () => {
       /> */}
 
       {/* Content - Same as before */}
-      <div className="container mx-auto px-4 relative z-10 pt-24 pb-20">
+      <div className="container mx-auto px-4 relative z-10 pt-32 pb-28">
         <div className="max-w-3xl">
           {/* Main Headline */}
           <h1 className="text-5xl lg:text-7xl font-bold text-white mb-6 leading-tight">
