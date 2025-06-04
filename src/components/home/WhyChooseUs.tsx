@@ -21,7 +21,7 @@ const WhyChooseUs = () => {
     {
       icon: Truck,
       title: "Fast Delivery",
-      description: "Quick shipping to all major Indonesian cities",
+      description: "Quick shipping to all Indonesian cities",
       color: "text-purple-600",
       bgColor: "bg-purple-100",
     },

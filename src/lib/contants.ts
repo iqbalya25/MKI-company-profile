@@ -52,6 +52,17 @@ export const PRODUCT_CATEGORIES = [
     ],
   },
   {
+    slug: "power-meter",
+    name: "Power Meter & Monitoring",
+    description:
+      "Energy monitoring devices dengan installation support - Schneider, ABB, Phoenix Contact",
+    keywords: [
+      "power meter schneider",
+      "energy monitoring",
+      "power analyzer indonesia",
+    ],
+  },
+  {
     slug: "safety-relay",
     name: "Safety Relay & Emergency Stop",
     description:
@@ -63,15 +74,11 @@ export const PRODUCT_CATEGORIES = [
     ],
   },
   {
-    slug: "power-meter",
-    name: "Power Meter & Monitoring",
+    slug: "servo",
+    name: "Servo Drives & Motor",
     description:
-      "Energy monitoring devices dengan installation support - Schneider, ABB, Phoenix Contact",
-    keywords: [
-      "power meter schneider",
-      "energy monitoring",
-      "power analyzer indonesia",
-    ],
+      "Pengontrol kecepatan motor presisi tinggi dengan parameter setting dan commissioning - Panasonic, Mitsubishi, Yaskawa",
+    keywords: ["Servo Mitsubishi", "Servo Drive", "Servo Motor"],
   },
 ];
 

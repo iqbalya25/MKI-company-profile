@@ -2,13 +2,18 @@
 import { Metadata } from "next";
 import HeroSection from "@/components/home/HeroSection";
 import FeaturedProducts from "@/components/home/FeaturedProducts";
-import { getFeaturedProducts, getProductCategories } from "@/lib/contentful";
+import {
+  getFeaturedProducts,
+  getProductCategories,
+  getServices,
+} from "@/lib/contentful";
 import { TARGET_KEYWORDS } from "@/lib/contants";
 import CategoryShowcase from "@/components/home/CategoryShowcase";
 import WhyChooseUs from "@/components/home/WhyChooseUs";
 import ServicesHighlight from "@/components/home/ServicesHighlight";
-import ClientLogos from "@/components/home/ClientLogos";
+// import ClientLogos from "@/components/home/ClientLogos";
 import CTASection from "@/components/home/CTASection";
+import BrandShowcase from "@/components/home/BrandShowcase";
 
 export const metadata: Metadata = {
   title:
@@ -25,9 +30,10 @@ export const metadata: Metadata = {
 
 export default async function HomePage() {
   // Fetch data
-  const [featuredProducts, categories] = await Promise.all([
+  const [featuredProducts, categories, services] = await Promise.all([
     getFeaturedProducts(6),
     getProductCategories(),
+    getServices({ limit: 10 }), // ADD THIS LINE
   ]);
 
   return (
@@ -59,6 +65,9 @@ export default async function HomePage() {
         </div>
       </section> */}
 
+      {/* SECTION 2: brand Showcase */}
+      <BrandShowcase />
+
       {/* SECTION 3: Product Categories (Primary focus) */}
       <CategoryShowcase categories={categories} />
 
@@ -66,7 +75,7 @@ export default async function HomePage() {
       <WhyChooseUs />
 
       {/* SECTION 5: Services Highlight */}
-      <ServicesHighlight />
+      <ServicesHighlight services={services} />
 
       {/* SECTION 6: Featured Products (Only if available) */}
       {featuredProducts.length > 0 && (
@@ -74,7 +83,7 @@ export default async function HomePage() {
       )}
 
       {/* SECTION 7: Client Logos (Social Proof) */}
-      <ClientLogos />
+      {/* <ClientLogos /> */}
 
       {/* SECTION 8: Final CTA */}
       <CTASection />

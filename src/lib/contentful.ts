@@ -1,260 +1,277 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // File: src/lib/contentful.ts
-import { createClient } from 'contentful'
-import { Product } from '@/types/product'
+import { createClient } from "contentful";
+import { Product } from "@/types/product";
+import { Service } from "@/types/service";
 
 // Create Contentful client
 const client = createClient({
   space: process.env.CONTENTFUL_SPACE_ID!,
   accessToken: process.env.CONTENTFUL_ACCESS_TOKEN!,
-})
+});
 
 // Simple approach - let Contentful handle the types automatically
-export async function getProducts(options: {
-  limit?: number
-  skip?: number
-  category?: string
-  featured?: boolean
-} = {}): Promise<Product[]> {
+export async function getProducts(
+  options: {
+    limit?: number;
+    skip?: number;
+    category?: string;
+    featured?: boolean;
+  } = {}
+): Promise<Product[]> {
   try {
     const query: any = {
-      content_type: 'product',
+      content_type: "product",
       limit: options.limit || 100,
-    }
+    };
 
     if (options.category) {
-      query['fields.category'] = options.category
+      query["fields.category"] = options.category;
     }
 
     if (options.featured !== undefined) {
-      query['fields.featured'] = options.featured
+      query["fields.featured"] = options.featured;
     }
 
     if (options.skip) {
-      query.skip = options.skip
+      query.skip = options.skip;
     }
 
-    const response = await client.getEntries(query)
-    return response.items.map(transformProduct)
+    const response = await client.getEntries(query);
+    return response.items.map(transformProduct);
   } catch (error) {
-    console.error('Error fetching products:', error)
-    return []
+    console.error("Error fetching products:", error);
+    return [];
   }
 }
 
 export async function getProductBySlug(slug: string): Promise<Product | null> {
   try {
     const response = await client.getEntries({
-      content_type: 'product',
-      'fields.slug': slug,
+      content_type: "product",
+      "fields.slug": slug,
       limit: 1,
-    })
+    });
 
-    if (response.items.length === 0) return null
-    return transformProduct(response.items[0])
+    if (response.items.length === 0) return null;
+    return transformProduct(response.items[0]);
   } catch (error) {
-    console.error('Error fetching product by slug:', error)
-    return null
+    console.error("Error fetching product by slug:", error);
+    return null;
   }
 }
 
-export async function getFeaturedProducts(limit: number = 6): Promise<Product[]> {
+export async function getFeaturedProducts(
+  limit: number = 6
+): Promise<Product[]> {
   try {
     // Try different possible field names for featured
     let response;
     try {
       // First try 'featured'
       response = await client.getEntries({
-        content_type: 'product',
-        'fields.featured': true,
-        order: ['-sys.createdAt'],
+        content_type: "product",
+        "fields.featured": true,
+        order: ["-sys.createdAt"],
         limit,
-      })
+      });
     } catch (error) {
       // If 'featured' fails, try other possible names
-      console.log('Trying alternative field names for featured...')
+      console.log("Trying alternative field names for featured...");
       try {
         response = await client.getEntries({
-          content_type: 'product',
-          'fields.isFeatured': true,
-          order: ['-sys.createdAt'],
+          content_type: "product",
+          "fields.isFeatured": true,
+          order: ["-sys.createdAt"],
           limit,
-        })
+        });
       } catch (error2) {
         // If both fail, just get all products and filter manually
-        console.log('Getting all products and filtering manually...')
+        console.log("Getting all products and filtering manually...");
         response = await client.getEntries({
-          content_type: 'product',
-          order: ['-sys.createdAt'],
+          content_type: "product",
+          order: ["-sys.createdAt"],
           limit: limit * 3, // Get more to filter from
-        })
+        });
       }
     }
 
-    const products = response.items.map(transformProduct)
-    
+    const products = response.items.map(transformProduct);
+
     // Filter for featured products if we couldn't query directly
-    const featuredProducts = products.filter(product => product.feature === true)
-    
-    return featuredProducts.slice(0, limit)
+    const featuredProducts = products.filter(
+      (product) => product.feature === true
+    );
+
+    return featuredProducts.slice(0, limit);
   } catch (error) {
-    console.error('Error fetching featured products:', error)
-    return []
+    console.error("Error fetching featured products:", error);
+    return [];
   }
 }
 
-export async function getProductsByCategory(category: string): Promise<Product[]> {
+export async function getProductsByCategory(
+  category: string
+): Promise<Product[]> {
   try {
     const response = await client.getEntries({
-      content_type: 'product',
-      'fields.category': category,
-      order: ['-sys.createdAt'],
-    })
+      content_type: "product",
+      "fields.category": category,
+      order: ["-sys.createdAt"],
+    });
 
-    return response.items.map(transformProduct)
+    return response.items.map(transformProduct);
   } catch (error) {
-    console.error('Error fetching products by category:', error)
-    return []
+    console.error("Error fetching products by category:", error);
+    return [];
   }
 }
 
 export async function getBlogPosts(limit: number = 10) {
   try {
     const response = await client.getEntries({
-      content_type: 'blogPost',
-      order: ['-fields.publishDate'],
+      content_type: "blogPost",
+      order: ["-fields.publishDate"],
       limit,
-    })
+    });
 
-    return response.items
+    return response.items;
   } catch (error) {
-    console.error('Error fetching blog posts:', error)
-    return []
+    console.error("Error fetching blog posts:", error);
+    return [];
   }
 }
 
 export async function getBlogPostBySlug(slug: string) {
   try {
     const response = await client.getEntries({
-      content_type: 'blogPost',
-      'fields.slug': slug,
+      content_type: "blogPost",
+      "fields.slug": slug,
       limit: 1,
-    })
+    });
 
-    if (response.items.length === 0) return null
-    return response.items[0]
+    if (response.items.length === 0) return null;
+    return response.items[0];
   } catch (error) {
-    console.error('Error fetching blog post by slug:', error)
-    return null
+    console.error("Error fetching blog post by slug:", error);
+    return null;
   }
 }
 
 export async function getPageBySlug(slug: string) {
   try {
     const response = await client.getEntries({
-      content_type: 'page',
-      'fields.slug': slug,
+      content_type: "page",
+      "fields.slug": slug,
       limit: 1,
-    })
+    });
 
-    if (response.items.length === 0) return null
-    return response.items[0]
+    if (response.items.length === 0) return null;
+    return response.items[0];
   } catch (error) {
-    console.error('Error fetching page by slug:', error)
-    return null
+    console.error("Error fetching page by slug:", error);
+    return null;
   }
 }
 
 // Transform Contentful entry to our Product type
 function transformProduct(item: any): Product {
-  const fields = item.fields || {}
-  
+  const fields = item.fields || {};
+
   // Helper function to safely get field values
-  const getField = (fieldName: string, defaultValue: any = '') => {
-    return fields[fieldName] ?? defaultValue
-  }
+  const getField = (fieldName: string, defaultValue: any = "") => {
+    return fields[fieldName] ?? defaultValue;
+  };
 
   // Helper function to safely get string field
-  const getStringField = (fieldName: string, defaultValue: string = ''): string => {
-    const value = fields[fieldName]
-    if (typeof value === 'string') return value
-    if (value && typeof value === 'object' && value.content) {
+  const getStringField = (
+    fieldName: string,
+    defaultValue: string = ""
+  ): string => {
+    const value = fields[fieldName];
+    if (typeof value === "string") return value;
+    if (value && typeof value === "object" && value.content) {
       // Handle rich text content
-      return extractTextFromRichText(value)
+      return extractTextFromRichText(value);
     }
-    return defaultValue
-  }
+    return defaultValue;
+  };
 
   // Helper function to extract text from Contentful rich text
   const extractTextFromRichText = (richText: any): string => {
-    if (!richText || !richText.content) return ''
-    
-    let text = ''
+    if (!richText || !richText.content) return "";
+
+    let text = "";
     const traverse = (nodes: any[]) => {
-      nodes.forEach(node => {
+      nodes.forEach((node) => {
         if (node.value) {
-          text += node.value
+          text += node.value;
         }
         if (node.content) {
-          traverse(node.content)
+          traverse(node.content);
         }
-      })
-    }
-    
-    traverse(richText.content)
-    return text.trim()
-  }
+      });
+    };
+
+    traverse(richText.content);
+    return text.trim();
+  };
 
   // Helper function to safely get asset URL
   const getAssetUrl = (asset: any): string => {
-    if (!asset || !asset.fields || !asset.fields.file) return ''
-    return `https:${asset.fields.file.url}`
-  }
+    if (!asset || !asset.fields || !asset.fields.file) return "";
+    return `https:${asset.fields.file.url}`;
+  };
 
   // Helper function to safely get images array
   const getImages = (images: any[]): string[] => {
-    if (!Array.isArray(images)) return []
+    if (!Array.isArray(images)) return [];
     return images
-      .filter(img => img && img.fields && img.fields.file)
-      .map(img => `https:${img.fields.file.url}`)
-  }
+      .filter((img) => img && img.fields && img.fields.file)
+      .map((img) => `https:${img.fields.file.url}`);
+  };
 
   return {
-    id: item.sys?.id || '',
-    name: getStringField('name', 'Unnamed Product'),
-    slug: getStringField('slug', ''),
-    brand: getStringField('brand', ''),
-    category: getStringField('category', ''),
-    model: getStringField('model', ''),
-    description: getStringField('description', ''),
-    specification: getField('specifications', []),
-    images: getImages(getField('images', [])),
-    datasheet: getField('datasheets') ? getAssetUrl(getField('datasheets')) : undefined,
-    price: getField('price'),
-    priceNote: getStringField('priceNote'),
-    showPrice: Boolean(getField('showPrice', false)),
-    inStock: Boolean(getField('inStock', false)),
-    feature: Boolean(getField('featured', false) || getField('isFeatured', false)),
-    seoTitle: getStringField('seoTitle'),
-    seoDescription: getStringField('seoDescription'),
+    id: item.sys?.id || "",
+    name: getStringField("name", "Unnamed Product"),
+    slug: getStringField("slug", ""),
+    brand: getStringField("brand", ""),
+    category: getStringField("category", ""),
+    model: getStringField("model", ""),
+    description: getStringField("description", ""),
+    specification: getField("specifications", []),
+    images: getImages(getField("images", [])),
+    datasheet: getField("datasheets")
+      ? getAssetUrl(getField("datasheets"))
+      : undefined,
+    price: getField("price"),
+    priceNote: getStringField("priceNote"),
+    showPrice: Boolean(getField("showPrice", false)),
+    inStock: Boolean(getField("inStock", false)),
+    feature: Boolean(
+      getField("featured", false) || getField("isFeatured", false)
+    ),
+    seoTitle: getStringField("seoTitle"),
+    seoDescription: getStringField("seoDescription"),
     createdAt: item.sys?.createdAt || new Date().toISOString(),
-    updateAt: item.sys?.updatedAt || item.sys?.createdAt || new Date().toISOString(),
-  }
+    updateAt:
+      item.sys?.updatedAt || item.sys?.createdAt || new Date().toISOString(),
+  };
 }
 
 // Search function for products
 export async function searchProducts(searchTerm: string): Promise<Product[]> {
   try {
     const response = await client.getEntries({
-      content_type: 'product',
+      content_type: "product",
       query: searchTerm,
-    })
+    });
 
-    return response.items.map(transformProduct)
+    return response.items.map(transformProduct);
   } catch (error) {
-    console.error('Error searching products:', error)
-    return []
+    console.error("Error searching products:", error);
+    return [];
   }
 }
 
@@ -262,26 +279,72 @@ export async function searchProducts(searchTerm: string): Promise<Product[]> {
 export async function getProductCategories() {
   try {
     const response = await client.getEntries({
-      content_type: 'product',
-    })
+      content_type: "product",
+    });
 
     // Count products by category
-    const categoryCounts: Record<string, number> = {}
-    response.items.forEach(item => {
+    const categoryCounts: Record<string, number> = {};
+    response.items.forEach((item) => {
       // Safely extract category as string
-      const categoryField = item.fields?.category
-      const category = typeof categoryField === 'string' ? categoryField : 'Uncategorized'
-      
-      categoryCounts[category] = (categoryCounts[category] || 0) + 1
-    })
+      const categoryField = item.fields?.category;
+      const category =
+        typeof categoryField === "string" ? categoryField : "Uncategorized";
+
+      categoryCounts[category] = (categoryCounts[category] || 0) + 1;
+    });
 
     return Object.entries(categoryCounts).map(([category, count]) => ({
       name: category,
-      slug: category.toLowerCase().replace(/\s+/g, '-'),
+      slug: category.toLowerCase().replace(/\s+/g, "-"),
       count,
-    }))
+    }));
   } catch (error) {
-    console.error('Error fetching product categories:', error)
-    return []
+    console.error("Error fetching product categories:", error);
+    return [];
   }
+}
+
+export async function getServices(
+  options: {
+    limit?: number;
+    featured?: boolean;
+  } = {}
+): Promise<Service[]> {
+  try {
+    const query: any = {
+      content_type: "services",
+      limit: options.limit || 100,
+    };
+
+    if (options.featured !== undefined) {
+      query["fields.featured"] = options.featured;
+    }
+
+    const response = await client.getEntries(query);
+    return response.items.map(transformService);
+  } catch (error) {
+    console.error("Error fetching services:", error);
+    return [];
+  }
+}
+
+function transformService(item: any): Service {
+  const fields = item.fields || {};
+
+  return {
+    id: item.sys?.id || "",
+    name: fields.name || "",
+    slug: fields.slug || "",
+    shortDescription: fields.shortDescription || "",
+    description: fields.description || "",
+    image: fields.image?.fields?.file?.url
+      ? `https:${fields.image.fields.file.url}`
+      : "",
+    features: fields.features || [],
+    featured: Boolean(fields.featured || false),
+    seoTitle: fields.seoTitle || "",
+    seoDescription: fields.seoDescription || "",
+    createdAt: item.sys?.createdAt || new Date().toISOString(),
+    updatedAt: item.sys?.updatedAt || new Date().toISOString(),
+  };
 }

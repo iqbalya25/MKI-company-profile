@@ -23,8 +23,8 @@ const CategoryShowcase = ({ categories }: CategoryShowcaseProps) => {
     "power-meter": "/images/power-meter.jpg",
   };
 
-  // Top categories to highlight
-  const topCategories = ["plc", "inverter", "hmi", "safety-relay"];
+  // Top categories to highlight - using first 4 from constants
+  const topCategories = PRODUCT_CATEGORIES.slice(0, 4).map((cat) => cat.slug);
 
   return (
     <section className="py-16 bg-white">

@@ -22,7 +22,7 @@ const HeroSection = () => {
           blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQ..." // Generate with plaiceholder
         />
         {/* Dark Overlay */}
-        <div className="absolute inset-0 bg-black/50" />
+        <div className="absolute inset-0 bg-black/70" />
       </div>
 
       {/* Alternative: CSS Gradient Background (No Image) */}
