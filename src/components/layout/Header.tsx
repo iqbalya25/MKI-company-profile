@@ -1,31 +1,43 @@
-// src/components/layout/Header.tsx - CLEAN & SIMPLE DROPDOWN
+// src/components/layout/Header.tsx - ENHANCED WITH MOBILE DRAWER
 "use client";
 
 import { useState } from "react";
 import Link from "next/link";
 import {
   Menu,
-  X,
-  Phone,
-  Mail,
   Search,
   ChevronDown,
   ChevronRight,
+  Home,
+  Package,
+  Briefcase,
+  Info,
+  BookOpen,
+  MessageSquare,
+  FileText,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { PRODUCT_CATEGORIES, SITE_CONFIG } from "@/lib/contants";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+  SheetClose,
+} from "@/components/ui/sheet";
+import { PRODUCT_CATEGORIES } from "@/lib/contants";
 import Image from "next/image";
 
 const Header = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isProductsOpen, setIsProductsOpen] = useState(false);
 
   const navigation = [
-    { name: "Home", href: "/" },
-    { name: "Products", href: "/products", hasDropdown: true },
-    { name: "Services", href: "/services" },
-    { name: "About", href: "/about" },
-    { name: "Blog", href: "/blog" },
-    { name: "Contact", href: "/contact" },
+    { name: "Home", href: "/", icon: Home },
+    { name: "Products", href: "/products", hasDropdown: true, icon: Package },
+    { name: "Services", href: "/services", icon: Briefcase },
+    { name: "About", href: "/about", icon: Info },
+    { name: "Blog", href: "/blog", icon: BookOpen },
+    { name: "Contact", href: "/contact", icon: MessageSquare },
   ];
 
   return (
@@ -81,7 +93,7 @@ const Header = () => {
                       <div className="h-px bg-slate-100 mb-2" />
 
                       {/* Category Links */}
-                      {PRODUCT_CATEGORIES.map((category, index) => (
+                      {PRODUCT_CATEGORIES.map((category) => (
                         <Link
                           key={category.slug}
                           href={`/products?category=${category.slug}`}
@@ -119,92 +131,161 @@ const Header = () => {
             </Button>
           </div>
 
-          {/* Mobile Menu Button */}
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="lg:hidden"
-          >
-            {isMenuOpen ? (
-              <X className="h-6 w-6" />
-            ) : (
-              <Menu className="h-6 w-6" />
-            )}
-          </Button>
-        </div>
-      </div>
+          {/* Mobile Menu - Sheet Drawer */}
+          <div className="lg:hidden">
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="sm" className="p-2">
+                  <Menu className="h-6 w-6" />
+                  <span className="sr-only">Toggle menu</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-[85vw] sm:w-[380px] p-0">
+                <SheetHeader className="px-6 py-4 border-b">
+                  <SheetTitle className="text-left">
+                    <div className="flex items-center gap-3">
+                      <div>
+                        <p className="font-semibold text-slate-900">
+                          Mederi Karya Indonesia
+                        </p>
+                        <p className="text-xs text-slate-500">
+                          Industrial Automation
+                        </p>
+                      </div>
+                    </div>
+                  </SheetTitle>
+                </SheetHeader>
 
-      {/* Mobile Menu */}
-      {isMenuOpen && (
-        <div className="lg:hidden bg-white border-t border-slate-100 max-h-[calc(100vh-64px)] overflow-y-auto">
-          <div className="container mx-auto px-4 py-6 space-y-4">
-            {navigation.map((item) => (
-              <div key={item.name}>
-                <Link
-                  href={item.href}
-                  className="block py-3 px-4 text-base font-medium text-slate-700 hover:text-teal-600 hover:bg-slate-50 rounded-lg"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {item.name}
-                </Link>
+                {/* Mobile Navigation Content */}
+                <div className="flex flex-col h-full">
+                  <nav className="flex-1 px-4 py-6 overflow-y-auto">
+                    {navigation.map((item) => {
+                      const Icon = item.icon;
+                      return (
+                        <div key={item.name} className="mb-2">
+                          {item.hasDropdown ? (
+                            <div>
+                              {/* Products Accordion */}
+                              <button
+                                onClick={() =>
+                                  setIsProductsOpen(!isProductsOpen)
+                                }
+                                className="w-full flex items-center justify-between py-3 px-4 text-left font-medium text-slate-700 hover:text-teal-600 hover:bg-slate-50 rounded-lg transition-colors"
+                              >
+                                <div className="flex items-center gap-3">
+                                  <Icon className="h-5 w-5" />
+                                  <span>{item.name}</span>
+                                </div>
+                                <ChevronDown
+                                  className={`h-4 w-4 transition-transform ${
+                                    isProductsOpen ? "rotate-180" : ""
+                                  }`}
+                                />
+                              </button>
 
-                {/* Mobile Products Submenu */}
-                {item.name === "Products" && (
-                  <div className="ml-4 mt-2 space-y-2 pl-4 border-l-2 border-teal-100">
-                    {PRODUCT_CATEGORIES.map((category) => (
-                      <Link
-                        key={category.slug}
-                        href={`/products?category=${category.slug}`}
-                        className="block py-2 px-3 text-sm text-slate-600 hover:text-teal-600"
-                        onClick={() => setIsMenuOpen(false)}
+                              {/* Products Submenu */}
+                              {isProductsOpen && (
+                                <div className="mt-2 ml-4 space-y-1 animate-in slide-in-from-top-1">
+                                  <SheetClose asChild>
+                                    <Link
+                                      href="/products"
+                                      className="flex items-center gap-3 py-2 px-4 text-sm text-teal-600 hover:bg-teal-50 rounded-lg font-medium"
+                                    >
+                                      <Package className="h-4 w-4" />
+                                      All Products
+                                    </Link>
+                                  </SheetClose>
+                                  <div className="h-px bg-slate-100 my-2" />
+                                  {PRODUCT_CATEGORIES.map((category) => (
+                                    <SheetClose asChild key={category.slug}>
+                                      <Link
+                                        href={`/products?category=${category.slug}`}
+                                        className="block py-2 px-4 text-sm text-slate-600 hover:text-teal-600 hover:bg-slate-50 rounded-lg transition-colors pl-12"
+                                      >
+                                        {category.name}
+                                      </Link>
+                                    </SheetClose>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          ) : (
+                            <SheetClose asChild>
+                              <Link
+                                href={item.href}
+                                className="flex items-center gap-3 py-3 px-4 font-medium text-slate-700 hover:text-teal-600 hover:bg-slate-50 rounded-lg transition-colors"
+                              >
+                                <Icon className="h-5 w-5" />
+                                <span>{item.name}</span>
+                              </Link>
+                            </SheetClose>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </nav>
+
+                  {/* Mobile Actions */}
+                  <div className="p-6 border-t bg-slate-50">
+                    <div className="space-y-3">
+                      <SheetClose asChild>
+                        <Button variant="outline" className="w-full" asChild>
+                          <Link href="/products">
+                            <Search className="h-4 w-4 mr-2" />
+                            Search Products
+                          </Link>
+                        </Button>
+                      </SheetClose>
+                      <SheetClose asChild>
+                        <Button
+                          className="w-full bg-gradient-to-r from-teal-600 to-teal-500 hover:from-teal-700 hover:to-teal-600 text-white"
+                          asChild
+                        >
+                          <Link href="/quote">
+                            <FileText className="h-4 w-4 mr-2" />
+                            Get Quote
+                          </Link>
+                        </Button>
+                      </SheetClose>
+                    </div>
+
+                    {/* Contact Info */}
+                    {/* <div className="mt-6 space-y-3 pt-6 border-t border-slate-200">
+                      <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">
+                        Quick Contact
+                      </h3>
+                      <a
+                        href={`tel:${SITE_CONFIG.company.phone}`}
+                        className="flex items-center gap-3 text-sm text-slate-600 hover:text-teal-600 transition-colors"
                       >
-                        {category.name}
-                      </Link>
-                    ))}
+                        <div className="w-8 h-8 bg-teal-100 rounded-lg flex items-center justify-center">
+                          <Phone className="h-4 w-4 text-teal-600" />
+                        </div>
+                        <div>
+                          <p className="text-xs text-slate-500">Call us</p>
+                          <p className="font-medium">{SITE_CONFIG.company.phone}</p>
+                        </div>
+                      </a>
+                      <a
+                        href={`mailto:${SITE_CONFIG.company.email}`}
+                        className="flex items-center gap-3 text-sm text-slate-600 hover:text-teal-600 transition-colors"
+                      >
+                        <div className="w-8 h-8 bg-teal-100 rounded-lg flex items-center justify-center">
+                          <Mail className="h-4 w-4 text-teal-600" />
+                        </div>
+                        <div>
+                          <p className="text-xs text-slate-500">Email us</p>
+                          <p className="font-medium text-xs">{SITE_CONFIG.company.email}</p>
+                        </div>
+                      </a>
+                    </div> */}
                   </div>
-                )}
-              </div>
-            ))}
-
-            {/* Mobile Actions */}
-            <div className="pt-6 space-y-3 border-t border-slate-100">
-              <Button variant="outline" className="w-full" asChild>
-                <Link href="/products" onClick={() => setIsMenuOpen(false)}>
-                  <Search className="h-4 w-4 mr-2" />
-                  Search Products
-                </Link>
-              </Button>
-              <Button
-                className="w-full bg-gradient-to-r from-teal-600 to-teal-500"
-                asChild
-              >
-                <Link href="/quote" onClick={() => setIsMenuOpen(false)}>
-                  Get Quote
-                </Link>
-              </Button>
-            </div>
-
-            {/* Mobile Contact Info */}
-            <div className="pt-6 space-y-3 border-t border-slate-100">
-              <a
-                href={`tel:${SITE_CONFIG.company.phone}`}
-                className="flex items-center gap-3 text-sm text-slate-600"
-              >
-                <Phone className="h-4 w-4 text-teal-600" />
-                {SITE_CONFIG.company.phone}
-              </a>
-              <a
-                href={`mailto:${SITE_CONFIG.company.email}`}
-                className="flex items-center gap-3 text-sm text-slate-600"
-              >
-                <Mail className="h-4 w-4 text-teal-600" />
-                {SITE_CONFIG.company.email}
-              </a>
-            </div>
+                </div>
+              </SheetContent>
+            </Sheet>
           </div>
         </div>
-      )}
+      </div>
     </header>
   );
 };
