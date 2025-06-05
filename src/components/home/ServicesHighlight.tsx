@@ -138,17 +138,6 @@ const ServicesHighlight = ({ services }: ServicesHighlightProps) => {
               <div key={service.slug} className="group relative">
                 {/* Card */}
                 <div className="bg-white rounded-2xl overflow-hidden h-full shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100 hover:border-gray-200 transform hover:-translate-y-2">
-                  {/* Service Number Badge */}
-                  <div className="absolute top-4 right-4 z-20">
-                    <div
-                      className={`w-10 h-10 ${
-                        isEven ? "bg-teal-600" : "bg-blue-600"
-                      } text-white rounded-lg flex items-center justify-center font-bold text-sm shadow-lg`}
-                    >
-                      {String(index + 1).padStart(2, "0")}
-                    </div>
-                  </div>
-
                   {/* Image Section with Overlay */}
                   <div className="h-48 relative overflow-hidden bg-gradient-to-br from-gray-100 to-gray-50">
                     {service.image ? (
@@ -179,19 +168,8 @@ const ServicesHighlight = ({ services }: ServicesHighlightProps) => {
 
                   {/* Content Section */}
                   <div className="p-6">
-                    {/* Icon & Title */}
+                    {/* Title */}
                     <div className="flex items-start gap-3 mb-4">
-                      <div
-                        className={`p-2 ${
-                          isEven ? "bg-teal-50" : "bg-blue-50"
-                        } rounded-lg`}
-                      >
-                        <IconComponent
-                          className={`h-5 w-5 ${
-                            isEven ? "text-teal-600" : "text-blue-600"
-                          }`}
-                        />
-                      </div>
                       <h3 className="font-bold text-lg text-gray-900 group-hover:text-teal-600 transition-colors flex-1">
                         {service.name}
                       </h3>
