@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 // src/components/layout/Header.tsx - CLEAN & SIMPLE DROPDOWN
 "use client";
 
