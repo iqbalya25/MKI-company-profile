@@ -1,128 +1,87 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react/no-unescaped-entities */
-// src/app/blog/page.tsx - SEO OPTIMIZED BLOG LISTING
+// src/app/blog/page.tsx - COMPLETE BLOG LISTING PAGE
 import { Metadata } from "next";
-import { Suspense } from "react";
-import { getBlogPosts } from "@/lib/contentful";
-
-import Breadcrumb from "@/components/common/Breadcrumb";
-import { generateBreadcrumbSchema } from "@/lib/schema";
-import { Search, BookOpen } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import BlogGrid from "@/components/blog/BlogGrid";
+import Image from "next/image";
+import { Calendar, User, ArrowRight, BookOpen, Tag, Clock } from "lucide-react";
+import { getBlogPosts } from "@/lib/contentful";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import Breadcrumb from "@/components/common/Breadcrumb";
+import { ReactElement, JSXElementConstructor, ReactNode, ReactPortal, Key } from "react";
 
-interface BlogPageProps {
-  searchParams: {
-    page?: string;
-    tag?: string;
-    search?: string;
-  };
-}
+export const metadata: Metadata = {
+  title: "Technical Blog & Automation Guides | Mederi Karya Indonesia",
+  description: "Expert insights on industrial automation: PLC programming tutorials, troubleshooting guides, parameter setting tips, and engineering best practices from MKI team.",
+  keywords: [
+    "automation blog indonesia",
+    "plc programming tutorial",
+    "automation troubleshooting guide",
+    "technical blog automation",
+    "engineering insights indonesia",
+    "parameter setting guide",
+    "automation best practices",
+    "industrial automation tips"
+  ],
+  openGraph: {
+    title: "Technical Blog & Automation Guides | MKI", 
+    description: "Expert engineering insights and automation tutorials",
+    url: "/blog",
+    type: "website",
+  },
+};
 
-export async function generateMetadata({
-  searchParams,
-}: BlogPageProps): Promise<Metadata> {
-  const tag = searchParams.tag;
-  const search = searchParams.search;
-
-  let title = "Technical Blog - Automation Tutorials & Guides | Mederi Karya Indonesia";
-  let description =
-    "Expert automation tutorials, troubleshooting guides, and technical articles. Learn PLC programming, HMI configuration, inverter parameter setting from professionals.";
-
-  if (tag) {
-    title = `${tag} Articles - Technical Blog | MKI`;
-    description = `Technical articles and tutorials about ${tag}. Expert guides from automation professionals at Mederi Karya Indonesia.`;
+// Helper function to safely extract fields from Contentful entry
+function extractBlogFields(entry: any) {
+  if (!entry || !entry.fields) {
+    return null;
   }
 
-  if (search) {
-    title = `Search: "${search}" - Technical Blog | MKI`;
-    description = `Search results for "${search}" in our technical automation blog. Find tutorials, guides, and troubleshooting tips.`;
-  }
+  const fields = entry.fields;
+  const sys = entry.sys || {};
 
   return {
-    title,
-    description,
-    keywords: [
-      "automation blog indonesia",
-      "plc programming tutorial",
-      "hmi configuration guide",
-      "inverter troubleshooting",
-      "technical automation articles",
-      "industrial automation tips",
-      "engineering tutorials indonesia",
-    ],
-    openGraph: {
-      title,
-      description,
-      url: "/blog",
-      type: "website",
-    },
-    alternates: {
-      canonical: "/blog",
-    },
+    title: fields.title || "Untitled Post",
+    slug: fields.slug || "",
+    excerpt: fields.excerpt || "",
+    featuredImage: fields.featuredImage ? {
+      url: fields.featuredImage.fields?.file?.url ? 
+        `https:${fields.featuredImage.fields.file.url}` : null,
+      title: fields.featuredImage.fields?.title || "",
+      width: fields.featuredImage.fields?.file?.details?.image?.width || 400,
+      height: fields.featuredImage.fields?.file?.details?.image?.height || 300,
+    } : null,
+    author: fields.author || "MKI Engineering Team",
+    publishDate: fields.publishDate || sys.createdAt,
+    tags: Array.isArray(fields.tags) ? fields.tags : [],
+    id: sys.id || "",
+    createdAt: sys.createdAt || new Date().toISOString(),
   };
 }
 
-export default async function BlogPage({ searchParams }: BlogPageProps) {
-  const { page = "1", tag, search } = searchParams;
-  const currentPage = parseInt(page);
-  const itemsPerPage = 9;
+// Calculate reading time helper
+function calculateReadingTime(excerpt: string): number {
+  const wordCount = excerpt.split(/\s+/).length;
+  const wordsPerMinute = 200;
+  return Math.max(1, Math.ceil(wordCount / wordsPerMinute));
+}
 
-  // Fetch all blog posts
-  const allPosts = await getBlogPosts(100);
+export default async function BlogPage() {
+  const blogEntries = await getBlogPosts(20);
+  
+  // Transform entries and filter out invalid ones
+  const posts = blogEntries
+    .map(extractBlogFields)
+    .filter((post): post is NonNullable<typeof post> => post !== null)
+    .sort((a, b) => new Date(b.publishDate).getTime() - new Date(a.publishDate).getTime());
 
-  // Transform Contentful response to our format
-  const transformedPosts = allPosts.map((post: any) => ({
-    id: post.sys.id,
-    title: post.fields.title || "",
-    slug: post.fields.slug || "",
-    excerpt: post.fields.excerpt || "",
-    content: post.fields.content || {},
-    featuredImage: post.fields.featuredImage?.fields?.file?.url
-      ? `https:${post.fields.featuredImage.fields.file.url}`
-      : null,
-    author: post.fields.author || "MKI Engineering Team",
-    publishDate: post.fields.publishDate || post.sys.createdAt,
-    tags: Array.isArray(post.fields.tags) ? post.fields.tags : [],
-    seoTitle: post.fields.seoTitle || "",
-    seoDescription: post.fields.seoDescription || "",
-    createdAt: post.sys.createdAt,
-    updatedAt: post.sys.updatedAt,
-  }));
+  // Featured post (latest)
+  const featuredPost = posts[0];
+  const regularPosts = posts.slice(1);
 
-  // Filter posts based on search params
-  let filteredPosts = transformedPosts;
-
-  if (tag) {
-    filteredPosts = filteredPosts.filter((post) =>
-      post.tags.some((t: string) => t.toLowerCase() === tag.toLowerCase())
-    );
-  }
-
-  if (search) {
-    const searchLower = search.toLowerCase();
-    filteredPosts = filteredPosts.filter(
-      (post) =>
-        post.title.toLowerCase().includes(searchLower) ||
-        post.excerpt.toLowerCase().includes(searchLower) ||
-        post.tags.some((t: string) => t.toLowerCase().includes(searchLower))
-    );
-  }
-
-  // Pagination
-  const totalPosts = filteredPosts.length;
-  const totalPages = Math.ceil(totalPosts / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedPosts = filteredPosts.slice(
-    startIndex,
-    startIndex + itemsPerPage
-  );
-
-  // Get all unique tags for filter
-  const allTags = Array.from(
-    new Set(transformedPosts.flatMap((post) => post.tags))
-  ).sort();
+  // Get unique tags for filter
+  const allTags = [...new Set(posts.flatMap(post => post.tags))].slice(0, 8);
 
   // Breadcrumb data
   const breadcrumbItems = [
@@ -130,43 +89,154 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
     { name: "Blog", url: "/blog" },
   ];
 
-  if (tag) {
-    breadcrumbItems.push({
-      name: tag,
-      url: `/blog?tag=${tag}`,
-    });
-  }
-
   return (
     <>
+      {/* Page Header */}
+      <div className="bg-gradient-to-br from-teal-600 to-teal-700 text-white py-16 mt-20">
+        <div className="container mx-auto px-4">
+          <Breadcrumb items={breadcrumbItems} className="mb-8 [&_a]:text-teal-200 [&_a:hover]:text-white [&_span]:text-white" />
+          <div className="max-w-4xl mx-auto text-center">
+            <h1 className="text-4xl lg:text-5xl font-bold mb-6">
+              Technical Blog & 
+              <span className="block text-teal-200">Automation Guides</span>
+            </h1>
+            <p className="text-xl text-teal-100 mb-8">
+              Expert insights, tutorials, and troubleshooting guides from our engineering team. 
+              Learn automation best practices and stay updated with industry trends.
+            </p>
+            <div className="flex items-center justify-center gap-6 text-teal-100">
+              <div className="flex items-center gap-2">
+                <BookOpen className="h-5 w-5" />
+                <span>{posts.length} Articles</span>
+              </div>
+              <span>•</span>
+              <div className="flex items-center gap-2">
+                <User className="h-5 w-5" />
+                <span>Expert Authors</span>
+              </div>
+              <span>•</span>
+              <div className="flex items-center gap-2">
+                <Tag className="h-5 w-5" />
+                <span>Technical Topics</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="container mx-auto px-4 py-16">
+        {posts.length === 0 ? (
+          /* No Posts State */
+          <div className="text-center py-16">
+            <div className="max-w-md mx-auto">
+              <BookOpen className="h-16 w-16 text-gray-300 mx-auto mb-6" />
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                Coming Soon!
+              </h2>
+              <p className="text-gray-600 mb-6">
+                Our engineering team is preparing technical articles and automation guides. 
+                Check back soon for expert insights and tutorials.
+              </p>
+              <div className="space-y-4">
+                <Button asChild>
+                  <Link href="/contact">
+                    Get Technical Support
+                  </Link>
+                </Button>
+                <p className="text-sm text-gray-500">
+                  Need immediate help? Contact our engineering team for consultation.
+                </p>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="max-w-6xl mx-auto">
+            {/* Featured Post */}
+            {featuredPost && (
+              <section className="mb-16">
+                <h2 className="text-2xl font-bold text-gray-900 mb-8">Featured Article</h2>
+                <FeaturedPostCard post={featuredPost} />
+              </section>
+            )}
+
+            {/* Tags Filter */}
+            {allTags.length > 0 && (
+              <section className="mb-12">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Browse by Topic</h3>
+                <div className="flex flex-wrap gap-2">
+                  {allTags.map((tag, index) => (
+                    <Badge key={index} variant="outline" className="hover:bg-teal-50 hover:border-teal-300 cursor-pointer">
+                      <Tag className="h-3 w-3 mr-1" />
+                      {tag}
+                    </Badge>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Regular Posts Grid */}
+            {regularPosts.length > 0 && (
+              <section>
+                <h2 className="text-2xl font-bold text-gray-900 mb-8">Latest Articles</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {regularPosts.map((post) => (
+                    <BlogPostCard key={post.id} post={post} />
+                  ))}
+                </div>
+              </section>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* CTA Section */}
+      <section className="py-16 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto text-center">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              Need Technical Support?
+            </h2>
+            <p className="text-lg text-gray-600 mb-8">
+              Can't find what you're looking for? Our engineering team provides 
+              direct technical support and consultation services.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button size="lg" asChild>
+                <Link href="/contact">
+                  Contact Engineers
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Link>
+              </Button>
+              <Button size="lg" variant="outline" asChild>
+                <Link href="/services">Technical Services</Link>
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Schema Markup */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(generateBreadcrumbSchema(breadcrumbItems)),
-        }}
-      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "Blog",
-            name: "MKI Technical Blog",
-            description:
-              "Technical articles and tutorials about industrial automation",
+            name: "Mederi Karya Indonesia Technical Blog", 
+            description: "Technical insights and automation guides",
             url: "/blog",
             publisher: {
               "@type": "Organization",
               name: "Mederi Karya Indonesia",
             },
-            blogPost: paginatedPosts.slice(0, 5).map((post) => ({
+            blogPost: posts.slice(0, 10).map(post => ({
               "@type": "BlogPosting",
               headline: post.title,
               description: post.excerpt,
               datePublished: post.publishDate,
               author: {
-                "@type": "Person",
+                "@type": "Organization", 
                 name: post.author,
               },
               url: `/blog/${post.slug}`,
@@ -174,163 +244,167 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
           }),
         }}
       />
-
-      {/* Hero Section */}
-      <section className="bg-gradient-to-br from-teal-600 to-teal-700 text-white py-16 mt-20">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-4xl lg:text-5xl font-bold mb-6">
-              Technical Blog
-              <span className="block text-teal-200 text-2xl font-normal mt-2">
-                Automation Tutorials & Engineering Insights
-              </span>
-            </h1>
-            <p className="text-xl text-teal-100 mb-8">
-              Learn from our engineering experts. Practical guides, troubleshooting
-              tips, and technical tutorials for industrial automation professionals.
-            </p>
-            <div className="flex items-center justify-center gap-6">
-              <div className="flex items-center gap-2">
-                <BookOpen className="h-5 w-5" />
-                <span>{totalPosts} Articles</span>
-              </div>
-              <span>•</span>
-              <div className="flex items-center gap-2">
-                <span>{allTags.length} Topics</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Main Content */}
-      <section className="py-12 bg-white">
-        <div className="container mx-auto px-4">
-          {/* Breadcrumb */}
-          <Breadcrumb items={breadcrumbItems} className="mb-8" />
-
-          {/* Search and Filters */}
-          <div className="bg-gray-50 rounded-lg p-6 mb-8">
-            <div className="flex flex-col lg:flex-row gap-6">
-              {/* Search Form */}
-              <div className="flex-1">
-                <form action="/blog" method="get" className="flex gap-2">
-                  <div className="relative flex-1">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                    <input
-                      type="text"
-                      name="search"
-                      placeholder="Search articles..."
-                      defaultValue={search}
-                      className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                    />
-                  </div>
-                  <Button type="submit">Search</Button>
-                </form>
-              </div>
-
-              {/* Tag Filter - Show current filter */}
-              {(tag || search) && (
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-600">Filtered by:</span>
-                  {tag && (
-                    <Link
-                      href="/blog"
-                      className="inline-flex items-center gap-1 px-3 py-1 bg-teal-100 text-teal-700 rounded-full text-sm hover:bg-teal-200 transition-colors"
-                    >
-                      {tag}
-                      <span className="text-teal-500">×</span>
-                    </Link>
-                  )}
-                  {search && (
-                    <Link
-                      href="/blog"
-                      className="inline-flex items-center gap-1 px-3 py-1 bg-gray-200 text-gray-700 rounded-full text-sm hover:bg-gray-300 transition-colors"
-                    >
-                      "{search}"
-                      <span className="text-gray-500">×</span>
-                    </Link>
-                  )}
-                </div>
-              )}
-            </div>
-
-            {/* Popular Tags */}
-            <div className="mt-6">
-              <h3 className="text-sm font-semibold text-gray-700 mb-3">
-                Popular Topics:
-              </h3>
-              <div className="flex flex-wrap gap-2">
-                {allTags.slice(0, 10).map((tagName) => (
-                  <Link
-                    key={tagName}
-                    href={`/blog?tag=${encodeURIComponent(tagName)}`}
-                    className="inline-block px-3 py-1 bg-white border border-gray-300 rounded-full text-sm text-gray-700 hover:bg-teal-50 hover:border-teal-300 hover:text-teal-700 transition-colors"
-                  >
-                    {tagName}
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Results Summary */}
-          {(tag || search) && (
-            <div className="mb-6 text-gray-600">
-              Found <span className="font-semibold text-gray-900">{totalPosts}</span> 
-              {totalPosts === 1 ? " article" : " articles"}
-              {tag && <span> tagged with "{tag}"</span>}
-              {search && <span> matching "{search}"</span>}
-            </div>
-          )}
-
-          {/* Blog Grid */}
-          <Suspense fallback={<BlogGridSkeleton />}>
-            <BlogGrid
-              posts={paginatedPosts}
-              currentPage={currentPage}
-              totalPages={totalPages}
-              totalPosts={totalPosts}
-              baseUrl="/blog"
-              searchParams={searchParams}
-            />
-          </Suspense>
-
-          {/* Newsletter CTA */}
-          {totalPosts > 0 && (
-            <div className="mt-16 bg-gradient-to-br from-teal-600 to-teal-700 rounded-2xl p-10 text-center text-white">
-              <h2 className="text-2xl font-bold mb-4">
-                Stay Updated with Automation Insights
-              </h2>
-              <p className="text-teal-100 mb-6 max-w-2xl mx-auto">
-                Get the latest technical articles, troubleshooting guides, and
-                engineering tips delivered to your inbox.
-              </p>
-              <Button size="lg" className="bg-white text-teal-600 hover:bg-gray-100" asChild>
-                <Link href="/contact">
-                  Subscribe to Updates
-                </Link>
-              </Button>
-            </div>
-          )}
-        </div>
-      </section>
     </>
   );
 }
 
-// Loading skeleton
-function BlogGridSkeleton() {
+// Featured Post Card Component
+function FeaturedPostCard({ post }: { post: NonNullable<ReturnType<typeof extractBlogFields>> }) {
+  const readingTime = calculateReadingTime(post.excerpt);
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      {Array.from({ length: 6 }).map((_, index) => (
-        <div key={index} className="animate-pulse">
-          <div className="bg-gray-200 h-48 rounded-lg mb-4" />
-          <div className="h-4 bg-gray-200 rounded mb-2" />
-          <div className="h-4 bg-gray-200 rounded w-3/4 mb-2" />
-          <div className="h-3 bg-gray-200 rounded w-1/2" />
+    <Link 
+      href={`/blog/${post.slug}`}
+      className="group block bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden"
+    >
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
+        {/* Image */}
+        <div className="aspect-video lg:aspect-square relative bg-gray-100">
+          {post.featuredImage?.url ? (
+            <Image
+              src={post.featuredImage.url}
+              alt={post.title}
+              fill
+              className="object-cover group-hover:scale-105 transition-transform duration-500"
+              sizes="(max-width: 1024px) 100vw, 50vw"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center">
+              <BookOpen className="h-16 w-16 text-gray-300" />
+            </div>
+          )}
+          <div className="absolute top-4 left-4">
+            <Badge className="bg-teal-600">Featured</Badge>
+          </div>
         </div>
-      ))}
-    </div>
+
+        {/* Content */}
+        <div className="p-8 flex flex-col justify-center">
+          {/* Tags */}
+          {post.tags.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-4">
+              {post.tags.slice(0, 3).map((tag: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined, index: Key | null | undefined) => (
+                <Badge key={index} variant="secondary" className="text-xs">
+                  {tag}
+                </Badge>
+              ))}
+            </div>
+          )}
+
+          {/* Title */}
+          <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-4 group-hover:text-teal-600 transition-colors">
+            {post.title}
+          </h3>
+
+          {/* Excerpt */}
+          <p className="text-gray-600 mb-6 line-clamp-3">
+            {post.excerpt}
+          </p>
+
+          {/* Meta */}
+          <div className="flex items-center gap-6 text-sm text-gray-500">
+            <div className="flex items-center gap-2">
+              <User className="h-4 w-4" />
+              <span>{post.author}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Calendar className="h-4 w-4" />
+              <time dateTime={post.publishDate}>
+                {new Date(post.publishDate).toLocaleDateString('id-ID', {
+                  year: 'numeric',
+                  month: 'short',
+                  day: 'numeric'
+                })}
+              </time>
+            </div>
+            <div className="flex items-center gap-2">
+              <Clock className="h-4 w-4" />
+              <span>{readingTime} min read</span>
+            </div>
+          </div>
+
+          {/* Read More */}
+          <div className="mt-6">
+            <span className="inline-flex items-center text-teal-600 font-medium group-hover:text-teal-700">
+              Read Full Article
+              <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+            </span>
+          </div>
+        </div>
+      </div>
+    </Link>
+  );
+}
+
+// Regular Post Card Component  
+function BlogPostCard({ post }: { post: NonNullable<ReturnType<typeof extractBlogFields>> }) {
+  const readingTime = calculateReadingTime(post.excerpt);
+
+  return (
+    <Link
+      href={`/blog/${post.slug}`}
+      className="group block bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden"
+    >
+      {/* Image */}
+      <div className="aspect-video relative bg-gray-100">
+        {post.featuredImage?.url ? (
+          <Image
+            src={post.featuredImage.url}
+            alt={post.title}
+            fill
+            className="object-cover group-hover:scale-105 transition-transform duration-300"
+            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center">
+            <BookOpen className="h-12 w-12 text-gray-300" />
+          </div>
+        )}
+      </div>
+
+      {/* Content */}
+      <div className="p-6">
+        {/* Tags */}
+        {post.tags.length > 0 && (
+          <div className="flex flex-wrap gap-2 mb-3">
+            {post.tags.slice(0, 2).map((tag: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined, index: Key | null | undefined) => (
+              <Badge key={index} variant="secondary" className="text-xs">
+                {tag}
+              </Badge>
+            ))}
+          </div>
+        )}
+
+        {/* Title */}
+        <h3 className="font-bold text-lg text-gray-900 mb-3 group-hover:text-teal-600 transition-colors line-clamp-2">
+          {post.title}
+        </h3>
+
+        {/* Excerpt */}
+        <p className="text-gray-600 text-sm mb-4 line-clamp-3">
+          {post.excerpt}
+        </p>
+
+        {/* Meta */}
+        <div className="flex items-center justify-between text-xs text-gray-500">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-1">
+              <User className="h-3 w-3" />
+              <span>{post.author}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <Clock className="h-3 w-3" />
+              <span>{readingTime} min</span>
+            </div>
+          </div>
+          <time dateTime={post.publishDate}>
+            {new Date(post.publishDate).toLocaleDateString('id-ID', {
+              month: 'short',
+              day: 'numeric'
+            })}
+          </time>
+        </div>
+      </div>
+    </Link>
   );
 }

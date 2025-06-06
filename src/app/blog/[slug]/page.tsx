@@ -1,228 +1,155 @@
-// src/app/blog/[slug]/page.tsx - SEO OPTIMIZED BLOG DETAIL
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// src/app/blog/[slug]/page.tsx - FIXED CLIENT/SERVER COMPONENT ISSUES
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { 
+  ArrowLeft, 
   Calendar, 
   User, 
-  Tag, 
   Clock, 
-  Share2,
-  Facebook,
-  Twitter,
-  Linkedin,
-  ArrowLeft,
-  ArrowRight,
-  BookOpen
+  Tag,
+  BookOpen,
+  ArrowRight
 } from "lucide-react";
 import { getBlogPostBySlug, getBlogPosts } from "@/lib/contentful";
 import { generateBreadcrumbSchema } from "@/lib/schema";
-import { formatDate } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import Breadcrumb from "@/components/common/Breadcrumb";
-import { documentToReactComponents } from "@contentful/rich-text-react-renderer";
-import { BLOCKS, INLINES } from "@contentful/rich-text-types";
-import RelatedPosts from "@/components/blog/RelatedPosts";
+import { SITE_CONFIG } from "@/lib/contants";
 
-interface BlogPostPageProps {
+// Client Components (moved to separate file)
+
+import { ReactElement, JSXElementConstructor, ReactNode, ReactPortal, Key } from "react";
+import ShareButton from "./shareButton";
+
+interface BlogPageProps {
   params: {
     slug: string;
   };
 }
 
-export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
-  const post = await getBlogPostBySlug(params.slug);
+// Helper function to safely extract fields from Contentful entry
+function extractBlogFields(entry: any) {
+  if (!entry || !entry.fields) {
+    return null;
+  }
+
+  const fields = entry.fields;
+  const sys = entry.sys || {};
+
+  return {
+    title: fields.title || "Untitled Post",
+    slug: fields.slug || "",
+    excerpt: fields.excerpt || "",
+    content: fields.content || null,
+    featuredImage: fields.featuredImage ? {
+      url: fields.featuredImage.fields?.file?.url ? 
+        `https:${fields.featuredImage.fields.file.url}` : null,
+      title: fields.featuredImage.fields?.title || "",
+      width: fields.featuredImage.fields?.file?.details?.image?.width || 800,
+      height: fields.featuredImage.fields?.file?.details?.image?.height || 600,
+    } : null,
+    author: fields.author || "MKI Engineering Team",
+    publishDate: fields.publishDate || sys.createdAt,
+    tags: Array.isArray(fields.tags) ? fields.tags : [],
+    seoTitle: fields.seoTitle || "",
+    seoDescription: fields.seoDescription || "",
+    id: sys.id || "",
+    createdAt: sys.createdAt || new Date().toISOString(),
+    updatedAt: sys.updatedAt || sys.createdAt || new Date().toISOString(),
+  };
+}
+
+export async function generateMetadata({ params }: BlogPageProps): Promise<Metadata> {
+  const entry = await getBlogPostBySlug(params.slug);
   
-  if (!post) {
+  if (!entry) {
     return {
-      title: "Article Not Found | Mederi Karya Indonesia",
-      description: "The requested article could not be found.",
+      title: "Blog Post Not Found | Mederi Karya Indonesia",
+      description: "The requested blog post could not be found.",
     };
   }
 
-  const title = post.fields.seoTitle || `${post.fields.title} | MKI Technical Blog`;
-  const description = post.fields.seoDescription || 
-    post.fields.excerpt || 
-    `Read ${post.fields.title} - Technical insights from Mederi Karya Indonesia engineering team.`;
+  const blog = extractBlogFields(entry);
+  if (!blog) {
+    return {
+      title: "Blog Post Not Found | Mederi Karya Indonesia", 
+      description: "The requested blog post could not be found.",
+    };
+  }
 
-  const featuredImage = post.fields.featuredImage?.fields?.file?.url
-    ? `https:${post.fields.featuredImage.fields.file.url}`
-    : null;
+  const title = blog.seoTitle || `${blog.title} | MKI Technical Blog`;
+  const description = blog.seoDescription || blog.excerpt || 
+    `${blog.title} - Technical insights and automation guides from Mederi Karya Indonesia engineering team.`;
 
   return {
     title,
     description,
     keywords: [
-      ...(post.fields.tags || []),
-      "automation blog",
-      "technical tutorial",
-      "engineering guide",
-      "indonesia automation",
+      "automation tutorial",
+      "plc programming guide", 
+      "technical blog indonesia",
+      "automation troubleshooting",
+      "engineering insights",
+      ...blog.tags,
     ],
-    authors: [{ name: post.fields.author || "MKI Engineering Team" }],
+    authors: [{ name: blog.author }],
     openGraph: {
       title,
       description,
       type: "article",
-      publishedTime: post.fields.publishDate || post.sys.createdAt,
-      modifiedTime: post.sys.updatedAt,
-      authors: [post.fields.author || "MKI Engineering Team"],
-      tags: post.fields.tags || [],
-      images: featuredImage ? [
+      url: `/blog/${blog.slug}`,
+      publishedTime: blog.publishDate,
+      modifiedTime: blog.updatedAt,
+      authors: [blog.author],
+      images: blog.featuredImage?.url ? [
         {
-          url: featuredImage,
-          width: 1200,
-          height: 630,
-          alt: post.fields.title,
+          url: blog.featuredImage.url,
+          width: blog.featuredImage.width,
+          height: blog.featuredImage.height,
+          alt: blog.title,
         }
       ] : [],
     },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      images: featuredImage ? [featuredImage] : [],
-    },
     alternates: {
-      canonical: `/blog/${params.slug}`,
+      canonical: `/blog/${blog.slug}`,
     },
   };
 }
 
-// Rich text rendering options
-const renderOptions = {
-  renderNode: {
-    [BLOCKS.PARAGRAPH]: (node: any, children: any) => (
-      <p className="mb-4 text-gray-700 leading-relaxed">{children}</p>
-    ),
-    [BLOCKS.HEADING_1]: (node: any, children: any) => (
-      <h1 className="text-3xl font-bold text-gray-900 mb-4 mt-8">{children}</h1>
-    ),
-    [BLOCKS.HEADING_2]: (node: any, children: any) => (
-      <h2 className="text-2xl font-bold text-gray-900 mb-4 mt-8">{children}</h2>
-    ),
-    [BLOCKS.HEADING_3]: (node: any, children: any) => (
-      <h3 className="text-xl font-bold text-gray-900 mb-3 mt-6">{children}</h3>
-    ),
-    [BLOCKS.HEADING_4]: (node: any, children: any) => (
-      <h4 className="text-lg font-semibold text-gray-900 mb-3 mt-6">{children}</h4>
-    ),
-    [BLOCKS.HEADING_5]: (node: any, children: any) => (
-      <h5 className="text-base font-semibold text-gray-900 mb-2 mt-4">{children}</h5>
-    ),
-    [BLOCKS.HEADING_6]: (node: any, children: any) => (
-      <h6 className="text-sm font-semibold text-gray-900 mb-2 mt-4">{children}</h6>
-    ),
-    [BLOCKS.UL_LIST]: (node: any, children: any) => (
-      <ul className="list-disc list-inside mb-4 space-y-2 text-gray-700">{children}</ul>
-    ),
-    [BLOCKS.OL_LIST]: (node: any, children: any) => (
-      <ol className="list-decimal list-inside mb-4 space-y-2 text-gray-700">{children}</ol>
-    ),
-    [BLOCKS.LIST_ITEM]: (node: any, children: any) => (
-      <li className="ml-4">{children}</li>
-    ),
-    [BLOCKS.QUOTE]: (node: any, children: any) => (
-      <blockquote className="border-l-4 border-teal-500 pl-4 py-2 mb-4 italic text-gray-600">
-        {children}
-      </blockquote>
-    ),
-    [BLOCKS.HR]: () => <hr className="my-8 border-gray-200" />,
-    [INLINES.HYPERLINK]: (node: any, children: any) => (
-      <a
-        href={node.data.uri}
-        target={node.data.uri.startsWith("http") ? "_blank" : undefined}
-        rel={node.data.uri.startsWith("http") ? "noopener noreferrer" : undefined}
-        className="text-teal-600 hover:text-teal-700 underline"
-      >
-        {children}
-      </a>
-    ),
-    [BLOCKS.EMBEDDED_ASSET]: (node: any) => {
-      const { file, title } = node.data.target.fields;
-      const imageUrl = `https:${file.url}`;
-      return (
-        <div className="my-8">
-          <Image
-            src={imageUrl}
-            alt={title || "Blog image"}
-            width={800}
-            height={450}
-            className="rounded-lg w-full"
-          />
-          {title && (
-            <p className="text-sm text-gray-500 text-center mt-2">{title}</p>
-          )}
-        </div>
-      );
-    },
-  },
-};
-
-// Calculate reading time
-function calculateReadingTime(content: any): number {
-  const text = JSON.stringify(content);
-  const wordsPerMinute = 200;
-  const wordCount = text.split(/\s+/).length;
-  return Math.ceil(wordCount / wordsPerMinute);
-}
-
-export default async function BlogPostPage({ params }: BlogPostPageProps) {
-  const post = await getBlogPostBySlug(params.slug);
+export default async function BlogPostPage({ params }: BlogPageProps) {
+  const entry = await getBlogPostBySlug(params.slug);
   
-  if (!post) {
+  if (!entry) {
     notFound();
   }
 
-  // Transform post data
-  const postData = {
-    title: post.fields.title || "",
-    slug: post.fields.slug || "",
-    excerpt: post.fields.excerpt || "",
-    content: post.fields.content || {},
-    featuredImage: post.fields.featuredImage?.fields?.file?.url
-      ? `https:${post.fields.featuredImage.fields.file.url}`
-      : null,
-    author: post.fields.author || "MKI Engineering Team",
-    publishDate: post.fields.publishDate || post.sys.createdAt,
-    tags: Array.isArray(post.fields.tags) ? post.fields.tags : [],
-    updatedAt: post.sys.updatedAt,
-  };
+  const blog = extractBlogFields(entry);
+  if (!blog) {
+    notFound();
+  }
 
-  const readingTime = calculateReadingTime(postData.content);
-
-  // Fetch related posts (same tags)
-  const allPosts = await getBlogPosts(20);
-  const relatedPosts = allPosts
-    .filter((p: any) => 
-      p.fields.slug !== postData.slug && 
-      p.fields.tags?.some((tag: string) => postData.tags.includes(tag))
+  // Fetch related posts
+  const relatedPostsEntries = await getBlogPosts(3);
+  const relatedPosts = relatedPostsEntries
+    .map(extractBlogFields)
+    .filter((post): post is NonNullable<typeof post> => 
+      post !== null && post.slug !== blog.slug
     )
-    .slice(0, 3)
-    .map((p: any) => ({
-      id: p.sys.id,
-      title: p.fields.title || "",
-      slug: p.fields.slug || "",
-      excerpt: p.fields.excerpt || "",
-      featuredImage: p.fields.featuredImage?.fields?.file?.url
-        ? `https:${p.fields.featuredImage.fields.file.url}`
-        : null,
-      author: p.fields.author || "MKI Engineering Team",
-      publishDate: p.fields.publishDate || p.sys.createdAt,
-      tags: Array.isArray(p.fields.tags) ? p.fields.tags : [],
-    }));
+    .slice(0, 3);
+
+  // Calculate reading time
+  const readingTime = calculateReadingTime(blog.content);
 
   // Breadcrumb data
   const breadcrumbItems = [
     { name: "Home", url: "/" },
     { name: "Blog", url: "/blog" },
-    { name: postData.title, url: `/blog/${postData.slug}` },
+    { name: blog.title, url: `/blog/${blog.slug}` },
   ];
-
-  // Social share URLs
-  const shareUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'https://mederikaryaindonesia.com'}/blog/${postData.slug}`;
-  const shareText = `${postData.title} - MKI Technical Blog`;
 
   return (
     <>
@@ -230,180 +157,138 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(generateBreadcrumbSchema(breadcrumbItems)),
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BlogPosting",
+            headline: blog.title,
+            description: blog.excerpt,
+            image: blog.featuredImage?.url ? [blog.featuredImage.url] : [],
+            datePublished: blog.publishDate,
+            dateModified: blog.updatedAt,
+            author: {
+              "@type": "Organization",
+              name: blog.author,
+            },
+            publisher: {
+              "@type": "Organization",
+              name: SITE_CONFIG.company.name,
+              logo: {
+                "@type": "ImageObject",
+                url: `${SITE_CONFIG.url}/logo.png`,
+              },
+            },
+            mainEntityOfPage: {
+              "@type": "WebPage",
+              "@id": `${SITE_CONFIG.url}/blog/${blog.slug}`,
+            },
+            articleSection: "Technical Guides",
+            keywords: blog.tags.join(", "),
+          }),
         }}
       />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "BlogPosting",
-            headline: postData.title,
-            description: postData.excerpt,
-            image: postData.featuredImage,
-            datePublished: postData.publishDate,
-            dateModified: postData.updatedAt,
-            author: {
-              "@type": "Person",
-              name: postData.author,
-            },
-            publisher: {
-              "@type": "Organization",
-              name: "Mederi Karya Indonesia",
-              logo: {
-                "@type": "ImageObject",
-                url: `${process.env.NEXT_PUBLIC_SITE_URL}/logo.png`,
-              },
-            },
-            mainEntityOfPage: {
-              "@type": "WebPage",
-              "@id": shareUrl,
-            },
-            keywords: postData.tags.join(", "),
-          }),
+          __html: JSON.stringify(generateBreadcrumbSchema(breadcrumbItems)),
         }}
       />
 
-      {/* Article Header */}
-      <div className="bg-white py-8 mt-20 border-b">
+      {/* Page Header */}
+      <div className="bg-white py-6 mt-20 border-b">
         <div className="container mx-auto px-4">
           <Breadcrumb items={breadcrumbItems} />
         </div>
       </div>
 
-      {/* Main Content */}
-      <article className="py-12 bg-white">
+      {/* Article Content */}
+      <article className="py-12">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
+            
             {/* Article Header */}
-            <header className="mb-8">
+            <header className="mb-12">
               {/* Tags */}
-              {postData.tags.length > 0 && (
-                <div className="flex items-center gap-2 mb-4">
-                  <Tag className="h-4 w-4 text-gray-400" />
-                  <div className="flex flex-wrap gap-2">
-                    {postData.tags.map((tag) => (
-                      <Link
-                        key={tag}
-                        href={`/blog?tag=${encodeURIComponent(tag)}`}
-                        className="text-sm px-3 py-1 bg-teal-100 text-teal-700 rounded-full hover:bg-teal-200 transition-colors"
-                      >
-                        {tag}
-                      </Link>
-                    ))}
-                  </div>
+              {blog.tags.length > 0 && (
+                <div className="flex flex-wrap gap-2 mb-6">
+                  {blog.tags.map((tag: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined, index: Key | null | undefined) => (
+                    <Badge key={index} variant="secondary" className="text-xs">
+                      <Tag className="h-3 w-3 mr-1" />
+                      {tag}
+                    </Badge>
+                  ))}
                 </div>
               )}
 
               {/* Title */}
-              <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-                {postData.title}
+              <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">
+                {blog.title}
               </h1>
 
-              {/* Meta Info */}
-              <div className="flex flex-wrap items-center gap-6 text-gray-600 pb-6 border-b">
+              {/* Excerpt */}
+              {blog.excerpt && (
+                <p className="text-xl text-gray-600 mb-8 leading-relaxed">
+                  {blog.excerpt}
+                </p>
+              )}
+
+              {/* Meta Information */}
+              <div className="flex flex-wrap items-center gap-6 text-sm text-gray-600 border-b border-gray-200 pb-6">
                 <div className="flex items-center gap-2">
                   <User className="h-4 w-4" />
-                  <span>{postData.author}</span>
+                  <span>{blog.author}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Calendar className="h-4 w-4" />
-                  <time dateTime={postData.publishDate}>
-                    {formatDate(postData.publishDate)}
+                  <time dateTime={blog.publishDate}>
+                    {new Date(blog.publishDate).toLocaleDateString('id-ID', {
+                      year: 'numeric',
+                      month: 'long', 
+                      day: 'numeric'
+                    })}
                   </time>
                 </div>
                 <div className="flex items-center gap-2">
                   <Clock className="h-4 w-4" />
                   <span>{readingTime} min read</span>
                 </div>
+                <ShareButton title={blog.title} url={`/blog/${blog.slug}`} />
               </div>
             </header>
 
             {/* Featured Image */}
-            {postData.featuredImage && (
-              <div className="mb-8">
-                <Image
-                  src={postData.featuredImage}
-                  alt={postData.title}
-                  width={1200}
-                  height={630}
-                  className="rounded-lg w-full"
-                  priority
-                />
+            {blog.featuredImage?.url && (
+              <div className="mb-12">
+                <div className="aspect-video relative bg-gray-100 rounded-xl overflow-hidden">
+                  <Image
+                    src={blog.featuredImage.url}
+                    alt={blog.featuredImage.title || blog.title}
+                    fill
+                    className="object-cover"
+                    priority
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
+                  />
+                </div>
               </div>
             )}
 
             {/* Article Content */}
             <div className="prose prose-lg max-w-none">
-              {documentToReactComponents(postData.content, renderOptions)}
+              <BlogContent content={blog.content} />
             </div>
 
-            {/* Share Section */}
-            <div className="mt-12 pt-8 border-t">
-              <div className="flex items-center justify-between">
-                <h3 className="font-semibold text-gray-900 flex items-center gap-2">
-                  <Share2 className="h-5 w-5" />
-                  Share this article
-                </h3>
-                <div className="flex items-center gap-2">
-                  <a
-                    href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                    aria-label="Share on Facebook"
-                  >
-                    <Facebook className="h-5 w-5" />
-                  </a>
-                  <a
-                    href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
-                    aria-label="Share on Twitter"
-                  >
-                    <Twitter className="h-5 w-5" />
-                  </a>
-                  <a
-                    href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-2 bg-blue-700 text-white rounded-lg hover:bg-blue-800 transition-colors"
-                    aria-label="Share on LinkedIn"
-                  >
-                    <Linkedin className="h-5 w-5" />
-                  </a>
+            {/* Article Footer */}
+            <footer className="mt-16 pt-8 border-t border-gray-200">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                  <p className="text-sm text-gray-600 mb-2">Published by</p>
+                  <p className="font-semibold text-gray-900">{blog.author}</p>
+                  <p className="text-sm text-gray-600">
+                    Mederi Karya Indonesia - Engineering Team
+                  </p>
                 </div>
+                <ShareButton title={blog.title} url={`/blog/${blog.slug}`} />
               </div>
-            </div>
-
-            {/* Author Bio */}
-            <div className="mt-12 p-6 bg-gray-50 rounded-lg">
-              <h3 className="font-semibold text-gray-900 mb-3">About the Author</h3>
-              <p className="text-gray-600">
-                <strong>{postData.author}</strong> is part of the Mederi Karya Indonesia 
-                engineering team, specializing in industrial automation solutions. 
-                With years of hands-on experience in PLC programming, HMI configuration, 
-                and system integration.
-              </p>
-            </div>
-
-            {/* Navigation */}
-            <div className="mt-12 flex justify-between">
-              <Button variant="outline" asChild>
-                <Link href="/blog">
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  Back to Blog
-                </Link>
-              </Button>
-              <Button asChild>
-                <Link href="/contact">
-                  Get Technical Support
-                  <ArrowRight className="h-4 w-4 ml-2" />
-                </Link>
-              </Button>
-            </div>
+            </footer>
           </div>
         </div>
       </article>
@@ -412,7 +297,16 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       {relatedPosts.length > 0 && (
         <section className="py-16 bg-gray-50">
           <div className="container mx-auto px-4">
-            <RelatedPosts posts={relatedPosts} />
+            <div className="max-w-6xl mx-auto">
+              <h2 className="text-2xl font-bold text-gray-900 mb-8">
+                Related Articles
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {relatedPosts.map((post) => (
+                  <RelatedPostCard key={post.id} post={post} />
+                ))}
+              </div>
+            </div>
           </div>
         </section>
       )}
@@ -422,31 +316,209 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-3xl font-bold mb-4">
-              Need Help with Your Automation Project?
+              Need Technical Support?
             </h2>
-            <p className="text-xl text-teal-100 mb-8">
-              Our engineering team is ready to provide technical support, parameter 
-              setting, and commissioning services for your automation systems.
+            <p className="text-teal-100 mb-8 text-lg">
+              Our engineering team is ready to help with your automation challenges. 
+              Get professional consultation and support services.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" className="bg-white text-teal-600 hover:bg-gray-100" asChild>
                 <Link href="/contact">
-                  Get Technical Consultation
+                  Contact Engineers
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
               <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-teal-600" asChild>
-                <Link href="/services">View Our Services</Link>
+                <Link href="/services">Our Services</Link>
               </Button>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Back to Blog */}
+      <section className="py-8 bg-white border-t">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <Button variant="outline" asChild>
+              <Link href="/blog">
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Back to All Articles
+              </Link>
+            </Button>
           </div>
         </div>
       </section>
     </>
   );
 }
-        </div>
+
+// Helper function to calculate reading time
+function calculateReadingTime(content: any): number {
+  if (!content) return 1;
+  
+  // Simple word count estimation for rich text
+  const wordCount = JSON.stringify(content).split(/\s+/).length;
+  const wordsPerMinute = 200;
+  return Math.max(1, Math.ceil(wordCount / wordsPerMinute));
+}
+
+// Component for rendering rich text content
+function BlogContent({ content }: { content: any }) {
+  if (!content) {
+    return (
+      <div className="text-center py-8">
+        <BookOpen className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+        <p className="text-gray-600">Content not available</p>
+      </div>
+    );
+  }
+
+  // Simple rich text rendering - you can enhance this with a proper rich text renderer
+  return (
+    <div className="space-y-4">
+      {content.content?.map((node: any, index: number) => (
+        <RenderNode key={index} node={node} />
+      )) || (
+        <p className="text-gray-600">
+          {typeof content === 'string' ? content : 'Content not available'}
+        </p>
+      )}
+    </div>
+  );
+}
+
+// Simple rich text node renderer
+function RenderNode({ node }: { node: any }) {
+  if (!node) return null;
+
+  switch (node.nodeType) {
+    case 'paragraph':
+      return (
+        <p className="mb-4">
+          {node.content?.map((child: any, index: number) => (
+            <RenderNode key={index} node={child} />
+          ))}
+        </p>
       );
-    },
-  },
-};
+    
+    case 'heading-1':
+      return (
+        <h1 className="text-3xl font-bold mt-8 mb-4">
+          {node.content?.map((child: any, index: number) => (
+            <RenderNode key={index} node={child} />
+          ))}
+        </h1>
+      );
+    
+    case 'heading-2':
+      return (
+        <h2 className="text-2xl font-bold mt-6 mb-3">
+          {node.content?.map((child: any, index: number) => (
+            <RenderNode key={index} node={child} />
+          ))}
+        </h2>
+      );
+    
+    case 'heading-3':
+      return (
+        <h3 className="text-xl font-bold mt-4 mb-2">
+          {node.content?.map((child: any, index: number) => (
+            <RenderNode key={index} node={child} />
+          ))}
+        </h3>
+      );
+    
+    case 'unordered-list':
+      return (
+        <ul className="list-disc pl-6 mb-4">
+          {node.content?.map((child: any, index: number) => (
+            <RenderNode key={index} node={child} />
+          ))}
+        </ul>
+      );
+    
+    case 'ordered-list':
+      return (
+        <ol className="list-decimal pl-6 mb-4">
+          {node.content?.map((child: any, index: number) => (
+            <RenderNode key={index} node={child} />
+          ))}
+        </ol>
+      );
+    
+    case 'list-item':
+      return (
+        <li className="mb-1">
+          {node.content?.map((child: any, index: number) => (
+            <RenderNode key={index} node={child} />
+          ))}
+        </li>
+      );
+    
+    case 'text':
+      let text = node.value || '';
+      
+      // Apply text formatting
+      if (node.marks?.length > 0) {
+        node.marks.forEach((mark: any) => {
+          switch (mark.type) {
+            case 'bold':
+              text = <strong key="bold">{text}</strong>;
+              break;
+            case 'italic':
+              text = <em key="italic">{text}</em>;
+              break;
+            case 'code':
+              text = <code key="code" className="bg-gray-100 px-1 rounded">{text}</code>;
+              break;
+          }
+        });
+      }
+      
+      return text;
+    
+    default:
+      return null;
+  }
+}
+
+// Related post card component
+function RelatedPostCard({ post }: { post: NonNullable<ReturnType<typeof extractBlogFields>> }) {
+  return (
+    <Link
+      href={`/blog/${post.slug}`}
+      className="group bg-white rounded-lg shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden"
+    >
+      {post.featuredImage?.url && (
+        <div className="aspect-video relative bg-gray-100">
+          <Image
+            src={post.featuredImage.url}
+            alt={post.title}
+            fill
+            className="object-cover group-hover:scale-105 transition-transform duration-300"
+            sizes="(max-width: 768px) 100vw, 33vw"
+          />
+        </div>
+      )}
+      <div className="p-6">
+        <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-teal-600 transition-colors line-clamp-2">
+          {post.title}
+        </h3>
+        {post.excerpt && (
+          <p className="text-gray-600 text-sm mb-4 line-clamp-3">
+            {post.excerpt}
+          </p>
+        )}
+        <div className="flex items-center gap-4 text-xs text-gray-500">
+          <span>{post.author}</span>
+          <span>•</span>
+          <time dateTime={post.publishDate}>
+            {new Date(post.publishDate).toLocaleDateString('id-ID')}
+          </time>
+        </div>
+      </div>
+    </Link>
+  );
+}
