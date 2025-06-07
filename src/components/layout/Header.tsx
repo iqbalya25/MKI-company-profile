@@ -53,7 +53,7 @@ const Header = () => {
           >
             <div className="relative w-52 h-52 lg:w-64 lg:h-64 pointer-events-none select-none">
               <Image
-                src="/Images/mkilogo.png"
+                src="/images/mkilogo.png"
                 alt="MKI Logo"
                 fill
                 className="object-contain"
