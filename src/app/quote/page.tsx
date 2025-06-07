@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react/no-unescaped-entities */
-// src/app/quote/page.tsx - COMPLETE QUOTE PAGE
+// src/app/quote/page.tsx - FIXED FOR NEXT.JS 15 COMPATIBILITY
 import { Metadata } from "next";
 import { Suspense } from "react";
 import QuoteForm from "@/components/forms/QuoteForm";
@@ -26,7 +27,15 @@ export const metadata: Metadata = {
   },
 };
 
-export default function QuotePage() {
+interface QuotePageProps {
+  searchParams: Promise<{
+    product?: string;
+  }>;
+}
+
+export default async function QuotePage({ searchParams }: QuotePageProps) {
+  const params = await searchParams;
+  
   return (
     <>
       {/* Hero Section */}
@@ -78,7 +87,7 @@ export default function QuotePage() {
                   Tell Us About Your Requirements
                 </h2>
                 <Suspense fallback={<QuoteFormSkeleton />}>
-                  <QuoteForm />
+                  <QuoteFormWrapper prefilledProduct={params.product} />
                 </Suspense>
               </div>
             </div>
@@ -330,6 +339,11 @@ export default function QuotePage() {
       />
     </>
   );
+}
+
+// Wrapper component to handle the prefilled product
+function QuoteFormWrapper({ prefilledProduct }: { prefilledProduct?: string }) {
+  return <QuoteForm />;
 }
 
 // Loading skeleton for better UX

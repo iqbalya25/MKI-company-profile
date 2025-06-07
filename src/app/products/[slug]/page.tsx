@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// src/app/products/[slug]/page.tsx - SEO OPTIMIZED PRODUCT DETAIL PAGE
+// src/app/products/[slug]/page.tsx - FIXED FOR NEXT.JS 15 COMPATIBILITY
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Image from "next/image";
@@ -7,7 +7,6 @@ import Link from "next/link";
 import { 
   ArrowRight, 
   Download, 
-
   ShoppingCart,
   Settings,
   Headphones,
@@ -29,15 +28,15 @@ import Breadcrumb from "@/components/common/Breadcrumb";
 import RelatedProducts from "@/app/products/RelatedProducts";
 import ProductSpecs from "@/app/products/ProductSpecs";
 
-
 interface ProductPageProps {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
-  const product = await getProductBySlug(params.slug);
+  const { slug } = await params;
+  const product = await getProductBySlug(slug);
   
   if (!product) {
     return {
@@ -84,7 +83,8 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
 }
 
 export default async function ProductPage({ params }: ProductPageProps) {
-  const product = await getProductBySlug(params.slug);
+  const { slug } = await params;
+  const product = await getProductBySlug(slug);
   
   if (!product) {
     notFound();

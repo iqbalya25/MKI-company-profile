@@ -1,4 +1,4 @@
-// src/app/products/page.tsx - SEO OPTIMIZED PRODUCT LISTING
+// src/app/products/page.tsx - FIXED FOR NEXT.JS 15 COMPATIBILITY
 import { Metadata } from "next";
 import { Suspense } from "react";
 import { getProducts, getProductCategories } from "@/lib/contentful";
@@ -9,20 +9,19 @@ import Breadcrumb from "@/components/common/Breadcrumb";
 import { generateBreadcrumbSchema } from "@/lib/schema";
 
 interface ProductsPageProps {
-  searchParams: {
+  searchParams: Promise<{
     category?: string;
     brand?: string;
     search?: string;
     page?: string;
-  };
+  }>;
 }
 
 export async function generateMetadata({
   searchParams,
 }: ProductsPageProps): Promise<Metadata> {
-  const category = searchParams.category;
-  const brand = searchParams.brand;
-  const search = searchParams.search;
+  const params = await searchParams;
+  const { category, brand, search } = params;
 
   // Dynamic SEO based on filters
   let title = "Industrial Automation Products + Technical Support | MKI";
@@ -82,7 +81,8 @@ export async function generateMetadata({
 export default async function ProductsPage({
   searchParams,
 }: ProductsPageProps) {
-  const { category, brand, search, page = "1" } = searchParams;
+  const params = await searchParams;
+  const { category, brand, search, page = "1" } = params;
   const currentPage = parseInt(page);
   const itemsPerPage = 12;
 
@@ -225,7 +225,7 @@ export default async function ProductsPage({
                 totalPages={totalPages}
                 totalProducts={totalProducts}
                 baseUrl="/products"
-                searchParams={searchParams}
+                searchParams={params}
               />
             </Suspense>
           </div>

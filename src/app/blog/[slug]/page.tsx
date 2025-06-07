@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// src/app/blog/[slug]/page.tsx - FIXED CLIENT/SERVER COMPONENT ISSUES
+// src/app/blog/[slug]/page.tsx - FIXED FOR NEXT.JS 15 COMPATIBILITY
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Image from "next/image";
@@ -19,16 +19,13 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Breadcrumb from "@/components/common/Breadcrumb";
 import { SITE_CONFIG } from "@/lib/contants";
-
-// Client Components (moved to separate file)
-
-import { ReactElement, JSXElementConstructor, ReactNode, ReactPortal, Key } from "react";
 import ShareButton from "./shareButton";
+import { ReactElement, JSXElementConstructor, ReactNode, ReactPortal, Key } from "react";
 
 interface BlogPageProps {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
 // Helper function to safely extract fields from Contentful entry
@@ -64,7 +61,8 @@ function extractBlogFields(entry: any) {
 }
 
 export async function generateMetadata({ params }: BlogPageProps): Promise<Metadata> {
-  const entry = await getBlogPostBySlug(params.slug);
+  const { slug } = await params;
+  const entry = await getBlogPostBySlug(slug);
   
   if (!entry) {
     return {
@@ -121,7 +119,8 @@ export async function generateMetadata({ params }: BlogPageProps): Promise<Metad
 }
 
 export default async function BlogPostPage({ params }: BlogPageProps) {
-  const entry = await getBlogPostBySlug(params.slug);
+  const { slug } = await params;
+  const entry = await getBlogPostBySlug(slug);
   
   if (!entry) {
     notFound();
