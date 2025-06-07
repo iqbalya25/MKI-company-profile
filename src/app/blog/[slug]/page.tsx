@@ -19,50 +19,20 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Breadcrumb from "@/components/common/Breadcrumb";
 import { SITE_CONFIG } from "@/lib/contants";
-import ShareButton from "./shareButton";
-import { JSX } from "react";
 
-// Define proper types
+// Client Components (moved to separate file)
+
+import { ReactElement, JSXElementConstructor, ReactNode, ReactPortal, Key } from "react";
+import ShareButton from "./shareButton";
+
 interface BlogPageProps {
   params: {
     slug: string;
   };
 }
 
-interface BlogPost {
-  title: string;
-  slug: string;
-  excerpt: string;
-  content: any;
-  featuredImage: {
-    url: string;
-    title: string;
-    width: number;
-    height: number;
-  } | null;
-  author: string;
-  publishDate: string;
-  tags: string[];
-  seoTitle: string;
-  seoDescription: string;
-  id: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface TextMark {
-  type: 'bold' | 'italic' | 'code';
-}
-
-interface RichTextNode {
-  nodeType: string;
-  value?: string;
-  content?: RichTextNode[];
-  marks?: TextMark[];
-}
-
 // Helper function to safely extract fields from Contentful entry
-function extractBlogFields(entry: any): BlogPost | null {
+function extractBlogFields(entry: any) {
   if (!entry || !entry.fields) {
     return null;
   }
@@ -77,7 +47,7 @@ function extractBlogFields(entry: any): BlogPost | null {
     content: fields.content || null,
     featuredImage: fields.featuredImage ? {
       url: fields.featuredImage.fields?.file?.url ? 
-        `https:${fields.featuredImage.fields.file.url}` : "",
+        `https:${fields.featuredImage.fields.file.url}` : null,
       title: fields.featuredImage.fields?.title || "",
       width: fields.featuredImage.fields?.file?.details?.image?.width || 800,
       height: fields.featuredImage.fields?.file?.details?.image?.height || 600,
@@ -166,7 +136,7 @@ export default async function BlogPostPage({ params }: BlogPageProps) {
   const relatedPostsEntries = await getBlogPosts(3);
   const relatedPosts = relatedPostsEntries
     .map(extractBlogFields)
-    .filter((post): post is BlogPost => 
+    .filter((post): post is NonNullable<typeof post> => 
       post !== null && post.slug !== blog.slug
     )
     .slice(0, 3);
@@ -240,7 +210,7 @@ export default async function BlogPostPage({ params }: BlogPageProps) {
               {/* Tags */}
               {blog.tags.length > 0 && (
                 <div className="flex flex-wrap gap-2 mb-6">
-                  {blog.tags.map((tag, index) => (
+                  {blog.tags.map((tag: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined, index: Key | null | undefined) => (
                     <Badge key={index} variant="secondary" className="text-xs">
                       <Tag className="h-3 w-3 mr-1" />
                       {tag}
@@ -408,7 +378,7 @@ function BlogContent({ content }: { content: any }) {
   // Simple rich text rendering - you can enhance this with a proper rich text renderer
   return (
     <div className="space-y-4">
-      {content.content?.map((node: RichTextNode, index: number) => (
+      {content.content?.map((node: any, index: number) => (
         <RenderNode key={index} node={node} />
       )) || (
         <p className="text-gray-600">
@@ -420,14 +390,14 @@ function BlogContent({ content }: { content: any }) {
 }
 
 // Simple rich text node renderer
-function RenderNode({ node }: { node: RichTextNode }): JSX.Element | null {
+function RenderNode({ node }: { node: any }) {
   if (!node) return null;
 
   switch (node.nodeType) {
     case 'paragraph':
       return (
         <p className="mb-4">
-          {node.content?.map((child, index) => (
+          {node.content?.map((child: any, index: number) => (
             <RenderNode key={index} node={child} />
           ))}
         </p>
@@ -436,7 +406,7 @@ function RenderNode({ node }: { node: RichTextNode }): JSX.Element | null {
     case 'heading-1':
       return (
         <h1 className="text-3xl font-bold mt-8 mb-4">
-          {node.content?.map((child, index) => (
+          {node.content?.map((child: any, index: number) => (
             <RenderNode key={index} node={child} />
           ))}
         </h1>
@@ -445,7 +415,7 @@ function RenderNode({ node }: { node: RichTextNode }): JSX.Element | null {
     case 'heading-2':
       return (
         <h2 className="text-2xl font-bold mt-6 mb-3">
-          {node.content?.map((child, index) => (
+          {node.content?.map((child: any, index: number) => (
             <RenderNode key={index} node={child} />
           ))}
         </h2>
@@ -454,7 +424,7 @@ function RenderNode({ node }: { node: RichTextNode }): JSX.Element | null {
     case 'heading-3':
       return (
         <h3 className="text-xl font-bold mt-4 mb-2">
-          {node.content?.map((child, index) => (
+          {node.content?.map((child: any, index: number) => (
             <RenderNode key={index} node={child} />
           ))}
         </h3>
@@ -463,7 +433,7 @@ function RenderNode({ node }: { node: RichTextNode }): JSX.Element | null {
     case 'unordered-list':
       return (
         <ul className="list-disc pl-6 mb-4">
-          {node.content?.map((child, index) => (
+          {node.content?.map((child: any, index: number) => (
             <RenderNode key={index} node={child} />
           ))}
         </ul>
@@ -472,7 +442,7 @@ function RenderNode({ node }: { node: RichTextNode }): JSX.Element | null {
     case 'ordered-list':
       return (
         <ol className="list-decimal pl-6 mb-4">
-          {node.content?.map((child, index) => (
+          {node.content?.map((child: any, index: number) => (
             <RenderNode key={index} node={child} />
           ))}
         </ol>
@@ -481,33 +451,33 @@ function RenderNode({ node }: { node: RichTextNode }): JSX.Element | null {
     case 'list-item':
       return (
         <li className="mb-1">
-          {node.content?.map((child, index) => (
+          {node.content?.map((child: any, index: number) => (
             <RenderNode key={index} node={child} />
           ))}
         </li>
       );
     
     case 'text':
-      let textElement: JSX.Element | string = node.value || '';
+      let text = node.value || '';
       
       // Apply text formatting
-      if (node.marks?.length) {
-        node.marks.forEach((mark, markIndex) => {
+      if (node.marks?.length > 0) {
+        node.marks.forEach((mark: any) => {
           switch (mark.type) {
             case 'bold':
-              textElement = <strong key={`bold-${markIndex}`}>{textElement}</strong>;
+              text = <strong key="bold">{text}</strong>;
               break;
             case 'italic':
-              textElement = <em key={`italic-${markIndex}`}>{textElement}</em>;
+              text = <em key="italic">{text}</em>;
               break;
             case 'code':
-              textElement = <code key={`code-${markIndex}`} className="bg-gray-100 px-1 rounded">{textElement}</code>;
+              text = <code key="code" className="bg-gray-100 px-1 rounded">{text}</code>;
               break;
           }
         });
       }
       
-      return <>{textElement}</>;
+      return text;
     
     default:
       return null;
@@ -515,7 +485,7 @@ function RenderNode({ node }: { node: RichTextNode }): JSX.Element | null {
 }
 
 // Related post card component
-function RelatedPostCard({ post }: { post: BlogPost }) {
+function RelatedPostCard({ post }: { post: NonNullable<ReturnType<typeof extractBlogFields>> }) {
   return (
     <Link
       href={`/blog/${post.slug}`}
