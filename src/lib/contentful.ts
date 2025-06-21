@@ -348,3 +348,153 @@ function transformService(item: any): Service {
     updatedAt: item.sys?.updatedAt || new Date().toISOString(),
   };
 }
+
+import { ProductFamily, ProductVariant } from "@/types/product";
+
+// Transform Contentful entry to ProductFamily
+function transformProductFamily(entry: any): ProductFamily {
+  const fields = entry.fields || {};
+  
+  return {
+    id: entry.sys?.id || "",
+    name: fields.name || "",
+    slug: fields.slug || "",
+    brand: fields.brand || "",
+    category: fields.category || "",
+    series: fields.series || "",
+    description: fields.description || "",
+    keyFeatures: fields.keyFeatures || [],
+    applications: fields.applications || [],
+    
+    variants: (fields.variants || []).map((variant: any) => ({
+      model: variant.model || "",
+      name: variant.name || "",
+      sku: variant.sku || "",
+      ioPoints: variant.ioPoints,
+      inputPoints: variant.inputPoints,
+      outputPoints: variant.outputPoints,
+      outputType: variant.outputType,
+      powerSupply: variant.powerSupply,
+      specifications: variant.specifications || [],
+      price: variant.price,
+      priceNote: variant.priceNote,
+      inStock: variant.inStock || false,
+      leadTime: variant.leadTime,
+      images: variant.images ? variant.images.map((img: any) => 
+        img.fields?.file?.url ? `https:${img.fields.file.url}` : ""
+      ).filter(Boolean) : [],
+      datasheet: variant.datasheet?.fields?.file?.url ? 
+        `https:${variant.datasheet.fields.file.url}` : undefined,
+      searchKeywords: variant.searchKeywords || []
+    })),
+    
+    defaultVariant: fields.defaultVariant || "",
+    
+    heroImage: fields.heroImage?.fields?.file?.url ? 
+      `https:${fields.heroImage.fields.file.url}` : undefined,
+    gallery: fields.gallery ? fields.gallery.map((img: any) =>
+      img.fields?.file?.url ? `https:${img.fields.file.url}` : ""
+    ).filter(Boolean) : [],
+    brochure: fields.brochure?.fields?.file?.url ?
+      `https:${fields.brochure.fields.file.url}` : undefined,
+    
+    seoTitle: fields.seoTitle || "",
+    seoDescription: fields.seoDescription || "",
+    focusKeywords: fields.focusKeywords || [],
+    featured: fields.featured || false,
+    
+    createdAt: entry.sys?.createdAt || new Date().toISOString(),
+    updatedAt: entry.sys?.updatedAt || new Date().toISOString()
+  };
+}
+
+// Get all product families
+export async function getProductFamilies(options: {
+  limit?: number;
+  category?: string;
+  brand?: string;
+  featured?: boolean;
+} = {}): Promise<ProductFamily[]> {
+  try {
+    const query: any = {
+      content_type: "productFamily",
+      limit: options.limit || 100,
+      order: ["-sys.createdAt"]
+    };
+
+    if (options.category) {
+      query["fields.category"] = options.category;
+    }
+    if (options.brand) {
+      query["fields.brand"] = options.brand;
+    }
+    if (options.featured !== undefined) {
+      query["fields.featured"] = options.featured;
+    }
+
+    const response = await client.getEntries(query);
+    return response.items.map(transformProductFamily);
+  } catch (error) {
+    console.error("Error fetching product families:", error);
+    return [];
+  }
+}
+
+// Get single product family by slug
+export async function getProductFamilyBySlug(slug: string): Promise<ProductFamily | null> {
+  try {
+    const response = await client.getEntries({
+      content_type: "productFamily",
+      "fields.slug": slug,
+      limit: 1,
+    });
+
+    if (response.items.length === 0) return null;
+    return transformProductFamily(response.items[0]);
+  } catch (error) {
+    console.error("Error fetching product family by slug:", error);
+    return null;
+  }
+}
+
+// Get featured product families
+export async function getFeaturedProductFamilies(limit: number = 6): Promise<ProductFamily[]> {
+  return getProductFamilies({ featured: true, limit });
+}
+
+// Search product families and variants
+export async function searchProductFamilies(searchTerm: string): Promise<ProductFamily[]> {
+  try {
+    const response = await client.getEntries({
+      content_type: "productFamily",
+      query: searchTerm,
+    });
+
+    return response.items.map(transformProductFamily);
+  } catch (error) {
+    console.error("Error searching product families:", error);
+    return [];
+  }
+}
+
+// Get categories from product families
+export async function getProductFamilyCategories() {
+  try {
+    const families = await getProductFamilies();
+    const categoryCounts: Record<string, number> = {};
+    
+    families.forEach((family) => {
+      const category = family.category || "Uncategorized";
+      categoryCounts[category] = (categoryCounts[category] || 0) + 1;
+    });
+
+    return Object.entries(categoryCounts).map(([category, count]) => ({
+      name: category,
+      slug: category.toLowerCase().replace(/\s+/g, "-"),
+      count,
+    }));
+  } catch (error) {
+    console.error("Error fetching product family categories:", error);
+    return [];
+  }
+}
