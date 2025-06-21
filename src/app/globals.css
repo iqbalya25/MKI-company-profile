@@ -120,3 +120,12 @@
     @apply bg-background text-foreground;
   }
 }
+
+.text-justify {
+  text-align: justify;
+}
+
+.prose p {
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
