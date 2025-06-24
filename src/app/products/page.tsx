@@ -1,4 +1,4 @@
-// src/app/products/page.tsx - FIXED FOR NEXT.JS 15 COMPATIBILITY
+// src/app/products/page.tsx - FIXED FOR RICH TEXT SEARCH
 import { Metadata } from "next";
 import { Suspense } from "react";
 import { getProducts, getProductCategories } from "@/lib/contentful";
@@ -7,6 +7,7 @@ import ProductFilter from "@/components/products/ProductFilter";
 import ProductGrid from "@/components/products/ProductGrid";
 import Breadcrumb from "@/components/common/Breadcrumb";
 import { generateBreadcrumbSchema } from "@/lib/schema";
+import { extractPlainTextFromRichText } from "@/components/common/RichTextRenderer";
 
 interface ProductsPageProps {
   searchParams: Promise<{
@@ -108,15 +109,22 @@ export default async function ProductsPage({
     );
   }
 
+  // FIXED: Search filtering to handle rich text descriptions properly
   if (search) {
     const searchLower = search.toLowerCase();
-    filteredProducts = filteredProducts.filter(
-      (product) =>
-        product.name.toLowerCase().includes(searchLower) ||
-        product.brand.toLowerCase().includes(searchLower) ||
-        product.model.toLowerCase().includes(searchLower) ||
-        product.description.toLowerCase().includes(searchLower)
-    );
+    filteredProducts = filteredProducts.filter((product) => {
+      // Extract plain text from description for search
+      const plainDescription = typeof product.description === 'string' 
+        ? product.description 
+        : extractPlainTextFromRichText(product.description) || '';
+      
+      return (
+        String(product.name).toLowerCase().includes(searchLower) ||
+        String(product.brand).toLowerCase().includes(searchLower) ||
+        String(product.model).toLowerCase().includes(searchLower) ||
+        plainDescription.toLowerCase().includes(searchLower)
+      );
+    });
   }
 
   // Pagination
@@ -283,7 +291,7 @@ export default async function ProductsPage({
                     url: `/products/${product.slug}`,
                     brand: product.brand,
                     category: product.category,
-                    description: product.description,
+                    description: extractPlainTextFromRichText(product.description) || 'Product description available',
                   },
                 })),
             },

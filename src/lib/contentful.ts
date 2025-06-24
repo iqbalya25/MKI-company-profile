@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// File: src/lib/contentful.ts - UPDATED transformProduct function
+// File: src/lib/contentful.ts - CLEAN VERSION (NO DEBUG LOGS)
 import { createClient } from "contentful";
 import { Product } from "@/types/product";
 import { Service } from "@/types/service";
@@ -11,7 +11,33 @@ const client = createClient({
   accessToken: process.env.CONTENTFUL_ACCESS_TOKEN!,
 });
 
-// Simple approach - let Contentful handle the types automatically
+// UTILITY: Extract plain text from Contentful rich text
+function extractTextFromRichText(richText: any): string {
+  if (!richText || !richText.content) return "";
+
+  let text = "";
+  const traverse = (nodes: any[]) => {
+    if (!Array.isArray(nodes)) return;
+    
+    nodes.forEach((node) => {
+      // Handle text nodes
+      if (node.nodeType === 'text' && node.value) {
+        text += node.value + ' ';
+      }
+      // Handle paragraph and other block nodes
+      if (node.content && Array.isArray(node.content)) {
+        traverse(node.content);
+      }
+    });
+  };
+
+  if (Array.isArray(richText.content)) {
+    traverse(richText.content);
+  }
+
+  return text.trim();
+}
+
 export async function getProducts(
   options: {
     limit?: number;
@@ -39,7 +65,7 @@ export async function getProducts(
     }
 
     const response = await client.getEntries(query);
-    return response.items.map(transformProduct);
+    return response.items.map((item) => transformProduct(item, 'list'));
   } catch (error) {
     console.error("Error fetching products:", error);
     return [];
@@ -55,7 +81,7 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
     });
 
     if (response.items.length === 0) return null;
-    return transformProduct(response.items[0]);
+    return transformProduct(response.items[0], 'detail');
   } catch (error) {
     console.error("Error fetching product by slug:", error);
     return null;
@@ -66,10 +92,8 @@ export async function getFeaturedProducts(
   limit: number = 6
 ): Promise<Product[]> {
   try {
-    // Try different possible field names for featured
     let response;
     try {
-      // First try 'featured'
       response = await client.getEntries({
         content_type: "product",
         "fields.featured": true,
@@ -77,8 +101,6 @@ export async function getFeaturedProducts(
         limit,
       });
     } catch (error) {
-      // If 'featured' fails, try other possible names
-      console.log("Trying alternative field names for featured...");
       try {
         response = await client.getEntries({
           content_type: "product",
@@ -87,19 +109,15 @@ export async function getFeaturedProducts(
           limit,
         });
       } catch (error2) {
-        // If both fail, just get all products and filter manually
-        console.log("Getting all products and filtering manually...");
         response = await client.getEntries({
           content_type: "product",
           order: ["-sys.createdAt"],
-          limit: limit * 3, // Get more to filter from
+          limit: limit * 3,
         });
       }
     }
 
-    const products = response.items.map(transformProduct);
-
-    // Filter for featured products if we couldn't query directly
+    const products = response.items.map((item) => transformProduct(item, 'list'));
     const featuredProducts = products.filter(
       (product) => product.feature === true
     );
@@ -121,7 +139,7 @@ export async function getProductsByCategory(
       order: ["-sys.createdAt"],
     });
 
-    return response.items.map(transformProduct);
+    return response.items.map((item) => transformProduct(item, 'list'));
   } catch (error) {
     console.error("Error fetching products by category:", error);
     return [];
@@ -175,9 +193,8 @@ export async function getPageBySlug(slug: string) {
   }
 }
 
-// UPDATED: Transform Contentful entry to our Product type - Now properly handles rich text
-// UPDATED: Transform Contentful entry to our Product type - FIXED FOR RICH TEXT
-function transformProduct(item: any): Product {
+// Transform Contentful entry to our Product type with context-aware rich text handling
+function transformProduct(item: any, context: 'list' | 'detail' = 'list'): Product {
   const fields = item.fields || {};
 
   // Helper function to safely get field values
@@ -193,65 +210,36 @@ function transformProduct(item: any): Product {
     const value = fields[fieldName];
     if (typeof value === "string") return value;
     if (value && typeof value === "object" && value.content) {
-      // Handle rich text content by extracting plain text for fallback
       return extractTextFromRichText(value);
     }
     return defaultValue;
   };
 
-  // UPDATED: Helper function to get rich text or string field - ENSURES CLEAN OUTPUT
-  const getRichTextOrStringField = (
-    fieldName: string,
-    defaultValue: any = ""
-  ) => {
-    const value = fields[fieldName];
+  // Context-aware description handling
+  const getDescriptionField = () => {
+    const value = fields.description;
 
-    // If it's a rich text object (has nodeType and content) - PRESERVE IT
+    if (!value) return "No description available";
+
+    if (typeof value === "string") return value;
+
     if (value && typeof value === "object" && value.nodeType && value.content) {
-      // IMPORTANT: Return the rich text object AS-IS for the detail page
-      // The ProductCard component will handle extracting plain text when needed
-      return value;
-    }
-
-    // If it's a plain string
-    if (typeof value === "string") {
-      return value;
-    }
-
-    // Handle any other object types by converting to string
-    if (value && typeof value === "object") {
-      console.warn(
-        `[Contentful] Field ${fieldName} contains unexpected object:`,
-        value
-      );
-      try {
-        return JSON.stringify(value);
-      } catch {
-        return String(defaultValue);
+      if (context === 'detail') {
+        return value; // Preserve rich text object for detail pages
+      } else {
+        return extractTextFromRichText(value) || "No description available";
       }
     }
 
-    return defaultValue;
-  };
+    if (value && typeof value === "object") {
+      try {
+        return JSON.stringify(value).substring(0, 200) + '...';
+      } catch {
+        return "Description available";
+      }
+    }
 
-  // Helper function to extract text from Contentful rich text (for SEO/fallback purposes)
-  const extractTextFromRichText = (richText: any): string => {
-    if (!richText || !richText.content) return "";
-
-    let text = "";
-    const traverse = (nodes: any[]) => {
-      nodes.forEach((node) => {
-        if (node.value) {
-          text += node.value;
-        }
-        if (node.content) {
-          traverse(node.content);
-        }
-      });
-    };
-
-    traverse(richText.content);
-    return text.trim();
+    return String(value || "No description available");
   };
 
   // Helper function to safely get asset URL
@@ -268,16 +256,14 @@ function transformProduct(item: any): Product {
       .map((img) => `https:${img.fields.file.url}`);
   };
 
-  // SAFE: Ensure all critical fields are properly typed
-  const productData = {
+  return {
     id: String(item.sys?.id || ""),
     name: String(getStringField("name", "Unnamed Product")),
     slug: String(getStringField("slug", "")),
     brand: String(getStringField("brand", "")),
     category: String(getStringField("category", "")),
     model: String(getStringField("model", "")),
-    // IMPORTANT: Description can be rich text object OR string
-    description: getRichTextOrStringField("description", ""),
+    description: getDescriptionField(),
     specification: getField("specifications", []),
     images: getImages(getField("images", [])),
     datasheet: getField("datasheets")
@@ -297,17 +283,8 @@ function transformProduct(item: any): Product {
       item.sys?.updatedAt || item.sys?.createdAt || new Date().toISOString()
     ),
   };
-
-  // DEBUG: Log the final product data (remove this after debugging)
-  console.log("[transformProduct] Final product data:", {
-    id: productData.id,
-    name: productData.name,
-    descriptionType: typeof productData.description,
-    description: productData.description,
-  });
-
-  return productData;
 }
+
 // Search function for products
 export async function searchProducts(searchTerm: string): Promise<Product[]> {
   try {
@@ -316,7 +293,7 @@ export async function searchProducts(searchTerm: string): Promise<Product[]> {
       query: searchTerm,
     });
 
-    return response.items.map(transformProduct);
+    return response.items.map((item) => transformProduct(item, 'list'));
   } catch (error) {
     console.error("Error searching products:", error);
     return [];
@@ -330,10 +307,8 @@ export async function getProductCategories() {
       content_type: "product",
     });
 
-    // Count products by category
     const categoryCounts: Record<string, number> = {};
     response.items.forEach((item) => {
-      // Safely extract category as string
       const categoryField = item.fields?.category;
       const category =
         typeof categoryField === "string" ? categoryField : "Uncategorized";

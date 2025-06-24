@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// src/components/products/ProductCard.tsx - FINAL FIX FOR RICH TEXT HANDLING
+// src/components/products/ProductCard.tsx - FIXED FOR RICH TEXT HANDLING
 "use client";
 
 import { useState } from "react";
@@ -20,65 +20,13 @@ import { Product } from "@/types/product";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { formatPrice } from "@/lib/utils";
+import { extractPlainTextFromRichText } from "@/components/common/RichTextRenderer";
 
 interface ProductCardProps {
   product: Product;
   viewMode?: "grid" | "list";
   showServices?: boolean;
 }
-
-// COMPREHENSIVE function to extract plain text from rich text description
-const extractPlainText = (description: any): string => {
-  // Handle null/undefined
-  if (!description) {
-    return 'No description available';
-  }
-
-  // If it's already a string, return it
-  if (typeof description === 'string') {
-    return description;
-  }
-  
-  // If it's a rich text object from Contentful
-  if (description && typeof description === 'object' && description.nodeType === 'document' && description.content) {
-    let text = '';
-    
-    const extractTextFromNodes = (nodes: any[]): void => {
-      if (!Array.isArray(nodes)) return;
-      
-      nodes.forEach((node) => {
-        // Handle text nodes
-        if (node.nodeType === 'text' && node.value) {
-          text += node.value + ' ';
-        }
-        
-        // Handle paragraph and other block nodes
-        if (node.content && Array.isArray(node.content)) {
-          extractTextFromNodes(node.content);
-        }
-      });
-    };
-    
-    if (Array.isArray(description.content)) {
-      extractTextFromNodes(description.content);
-    }
-    
-    return text.trim() || 'Rich text content available';
-  }
-  
-  // Handle other object types
-  if (typeof description === 'object') {
-    // Try to stringify safely
-    try {
-      return JSON.stringify(description).substring(0, 100) + '...';
-    } catch {
-      return 'Content available';
-    }
-  }
-  
-  // Fallback for any other type
-  return String(description || 'No description available');
-};
 
 const ProductCard = ({ 
   product, 
@@ -92,7 +40,7 @@ const ProductCard = ({
   const primaryImage = hasImage ? product.images[0] : null;
 
   // SAFE: Extract plain text from description
-  const plainTextDescription = extractPlainText(product.description);
+  const plainTextDescription = extractPlainTextFromRichText(product.description) || 'No description available';
   const truncatedDescription = plainTextDescription.length > 120 
     ? plainTextDescription.substring(0, 120) + "..."
     : plainTextDescription;
@@ -384,5 +332,5 @@ const ProductCard = ({
     </div>
   );
 };
-//
+
 export default ProductCard;

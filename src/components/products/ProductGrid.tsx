@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react/no-unescaped-entities */
-// src/components/products/ProductGrid.tsx - DEBUG VERSION TO FIND THE ISSUE
+// src/components/products/ProductGrid.tsx - CLEAN VERSION
 "use client";
 
 import { useState } from "react";
@@ -22,47 +22,6 @@ interface ProductGridProps {
 type SortOption = "name" | "brand" | "category" | "newest" | "oldest";
 type ViewMode = "grid" | "list";
 
-// Helper function to safely handle rich text in products
-const sanitizeProductForRendering = (product: Product): Product => {
-  console.log('[DEBUG] Sanitizing product:', product.id, product.name);
-  console.log('[DEBUG] Description type:', typeof product.description);
-  console.log('[DEBUG] Description value:', product.description);
-  
-  // If description is a rich text object, extract plain text
-  let safeDescription = product.description;
-  
-  if (product.description && typeof product.description === 'object' && product.description.nodeType) {
-    console.log('[DEBUG] Found rich text description, extracting text...');
-    
-    let text = '';
-    const extractTextFromNodes = (nodes: any[]): void => {
-      if (!Array.isArray(nodes)) return;
-      
-      nodes.forEach((node) => {
-        if (node.nodeType === 'text' && node.value) {
-          text += node.value + ' ';
-        }
-        if (node.content && Array.isArray(node.content)) {
-          extractTextFromNodes(node.content);
-        }
-      });
-    };
-    
-    if (Array.isArray(product.description.content)) {
-      extractTextFromNodes(product.description.content);
-    }
-    
-    safeDescription = text.trim() || 'Product description available';
-    console.log('[DEBUG] Extracted text:', safeDescription);
-  }
-  
-  // Return a new product object with safe description
-  return {
-    ...product,
-    description: safeDescription,
-  };
-};
-
 const ProductGrid = ({
   products,
   currentPage,
@@ -74,14 +33,8 @@ const ProductGrid = ({
   const [sortBy, setSortBy] = useState<SortOption>("newest");
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
 
-  console.log('[DEBUG] ProductGrid received products:', products.length);
-  console.log('[DEBUG] First product description type:', typeof products[0]?.description);
-
-  // SAFE: Sanitize all products before sorting
-  const sanitizedProducts = products.map(sanitizeProductForRendering);
-
   // Sort products
-  const sortedProducts = [...sanitizedProducts].sort((a, b) => {
+  const sortedProducts = [...products].sort((a, b) => {
     switch (sortBy) {
       case "name":
         return String(a.name).localeCompare(String(b.name));
@@ -100,9 +53,6 @@ const ProductGrid = ({
         );
     }
   });
-
-  console.log('[DEBUG] Sorted products:', sortedProducts.length);
-  console.log('[DEBUG] First sorted product description:', typeof sortedProducts[0]?.description);
 
   // Generate pagination URL
   const getPaginationUrl = (page: number) => {
@@ -245,7 +195,7 @@ const ProductGrid = ({
         </div>
       </div>
 
-      {/* Product Grid/List - THIS IS WHERE THE ERROR OCCURS */}
+      {/* Product Grid/List */}
       <div
         className={
           viewMode === "grid"
@@ -253,18 +203,9 @@ const ProductGrid = ({
             : "space-y-4"
         }
       >
-        {sortedProducts.map((product) => {
-          console.log('[DEBUG] Rendering product:', product.id, typeof product.description);
-          
-          // ADDITIONAL SAFETY: Double-check the product before passing to ProductCard
-          if (product.description && typeof product.description === 'object') {
-            console.error('[ERROR] Product still has object description!', product.id, product.description);
-          }
-          
-          return (
-            <ProductCard key={product.id} product={product} viewMode={viewMode} />
-          );
-        })}
+        {sortedProducts.map((product) => (
+          <ProductCard key={product.id} product={product} viewMode={viewMode} />
+        ))}
       </div>
 
       {/* Pagination */}

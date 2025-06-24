@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-// src/components/common/RichTextRenderer.tsx - NEW COMPONENT
+// src/components/common/RichTextRenderer.tsx - UPDATED WITH UTILITY FUNCTION
 // This component handles Contentful's rich text format properly
 import React from 'react';
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
@@ -12,6 +12,54 @@ interface RichTextRendererProps {
   content: any; // Contentful rich text document
   className?: string;
 }
+
+// UTILITY FUNCTION: Extract plain text from rich text for search/cards
+export const extractPlainTextFromRichText = (richText: any): string => {
+  // Handle null/undefined
+  if (!richText) {
+    return '';
+  }
+
+  // If it's already a string, return it
+  if (typeof richText === 'string') {
+    return richText;
+  }
+  
+  // If it's a rich text object from Contentful
+  if (richText && typeof richText === 'object' && richText.nodeType === 'document' && richText.content) {
+    let text = '';
+    
+    const extractTextFromNodes = (nodes: any[]): void => {
+      if (!Array.isArray(nodes)) return;
+      
+      nodes.forEach((node) => {
+        // Handle text nodes
+        if (node.nodeType === 'text' && node.value) {
+          text += node.value + ' ';
+        }
+        
+        // Handle paragraph and other block nodes
+        if (node.content && Array.isArray(node.content)) {
+          extractTextFromNodes(node.content);
+        }
+      });
+    };
+    
+    if (Array.isArray(richText.content)) {
+      extractTextFromNodes(richText.content);
+    }
+    
+    return text.trim();
+  }
+  
+  // Handle other object types - just return empty string to be safe
+  if (typeof richText === 'object') {
+    return '';
+  }
+  
+  // Fallback for any other type
+  return String(richText || '');
+};
 
 const RichTextRenderer: React.FC<RichTextRendererProps> = ({ 
   content, 
