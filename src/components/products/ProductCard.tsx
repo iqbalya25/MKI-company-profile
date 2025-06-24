@@ -1,4 +1,5 @@
-// src/components/products/ProductCard.tsx
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// src/components/products/ProductCard.tsx - FINAL FIX FOR RICH TEXT HANDLING
 "use client";
 
 import { useState } from "react";
@@ -26,6 +27,59 @@ interface ProductCardProps {
   showServices?: boolean;
 }
 
+// COMPREHENSIVE function to extract plain text from rich text description
+const extractPlainText = (description: any): string => {
+  // Handle null/undefined
+  if (!description) {
+    return 'No description available';
+  }
+
+  // If it's already a string, return it
+  if (typeof description === 'string') {
+    return description;
+  }
+  
+  // If it's a rich text object from Contentful
+  if (description && typeof description === 'object' && description.nodeType === 'document' && description.content) {
+    let text = '';
+    
+    const extractTextFromNodes = (nodes: any[]): void => {
+      if (!Array.isArray(nodes)) return;
+      
+      nodes.forEach((node) => {
+        // Handle text nodes
+        if (node.nodeType === 'text' && node.value) {
+          text += node.value + ' ';
+        }
+        
+        // Handle paragraph and other block nodes
+        if (node.content && Array.isArray(node.content)) {
+          extractTextFromNodes(node.content);
+        }
+      });
+    };
+    
+    if (Array.isArray(description.content)) {
+      extractTextFromNodes(description.content);
+    }
+    
+    return text.trim() || 'Rich text content available';
+  }
+  
+  // Handle other object types
+  if (typeof description === 'object') {
+    // Try to stringify safely
+    try {
+      return JSON.stringify(description).substring(0, 100) + '...';
+    } catch {
+      return 'Content available';
+    }
+  }
+  
+  // Fallback for any other type
+  return String(description || 'No description available');
+};
+
 const ProductCard = ({ 
   product, 
   viewMode = "grid",
@@ -37,10 +91,18 @@ const ProductCard = ({
   const hasImage = product.images && product.images.length > 0 && !imageError;
   const primaryImage = hasImage ? product.images[0] : null;
 
-  // Truncate description for card display
-  const truncatedDescription = product.description.length > 120 
-    ? product.description.substring(0, 120) + "..."
-    : product.description;
+  // SAFE: Extract plain text from description
+  const plainTextDescription = extractPlainText(product.description);
+  const truncatedDescription = plainTextDescription.length > 120 
+    ? plainTextDescription.substring(0, 120) + "..."
+    : plainTextDescription;
+
+  // SAFE: Ensure all text fields are strings
+  const safeName = String(product.name || 'Unnamed Product');
+  const safeBrand = String(product.brand || 'Unknown Brand');
+  const safeCategory = String(product.category || 'Uncategorized');
+  const safeModel = String(product.model || 'Unknown Model');
+  const safeSlug = String(product.slug || '');
 
   if (viewMode === "list") {
     return (
@@ -52,7 +114,7 @@ const ProductCard = ({
               {hasImage ? (
                 <Image
                   src={primaryImage!}
-                  alt={product.name}
+                  alt={safeName}
                   fill
                   className={`object-cover transition-all duration-300 group-hover:scale-105 ${
                     imageLoading ? 'opacity-0' : 'opacity-100'
@@ -87,10 +149,10 @@ const ProductCard = ({
                 {/* Brand & Category */}
                 <div className="flex items-center gap-2 mb-2">
                   <Badge variant="outline" className="text-xs">
-                    {product.brand}
+                    {safeBrand}
                   </Badge>
                   <Badge variant="secondary" className="text-xs">
-                    {product.category}
+                    {safeCategory}
                   </Badge>
                   {product.feature && (
                     <Badge className="text-xs bg-yellow-500">
@@ -102,20 +164,20 @@ const ProductCard = ({
 
                 {/* Product Name */}
                 <h3 className="font-semibold text-lg text-gray-900 group-hover:text-teal-600 transition-colors line-clamp-2">
-                  <Link href={`/products/${product.slug}`}>
-                    {product.name}
+                  <Link href={`/products/${safeSlug}`}>
+                    {safeName}
                   </Link>
                 </h3>
 
                 {/* Model */}
                 <p className="text-sm text-gray-600 mt-1">
-                  Model: <span className="font-medium">{product.model}</span>
+                  Model: <span className="font-medium">{safeModel}</span>
                 </p>
               </div>
 
-              {/* Description */}
+              {/* Description - SAFE: Using extracted plain text */}
               <p className="text-sm text-gray-600 mb-4 line-clamp-3 flex-grow">
-                {product.description}
+                {plainTextDescription}
               </p>
 
               {/* Services & Actions Row */}
@@ -140,7 +202,7 @@ const ProductCard = ({
                   <div className="text-right">
                     {product.showPrice && product.price ? (
                       <div className="text-lg font-bold text-gray-900">
-                        {formatPrice(product.price)}
+                        {formatPrice(Number(product.price))}
                       </div>
                     ) : (
                       <div className="text-sm text-gray-600">
@@ -152,12 +214,12 @@ const ProductCard = ({
                   {/* Action Buttons */}
                   <div className="flex items-center gap-2">
                     <Button size="sm" asChild>
-                      <Link href={`/products/${product.slug}`}>
+                      <Link href={`/products/${safeSlug}`}>
                         View Details
                       </Link>
                     </Button>
                     <Button size="sm" variant="outline" asChild>
-                      <Link href={`/quote?product=${product.slug}`}>
+                      <Link href={`/quote?product=${safeSlug}`}>
                         Quote
                       </Link>
                     </Button>
@@ -179,7 +241,7 @@ const ProductCard = ({
         {hasImage ? (
           <Image
             src={primaryImage!}
-            alt={product.name}
+            alt={safeName}
             fill
             className={`object-cover transition-all duration-300 group-hover:scale-105 ${
               imageLoading ? 'opacity-0' : 'opacity-100'
@@ -227,14 +289,14 @@ const ProductCard = ({
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
           <div className="flex items-center gap-2">
             <Button size="sm" variant="secondary" asChild>
-              <Link href={`/products/${product.slug}`}>
+              <Link href={`/products/${safeSlug}`}>
                 <ExternalLink className="h-4 w-4 mr-1" />
                 View
               </Link>
             </Button>
             {product.datasheet && (
               <Button size="sm" variant="secondary" asChild>
-                <a href={product.datasheet} target="_blank" rel="noopener noreferrer">
+                <a href={String(product.datasheet)} target="_blank" rel="noopener noreferrer">
                   <Download className="h-4 w-4" />
                 </a>
               </Button>
@@ -248,26 +310,26 @@ const ProductCard = ({
         {/* Brand & Category */}
         <div className="flex items-center gap-2 mb-3">
           <Badge variant="outline" className="text-xs">
-            {product.brand}
+            {safeBrand}
           </Badge>
           <Badge variant="secondary" className="text-xs">
-            {product.category}
+            {safeCategory}
           </Badge>
         </div>
 
         {/* Product Name */}
         <h3 className="font-semibold text-lg text-gray-900 mb-2 line-clamp-2 group-hover:text-teal-600 transition-colors">
-          <Link href={`/products/${product.slug}`}>
-            {product.name}
+          <Link href={`/products/${safeSlug}`}>
+            {safeName}
           </Link>
         </h3>
 
         {/* Model */}
         <p className="text-sm text-gray-600 mb-3">
-          Model: <span className="font-medium">{product.model}</span>
+          Model: <span className="font-medium">{safeModel}</span>
         </p>
 
-        {/* Description */}
+        {/* Description - SAFE: Using truncated plain text */}
         <p className="text-sm text-gray-600 mb-4 line-clamp-3">
           {truncatedDescription}
         </p>
@@ -295,7 +357,7 @@ const ProductCard = ({
         <div className="mb-4">
           {product.showPrice && product.price ? (
             <div className="text-xl font-bold text-gray-900">
-              {formatPrice(product.price)}
+              {formatPrice(Number(product.price))}
             </div>
           ) : (
             <div className="text-sm text-gray-600">
@@ -307,12 +369,12 @@ const ProductCard = ({
         {/* Action Buttons */}
         <div className="flex gap-2">
           <Button size="sm" className="flex-1" asChild>
-            <Link href={`/products/${product.slug}`}>
+            <Link href={`/products/${safeSlug}`}>
               View Details
             </Link>
           </Button>
           <Button size="sm" variant="outline" asChild>
-            <Link href={`/quote?product=${product.slug}`}>
+            <Link href={`/quote?product=${safeSlug}`}>
               <ShoppingCart className="h-4 w-4 mr-1" />
               Quote
             </Link>

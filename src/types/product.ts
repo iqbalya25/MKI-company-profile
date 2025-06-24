@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // File: src/types/product.ts
 export interface Product {
   id: string;
@@ -6,7 +7,7 @@ export interface Product {
   brand: string;
   category: string;
   model: string;
-  description: string;
+  description: string | any;
   specification: ProductSpecification[];
   images: string[];
   datasheet?: string;
@@ -28,29 +29,29 @@ export interface ProductSpecification {
 }
 
 export interface ProductCategory {
-    slug: string
-    name: string
-    description: string
-    image?: string
-    productCount : number
+  slug: string;
+  name: string;
+  description: string;
+  image?: string;
+  productCount: number;
 }
 
 export interface QuoteRequest {
-    id?: string
-    companyName : string
-    contactPerson : string
-    email: string
-    phone: string
-    product : QuoteProduct[]
-    message?: string
-    urgency: "low" | "medium" | "high"
-    status?: "pending" | "quoted" | "closed"
-    createdAt?: string
+  id?: string;
+  companyName: string;
+  contactPerson: string;
+  email: string;
+  phone: string;
+  product: QuoteProduct[];
+  message?: string;
+  urgency: "low" | "medium" | "high";
+  status?: "pending" | "quoted" | "closed";
+  createdAt?: string;
 }
 
 export interface QuoteProduct {
-    productId: string
-    productName: string
-    quantity: number
-    specifications?: string
+  productId: string;
+  productName: string;
+  quantity: number;
+  specifications?: string;
 }

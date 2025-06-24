@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// File: src/lib/contentful.ts
+// File: src/lib/contentful.ts - UPDATED transformProduct function
 import { createClient } from "contentful";
 import { Product } from "@/types/product";
 import { Service } from "@/types/service";
@@ -175,7 +175,8 @@ export async function getPageBySlug(slug: string) {
   }
 }
 
-// Transform Contentful entry to our Product type
+// UPDATED: Transform Contentful entry to our Product type - Now properly handles rich text
+// UPDATED: Transform Contentful entry to our Product type - FIXED FOR RICH TEXT
 function transformProduct(item: any): Product {
   const fields = item.fields || {};
 
@@ -192,13 +193,48 @@ function transformProduct(item: any): Product {
     const value = fields[fieldName];
     if (typeof value === "string") return value;
     if (value && typeof value === "object" && value.content) {
-      // Handle rich text content
+      // Handle rich text content by extracting plain text for fallback
       return extractTextFromRichText(value);
     }
     return defaultValue;
   };
 
-  // Helper function to extract text from Contentful rich text
+  // UPDATED: Helper function to get rich text or string field - ENSURES CLEAN OUTPUT
+  const getRichTextOrStringField = (
+    fieldName: string,
+    defaultValue: any = ""
+  ) => {
+    const value = fields[fieldName];
+
+    // If it's a rich text object (has nodeType and content) - PRESERVE IT
+    if (value && typeof value === "object" && value.nodeType && value.content) {
+      // IMPORTANT: Return the rich text object AS-IS for the detail page
+      // The ProductCard component will handle extracting plain text when needed
+      return value;
+    }
+
+    // If it's a plain string
+    if (typeof value === "string") {
+      return value;
+    }
+
+    // Handle any other object types by converting to string
+    if (value && typeof value === "object") {
+      console.warn(
+        `[Contentful] Field ${fieldName} contains unexpected object:`,
+        value
+      );
+      try {
+        return JSON.stringify(value);
+      } catch {
+        return String(defaultValue);
+      }
+    }
+
+    return defaultValue;
+  };
+
+  // Helper function to extract text from Contentful rich text (for SEO/fallback purposes)
   const extractTextFromRichText = (richText: any): string => {
     if (!richText || !richText.content) return "";
 
@@ -232,34 +268,46 @@ function transformProduct(item: any): Product {
       .map((img) => `https:${img.fields.file.url}`);
   };
 
-  return {
-    id: item.sys?.id || "",
-    name: getStringField("name", "Unnamed Product"),
-    slug: getStringField("slug", ""),
-    brand: getStringField("brand", ""),
-    category: getStringField("category", ""),
-    model: getStringField("model", ""),
-    description: getStringField("description", ""),
+  // SAFE: Ensure all critical fields are properly typed
+  const productData = {
+    id: String(item.sys?.id || ""),
+    name: String(getStringField("name", "Unnamed Product")),
+    slug: String(getStringField("slug", "")),
+    brand: String(getStringField("brand", "")),
+    category: String(getStringField("category", "")),
+    model: String(getStringField("model", "")),
+    // IMPORTANT: Description can be rich text object OR string
+    description: getRichTextOrStringField("description", ""),
     specification: getField("specifications", []),
     images: getImages(getField("images", [])),
     datasheet: getField("datasheets")
       ? getAssetUrl(getField("datasheets"))
       : undefined,
-    price: getField("price"),
-    priceNote: getStringField("priceNote"),
+    price: getField("price") ? Number(getField("price")) : undefined,
+    priceNote: String(getStringField("priceNote", "")),
     showPrice: Boolean(getField("showPrice", false)),
     inStock: Boolean(getField("inStock", false)),
     feature: Boolean(
       getField("featured", false) || getField("isFeatured", false)
     ),
-    seoTitle: getStringField("seoTitle"),
-    seoDescription: getStringField("seoDescription"),
-    createdAt: item.sys?.createdAt || new Date().toISOString(),
-    updateAt:
-      item.sys?.updatedAt || item.sys?.createdAt || new Date().toISOString(),
+    seoTitle: String(getStringField("seoTitle", "")),
+    seoDescription: String(getStringField("seoDescription", "")),
+    createdAt: String(item.sys?.createdAt || new Date().toISOString()),
+    updateAt: String(
+      item.sys?.updatedAt || item.sys?.createdAt || new Date().toISOString()
+    ),
   };
-}
 
+  // DEBUG: Log the final product data (remove this after debugging)
+  console.log("[transformProduct] Final product data:", {
+    id: productData.id,
+    name: productData.name,
+    descriptionType: typeof productData.description,
+    description: productData.description,
+  });
+
+  return productData;
+}
 // Search function for products
 export async function searchProducts(searchTerm: string): Promise<Product[]> {
   try {

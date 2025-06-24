@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react/no-unescaped-entities */
-// src/components/products/ProductGrid.tsx
+// src/components/products/ProductGrid.tsx - DEBUG VERSION TO FIND THE ISSUE
 "use client";
 
 import { useState } from "react";
@@ -21,6 +22,47 @@ interface ProductGridProps {
 type SortOption = "name" | "brand" | "category" | "newest" | "oldest";
 type ViewMode = "grid" | "list";
 
+// Helper function to safely handle rich text in products
+const sanitizeProductForRendering = (product: Product): Product => {
+  console.log('[DEBUG] Sanitizing product:', product.id, product.name);
+  console.log('[DEBUG] Description type:', typeof product.description);
+  console.log('[DEBUG] Description value:', product.description);
+  
+  // If description is a rich text object, extract plain text
+  let safeDescription = product.description;
+  
+  if (product.description && typeof product.description === 'object' && product.description.nodeType) {
+    console.log('[DEBUG] Found rich text description, extracting text...');
+    
+    let text = '';
+    const extractTextFromNodes = (nodes: any[]): void => {
+      if (!Array.isArray(nodes)) return;
+      
+      nodes.forEach((node) => {
+        if (node.nodeType === 'text' && node.value) {
+          text += node.value + ' ';
+        }
+        if (node.content && Array.isArray(node.content)) {
+          extractTextFromNodes(node.content);
+        }
+      });
+    };
+    
+    if (Array.isArray(product.description.content)) {
+      extractTextFromNodes(product.description.content);
+    }
+    
+    safeDescription = text.trim() || 'Product description available';
+    console.log('[DEBUG] Extracted text:', safeDescription);
+  }
+  
+  // Return a new product object with safe description
+  return {
+    ...product,
+    description: safeDescription,
+  };
+};
+
 const ProductGrid = ({
   products,
   currentPage,
@@ -32,15 +74,21 @@ const ProductGrid = ({
   const [sortBy, setSortBy] = useState<SortOption>("newest");
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
 
+  console.log('[DEBUG] ProductGrid received products:', products.length);
+  console.log('[DEBUG] First product description type:', typeof products[0]?.description);
+
+  // SAFE: Sanitize all products before sorting
+  const sanitizedProducts = products.map(sanitizeProductForRendering);
+
   // Sort products
-  const sortedProducts = [...products].sort((a, b) => {
+  const sortedProducts = [...sanitizedProducts].sort((a, b) => {
     switch (sortBy) {
       case "name":
-        return a.name.localeCompare(b.name);
+        return String(a.name).localeCompare(String(b.name));
       case "brand":
-        return a.brand.localeCompare(b.brand);
+        return String(a.brand).localeCompare(String(b.brand));
       case "category":
-        return a.category.localeCompare(b.category);
+        return String(a.category).localeCompare(String(b.category));
       case "oldest":
         return (
           new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
@@ -52,6 +100,9 @@ const ProductGrid = ({
         );
     }
   });
+
+  console.log('[DEBUG] Sorted products:', sortedProducts.length);
+  console.log('[DEBUG] First sorted product description:', typeof sortedProducts[0]?.description);
 
   // Generate pagination URL
   const getPaginationUrl = (page: number) => {
@@ -71,15 +122,13 @@ const ProductGrid = ({
   // Generate page numbers for pagination
   const getPageNumbers = () => {
     const pages: (number | string)[] = [];
-    const showPages = 5; // Show 5 page numbers
+    const showPages = 5;
 
     if (totalPages <= showPages) {
-      // Show all pages if total pages is small
       for (let i = 1; i <= totalPages; i++) {
         pages.push(i);
       }
     } else {
-      // Show ellipsis logic
       const startPage = Math.max(1, currentPage - 2);
       const endPage = Math.min(totalPages, currentPage + 2);
 
@@ -196,7 +245,7 @@ const ProductGrid = ({
         </div>
       </div>
 
-      {/* Product Grid/List */}
+      {/* Product Grid/List - THIS IS WHERE THE ERROR OCCURS */}
       <div
         className={
           viewMode === "grid"
@@ -204,9 +253,18 @@ const ProductGrid = ({
             : "space-y-4"
         }
       >
-        {sortedProducts.map((product) => (
-          <ProductCard key={product.id} product={product} viewMode={viewMode} />
-        ))}
+        {sortedProducts.map((product) => {
+          console.log('[DEBUG] Rendering product:', product.id, typeof product.description);
+          
+          // ADDITIONAL SAFETY: Double-check the product before passing to ProductCard
+          if (product.description && typeof product.description === 'object') {
+            console.error('[ERROR] Product still has object description!', product.id, product.description);
+          }
+          
+          return (
+            <ProductCard key={product.id} product={product} viewMode={viewMode} />
+          );
+        })}
       </div>
 
       {/* Pagination */}

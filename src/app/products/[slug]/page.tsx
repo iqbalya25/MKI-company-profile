@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// src/app/products/[slug]/page.tsx - FIXED FOR NEXT.JS 15 COMPATIBILITY
+// src/app/products/[slug]/page.tsx - UPDATED TO SUPPORT RICH TEXT
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import {
-  ArrowRight,
-  Download,
+import { 
+  ArrowRight, 
+  Download, 
   ShoppingCart,
   Settings,
   Headphones,
@@ -16,7 +16,7 @@ import {
   Package,
   Star,
   Phone,
-  Mail,
+  Mail
 } from "lucide-react";
 import { getProductBySlug, getProducts } from "@/lib/contentful";
 import { generateProductSchema, generateBreadcrumbSchema } from "@/lib/schema";
@@ -27,6 +27,8 @@ import { Badge } from "@/components/ui/badge";
 import Breadcrumb from "@/components/common/Breadcrumb";
 import RelatedProducts from "@/app/products/RelatedProducts";
 import ProductSpecs from "@/app/products/ProductSpecs";
+// NEW IMPORT: Import the new RichTextRenderer component
+import RichTextRenderer from "@/components/common/RichTextRenderer";
 
 interface ProductPageProps {
   params: Promise<{
@@ -34,12 +36,10 @@ interface ProductPageProps {
   }>;
 }
 
-export async function generateMetadata({
-  params,
-}: ProductPageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
   const { slug } = await params;
   const product = await getProductBySlug(slug);
-
+  
   if (!product) {
     return {
       title: "Product Not Found | Mederi Karya Indonesia",
@@ -47,17 +47,9 @@ export async function generateMetadata({
     };
   }
 
-  const title =
-    product.seoTitle ||
-    `${product.name} + Technical Support | Mederi Karya Indonesia`;
-  const description =
-    product.seoDescription ||
-    `${product.name} - ${product.brand} ${
-      product.model
-    }. ${product.description.substring(
-      0,
-      120
-    )}... Parameter setting, technical support available.`;
+  const title = product.seoTitle || `${product.name} + Technical Support | Mederi Karya Indonesia`;
+  const description = product.seoDescription || 
+    `${product.name} - ${product.brand} ${product.model}. ${product.description.substring(0, 120)}... Parameter setting, technical support available.`;
 
   return {
     title,
@@ -77,17 +69,14 @@ export async function generateMetadata({
       description,
       type: "website",
       url: `/products/${product.slug}`,
-      images:
-        product.images.length > 0
-          ? [
-              {
-                url: product.images[0],
-                width: 800,
-                height: 600,
-                alt: product.name,
-              },
-            ]
-          : [],
+      images: product.images.length > 0 ? [
+        {
+          url: product.images[0],
+          width: 800,
+          height: 600,
+          alt: product.name,
+        }
+      ] : [],
     },
     alternates: {
       canonical: `/products/${product.slug}`,
@@ -98,30 +87,25 @@ export async function generateMetadata({
 export default async function ProductPage({ params }: ProductPageProps) {
   const { slug } = await params;
   const product = await getProductBySlug(slug);
-
+  
   if (!product) {
     notFound();
   }
 
   // Fetch related products (same category)
-  const relatedProducts = await getProducts({
-    category: product.category,
-    limit: 4,
+  const relatedProducts = await getProducts({ 
+    category: product.category, 
+    limit: 4 
   });
-
+  
   // Filter out current product from related
-  const filteredRelated = relatedProducts.filter((p) => p.id !== product.id);
+  const filteredRelated = relatedProducts.filter(p => p.id !== product.id);
 
   // Breadcrumb data
   const breadcrumbItems = [
     { name: "Home", url: "/" },
     { name: "Products", url: "/products" },
-    {
-      name: product.category,
-      url: `/products?category=${product.category
-        .toLowerCase()
-        .replace(/\s+/g, "-")}`,
-    },
+    { name: product.category, url: `/products?category=${product.category.toLowerCase().replace(/\s+/g, '-')}` },
     { name: product.name, url: `/products/${product.slug}` },
   ];
 
@@ -153,10 +137,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
           {/* Product Images */}
           <div>
-            <ProductImageGallery
-              images={product.images}
-              productName={product.name}
-            />
+            <ProductImageGallery images={product.images} productName={product.name} />
           </div>
 
           {/* Product Info */}
@@ -167,6 +148,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
         {/* Product Details Tabs */}
         <div className="mb-16">
+          {/* UPDATED: Pass the product to the new component */}
           <ProductDetailsTabs product={product} />
         </div>
 
@@ -184,14 +166,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
   );
 }
 
-// Product Image Gallery Component
-function ProductImageGallery({
-  images,
-  productName,
-}: {
-  images: string[];
-  productName: string;
-}) {
+// Product Image Gallery Component - NO CHANGES
+function ProductImageGallery({ images, productName }: { images: string[]; productName: string }) {
   if (images.length === 0) {
     return (
       <div className="aspect-square bg-gray-100 rounded-lg flex items-center justify-center">
@@ -218,10 +194,7 @@ function ProductImageGallery({
       {images.length > 1 && (
         <div className="grid grid-cols-4 gap-2">
           {images.slice(1, 5).map((image, index) => (
-            <div
-              key={index}
-              className="aspect-square relative bg-gray-50 rounded-md overflow-hidden"
-            >
+            <div key={index} className="aspect-square relative bg-gray-50 rounded-md overflow-hidden">
               <Image
                 src={image}
                 alt={`${productName} view ${index + 2}`}
@@ -237,7 +210,7 @@ function ProductImageGallery({
   );
 }
 
-// Product Info Component
+// Product Info Component - NO CHANGES
 function ProductInfo({ product }: { product: any }) {
   return (
     <div className="space-y-6">
@@ -260,8 +233,7 @@ function ProductInfo({ product }: { product: any }) {
 
       {/* Model */}
       <p className="text-lg text-gray-600">
-        Model:{" "}
-        <span className="font-semibold text-gray-900">{product.model}</span>
+        Model: <span className="font-semibold text-gray-900">{product.model}</span>
       </p>
 
       {/* Stock Status */}
@@ -269,16 +241,12 @@ function ProductInfo({ product }: { product: any }) {
         {product.inStock ? (
           <div className="flex items-center gap-2 text-green-600">
             <CheckCircle className="h-5 w-5" />
-            <span className="font-medium">
-              Available for immediate shipping
-            </span>
+            <span className="font-medium">Available for immediate shipping</span>
           </div>
         ) : (
           <div className="flex items-center gap-2 text-orange-600">
             <AlertCircle className="h-5 w-5" />
-            <span className="font-medium">
-              Contact for availability & lead time
-            </span>
+            <span className="font-medium">Contact for availability & lead time</span>
           </div>
         )}
       </div>
@@ -335,15 +303,13 @@ function ProductInfo({ product }: { product: any }) {
         </Button>
         <div className="grid grid-cols-2 gap-3">
           <Button size="lg" variant="outline" asChild>
-            <Link href="/contact">Technical Consultation</Link>
+            <Link href="/contact">
+              Technical Consultation
+            </Link>
           </Button>
           {product.datasheet && (
             <Button size="lg" variant="outline" asChild>
-              <a
-                href={product.datasheet}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <a href={product.datasheet} target="_blank" rel="noopener noreferrer">
                 <Download className="h-4 w-4 mr-2" />
                 Datasheet
               </a>
@@ -354,9 +320,7 @@ function ProductInfo({ product }: { product: any }) {
 
       {/* Quick Contact */}
       <div className="p-4 bg-gray-50 rounded-lg border">
-        <h4 className="font-semibold text-gray-900 mb-3">
-          Need Immediate Help?
-        </h4>
+        <h4 className="font-semibold text-gray-900 mb-3">Need Immediate Help?</h4>
         <div className="space-y-2">
           <a
             href={`tel:${SITE_CONFIG.company.phone}`}
@@ -378,63 +342,43 @@ function ProductInfo({ product }: { product: any }) {
   );
 }
 
-// Product Details Tabs Component
+// UPDATED: Product Details Tabs Component - Now uses RichTextRenderer
 function ProductDetailsTabs({ product }: { product: any }) {
   return (
     <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
       {/* Tab Content */}
       <div className="p-6">
-        {/* Description */}
-        {/* Description */}
+        {/* Description - UPDATED: Now handles rich text properly */}
         <div className="mb-8">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">
-            Product Description
-          </h2>
-          <div className="prose max-w-none">
-            {product.description && typeof product.description === "object" ? (
-              <RenderRichText content={product.description} />
-            ) : typeof product.description === "string" ? (
-              <div className="space-y-4">
-                {product.description
-                  .split("\n")
-                  .filter((p: string) => p.trim())
-                  .map((paragraph: string, index: number) => (
-                    <p
-                      key={index}
-                      className="text-gray-600 text-justify leading-relaxed"
-                    >
-                      {paragraph}
-                    </p>
-                  ))}
-              </div>
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">Product Description</h2>
+          <div className="bg-gray-50 rounded-lg p-6">
+            {/* NEW: Use RichTextRenderer for proper rich text display */}
+            {product.description && typeof product.description === 'object' ? (
+              // If description is rich text object from Contentful
+              <RichTextRenderer 
+                content={product.description} 
+                className="text-gray-700"
+              />
             ) : (
-              <p className="text-gray-600 text-justify leading-relaxed">
-                No description available
-              </p>
+              // Fallback for plain text descriptions
+              <div className="prose max-w-none text-gray-700">
+                <p>{product.description || 'No description available.'}</p>
+              </div>
             )}
           </div>
         </div>
 
         {/* Specifications */}
         <div className="mb-8">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">
-            Technical Specifications
-          </h2>
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">Technical Specifications</h2>
           <ProductSpecs specifications={product.specification} />
         </div>
 
         {/* Applications */}
         <div>
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">
-            Applications
-          </h2>
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">Applications</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[
-              "Manufacturing",
-              "Pharmaceutical",
-              "Food Processing",
-              "Automotive",
-            ].map((app) => (
+            {["Manufacturing", "Pharmaceutical", "Food Processing", "Automotive"].map((app) => (
               <div key={app} className="p-3 bg-gray-50 rounded-lg text-center">
                 <span className="text-sm font-medium text-gray-700">{app}</span>
               </div>
@@ -446,147 +390,30 @@ function ProductDetailsTabs({ product }: { product: any }) {
   );
 }
 
-// Technical Support Section Component
+// Technical Support Section Component - NO CHANGES
 function TechnicalSupportSection() {
   return (
     <div className="bg-gradient-to-br from-teal-600 to-teal-700 rounded-2xl p-8 text-white">
       <div className="max-w-3xl mx-auto text-center">
         <h2 className="text-2xl font-bold mb-4">Need Technical Support?</h2>
         <p className="text-teal-100 mb-6">
-          Our engineering team provides comprehensive technical support
-          including parameter setting, commissioning, troubleshooting, and
-          training services.
+          Our engineering team provides comprehensive technical support including parameter setting, 
+          commissioning, troubleshooting, and training services.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button
-            size="lg"
-            className="bg-white text-teal-600 hover:bg-gray-100"
-            asChild
-          >
+          <Button size="lg" className="bg-white text-teal-600 hover:bg-gray-100" asChild>
             <Link href="/contact">
               Free Technical Consultation
               <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
           </Button>
-          <Button
-            size="lg"
-            variant="outline"
-            className="border-white text-white hover:bg-white hover:text-teal-600"
-            asChild
-          >
-            <Link href="/services">View All Services</Link>
+          <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-teal-600" asChild>
+            <Link href="/services">
+              View All Services
+            </Link>
           </Button>
         </div>
       </div>
-    </div>
-  );
-}
-
-// Add this component at the bottom of src/app/products/[slug]/page.tsx
-// Replace the RenderRichText component with this version:
-function RenderRichText({ content }: { content: any }) {
-  if (!content || !content.content) {
-    return (
-      <p className="text-gray-600 text-justify leading-relaxed">
-        No content available
-      </p>
-    );
-  }
-
-  const renderNode = (node: any, index: number): React.ReactNode => {
-    if (!node) return null;
-
-    switch (node.nodeType) {
-      case "paragraph":
-        const textContent =
-          node.content
-            ?.filter((textNode: any) => textNode.nodeType === "text")
-            .map((textNode: any) => textNode.value)
-            .join("") || "";
-
-        return textContent.trim() ? (
-          <p
-            key={index}
-            className="text-gray-600 text-justify leading-relaxed mb-4"
-          >
-            {textContent}
-          </p>
-        ) : null;
-
-      case "heading-1":
-        const h1Content =
-          node.content
-            ?.filter((textNode: any) => textNode.nodeType === "text")
-            .map((textNode: any) => textNode.value)
-            .join("") || "";
-        return (
-          <h3 key={index} className="text-xl font-bold text-gray-900 mt-6 mb-3">
-            {h1Content}
-          </h3>
-        );
-
-      case "heading-2":
-        const h2Content =
-          node.content
-            ?.filter((textNode: any) => textNode.nodeType === "text")
-            .map((textNode: any) => textNode.value)
-            .join("") || "";
-        return (
-          <h4
-            key={index}
-            className="text-lg font-semibold text-gray-900 mt-4 mb-2"
-          >
-            {h2Content}
-          </h4>
-        );
-
-      case "unordered-list":
-        return (
-          <ul key={index} className="list-disc pl-6 mb-4 space-y-1">
-            {node.content?.map((listItem: any, listIndex: number) =>
-              renderNode(listItem, listIndex)
-            )}
-          </ul>
-        );
-
-      case "list-item":
-        const listContent =
-          node.content
-            ?.filter(
-              (textNode: any) =>
-                textNode.nodeType === "text" ||
-                textNode.nodeType === "paragraph"
-            )
-            .map((textNode: any) => {
-              if (textNode.nodeType === "text") return textNode.value;
-              if (textNode.nodeType === "paragraph") {
-                return (
-                  textNode.content
-                    ?.filter((nested: any) => nested.nodeType === "text")
-                    .map((nested: any) => nested.value)
-                    .join("") || ""
-                );
-              }
-              return "";
-            })
-            .join("") || "";
-
-        return listContent.trim() ? (
-          <li key={index} className="text-gray-600">
-            {listContent}
-          </li>
-        ) : null;
-
-      default:
-        return null;
-    }
-  };
-
-  return (
-    <div className="space-y-0">
-      {content.content.map((node: any, index: number) =>
-        renderNode(node, index)
-      )}
     </div>
   );
 }
