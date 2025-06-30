@@ -314,6 +314,6 @@ const ProductFilter = ({
       </div>
     </div>
   );
-}; //
+}; 
 
 export default ProductFilter;
