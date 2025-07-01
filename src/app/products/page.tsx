@@ -1,10 +1,11 @@
-// src/app/products/page.tsx - FIXED FOR RICH TEXT SEARCH
+// src/app/products/page.tsx - UPDATED WITH SEARCH CARD
 import { Metadata } from "next";
 import { Suspense } from "react";
 import { getProducts, getProductCategories } from "@/lib/contentful";
 import { PRODUCT_CATEGORIES, TARGET_KEYWORDS } from "@/lib/contants";
 import ProductFilter from "@/components/products/ProductFilter";
 import ProductGrid from "@/components/products/ProductGrid";
+import ProductSearchCard from "@/components/products/ProductSearchCard";
 import Breadcrumb from "@/components/common/Breadcrumb";
 import { generateBreadcrumbSchema } from "@/lib/schema";
 import { extractPlainTextFromRichText } from "@/components/common/RichTextRenderer";
@@ -109,7 +110,7 @@ export default async function ProductsPage({
     );
   }
 
-  // FIXED: Search filtering to handle rich text descriptions properly
+  // Search filtering to handle rich text descriptions properly
   if (search) {
     const searchLower = search.toLowerCase();
     filteredProducts = filteredProducts.filter((product) => {
@@ -204,8 +205,18 @@ export default async function ProductsPage({
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
+        {/* NEW: Product Search Card - Added below header */}
+        <div className="mb-8">
+          <ProductSearchCard
+            currentSearch={search}
+            totalResults={totalProducts}
+            searchParams={params}
+          />
+        </div>
+
+        {/* Products Layout */}
         <div className="lg:grid lg:grid-cols-4 lg:gap-8">
-          {/* Sidebar Filters */}
+          {/* Sidebar Filters - NO SEARCH ANYMORE */}
           <div className="lg:col-span-1">
             <div className="sticky top-24">
               <Suspense
@@ -217,7 +228,6 @@ export default async function ProductsPage({
                   categories={categories}
                   currentCategory={category}
                   currentBrand={brand}
-                  currentSearch={search}
                   totalResults={totalProducts}
                 />
               </Suspense>
