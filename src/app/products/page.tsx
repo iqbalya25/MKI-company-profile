@@ -1,14 +1,16 @@
-// src/app/products/page.tsx - UPDATED WITH SEARCH CARD
+/* eslint-disable @typescript-eslint/no-unused-vars */
+// src/app/products/page.tsx - CLEAN VERSION WITHOUT PRODUCTFILTER
 import { Metadata } from "next";
 import { Suspense } from "react";
 import { getProducts, getProductCategories } from "@/lib/contentful";
 import { PRODUCT_CATEGORIES, TARGET_KEYWORDS } from "@/lib/contants";
-import ProductFilter from "@/components/products/ProductFilter";
 import ProductGrid from "@/components/products/ProductGrid";
 import ProductSearchCard from "@/components/products/ProductSearchCard";
 import Breadcrumb from "@/components/common/Breadcrumb";
 import { generateBreadcrumbSchema } from "@/lib/schema";
 import { extractPlainTextFromRichText } from "@/components/common/RichTextRenderer";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 interface ProductsPageProps {
   searchParams: Promise<{
@@ -25,7 +27,6 @@ export async function generateMetadata({
   const params = await searchParams;
   const { category, brand, search } = params;
 
-  // Dynamic SEO based on filters
   let title = "Industrial Automation Products + Technical Support | MKI";
   let description =
     "Complete catalog automation parts: PLC, HMI, Inverter, Safety Relay dengan technical support. Parameter setting, commissioning, engineering consultation.";
@@ -90,7 +91,7 @@ export default async function ProductsPage({
 
   // Fetch data
   const [allProducts, categories] = await Promise.all([
-    getProducts({ limit: 500 }), // Get all products for filtering
+    getProducts({ limit: 500 }),
     getProductCategories(),
   ]);
 
@@ -110,11 +111,9 @@ export default async function ProductsPage({
     );
   }
 
-  // Search filtering to handle rich text descriptions properly
   if (search) {
     const searchLower = search.toLowerCase();
     filteredProducts = filteredProducts.filter((product) => {
-      // Extract plain text from description for search
       const plainDescription = typeof product.description === 'string' 
         ? product.description 
         : extractPlainTextFromRichText(product.description) || '';
@@ -203,9 +202,9 @@ export default async function ProductsPage({
         </div>
       </div>
 
-      {/* Main Content */}
+      {/* Main Content - FULL WIDTH WITHOUT SIDEBAR */}
       <div className="container mx-auto px-4 py-8">
-        {/* NEW: Product Search Card - Added below header */}
+        {/* Product Search Card */}
         <div className="mb-8">
           <ProductSearchCard
             currentSearch={search}
@@ -214,40 +213,17 @@ export default async function ProductsPage({
           />
         </div>
 
-        {/* Products Layout */}
-        <div className="lg:grid lg:grid-cols-4 lg:gap-8">
-          {/* Sidebar Filters - NO SEARCH ANYMORE */}
-          <div className="lg:col-span-1">
-            <div className="sticky top-24">
-              <Suspense
-                fallback={
-                  <div className="animate-pulse bg-gray-200 h-96 rounded-lg" />
-                }
-              >
-                <ProductFilter
-                  categories={categories}
-                  currentCategory={category}
-                  currentBrand={brand}
-                  totalResults={totalProducts}
-                />
-              </Suspense>
-            </div>
-          </div>
-
-          {/* Product Grid */}
-          <div className="lg:col-span-3 mt-8 lg:mt-0">
-            <Suspense fallback={<ProductGridSkeleton />}>
-              <ProductGrid
-                products={paginatedProducts}
-                currentPage={currentPage}
-                totalPages={totalPages}
-                totalProducts={totalProducts}
-                baseUrl="/products"
-                searchParams={params}
-              />
-            </Suspense>
-          </div>
-        </div>
+        {/* Product Grid */}
+        <Suspense fallback={<ProductGridSkeleton />}>
+          <ProductGrid
+            products={paginatedProducts}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalProducts={totalProducts}
+            baseUrl="/products"
+            searchParams={params}
+          />
+        </Suspense>
       </div>
 
       {/* Technical Support CTA */}
@@ -263,18 +239,22 @@ export default async function ProductsPage({
               consultation for your automation project.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-teal-600 text-white px-6 py-3 rounded-lg hover:bg-teal-700 transition-colors">
-                Request Technical Support
-              </button>
-              <button className="border border-teal-600 text-teal-600 px-6 py-3 rounded-lg hover:bg-teal-50 transition-colors">
-                Engineering Consultation
-              </button>
+              <Button asChild>
+                <Link href="/contact">
+                  Request Technical Support
+                </Link>
+              </Button>
+              <Button variant="outline" asChild>
+                <Link href="/services">
+                  Engineering Consultation
+                </Link>
+              </Button>
             </div>
           </div>
         </section>
       )}
 
-      {/* Schema Markup for Product Catalog */}
+      {/* Schema Markup */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -312,7 +292,7 @@ export default async function ProductsPage({
   );
 }
 
-// Loading skeleton for better UX
+// Loading skeleton
 function ProductGridSkeleton() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
