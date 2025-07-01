@@ -206,12 +206,14 @@ export default async function ProductsPage({
       {/* Main Content - FULL WIDTH WITHOUT SIDEBAR */}
       <div className="container mx-auto px-4 py-6">
         {/* Product Search Card - NEW */}
-        <ProductSearchCard
-          totalProducts={totalProducts}
-          currentCategory={category}
-          currentBrand={brand}
-          currentSearch={search}
-        />
+        <Suspense>
+          <ProductSearchCard
+            totalProducts={totalProducts}
+            currentCategory={category}
+            currentBrand={brand}
+            currentSearch={search}
+          />
+        </Suspense>
 
         {/* Product Grid - Full Width */}
         <div className="mt-8">
