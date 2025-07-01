@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-// src/app/products/page.tsx - CLEAN VERSION WITHOUT PRODUCTFILTER
+// src/app/products/page.tsx - ENHANCED VERSION
 import { Metadata } from "next";
 import { Suspense } from "react";
 import { getProducts, getProductCategories } from "@/lib/contentful";
@@ -137,12 +137,13 @@ export default async function ProductsPage({
     startIndex + itemsPerPage
   );
 
-  // Breadcrumb data
+  // FIXED: Improved breadcrumb data with proper navigation
   const breadcrumbItems = [
     { name: "Home", url: "/" },
     { name: "Products", url: "/products" },
   ];
 
+  // Add category to breadcrumb only if filtering by category
   if (category) {
     const categoryData = PRODUCT_CATEGORIES.find(
       (cat) => cat.slug === category
@@ -165,47 +166,45 @@ export default async function ProductsPage({
         }}
       />
 
-      {/* Page Header */}
-      <div className="bg-teal-50 py-6 mt-20">
+      {/* ENHANCED: Page Header with Teal Background - Optimized for 1366x768 */}
+      <div className="bg-gradient-to-br from-teal-600 to-teal-700 text-white py-8 mt-20">
         <div className="container mx-auto px-4">
-          <Breadcrumb items={breadcrumbItems} />
+          {/* Breadcrumb - White styling for dark background */}
+          <Breadcrumb 
+            items={breadcrumbItems} 
+            className="mb-4 [&_a]:text-teal-200 [&_a:hover]:text-white [&_span]:text-white"
+          />
 
-          <div className="mt-6">
-            <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-3">
+          <div className="max-w-4xl">
+            <h1 className="text-3xl lg:text-4xl font-bold mb-3">
               {category
                 ? PRODUCT_CATEGORIES.find((cat) => cat.slug === category)
                     ?.name || "Products"
                 : brand
                 ? `${brand.charAt(0).toUpperCase() + brand.slice(1)} Products`
                 : search
-                ? `Search Results: "${search}"`
+                ? `Search Results`
                 : "Industrial Automation Products"}
-              <span className="block text-teal-600 text-base font-normal mt-1">
+              <span className="block text-teal-200 text-lg lg:text-xl font-normal mt-1">
                 + Technical Support & Engineering Services
               </span>
             </h1>
 
-            <p className="text-base text-gray-600 max-w-3xl">
+            <p className="text-base text-teal-100 leading-relaxed max-w-3xl">
               {category
                 ? PRODUCT_CATEGORIES.find((cat) => cat.slug === category)
-                    ?.description
+                    ?.description || "Quality automation parts with comprehensive engineering support."
+                : search
+                ? `Search results for "${search}"`
                 : "Complete range of automation parts with comprehensive engineering support. Parameter setting, commissioning, troubleshooting services available."}
             </p>
-
-            {/* Results Summary */}
-            {/* <div className="mt-3 text-sm text-gray-500">
-        Showing {paginatedProducts.length} of {totalProducts} products
-        {(category || brand || search) && (
-          <span className="ml-2 text-teal-600">• Filtered results</span>
-        )}
-      </div> */}
           </div>
         </div>
       </div>
 
-      {/* Main Content - FULL WIDTH WITHOUT SIDEBAR */}
-      <div className="container mx-auto px-4 py-6">
-        {/* Product Search Card - NEW */}
+      {/* Main Content */}
+      <div className="container mx-auto px-4 py-8">
+        {/* Enhanced Product Search Card */}
         <Suspense>
           <ProductSearchCard
             totalProducts={totalProducts}
@@ -215,7 +214,7 @@ export default async function ProductsPage({
           />
         </Suspense>
 
-        {/* Product Grid - Full Width */}
+        {/* Product Grid */}
         <div className="mt-8">
           <Suspense fallback={<ProductGridSkeleton />}>
             <ProductGrid
@@ -229,23 +228,24 @@ export default async function ProductsPage({
           </Suspense>
         </div>
       </div>
+
       {/* Technical Support CTA */}
       {totalProducts > 0 && (
-        <section className="py-16 bg-teal-50">
+        <section className="py-16 bg-gray-50">
           <div className="container mx-auto px-4 text-center">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
               Need Technical Support?
             </h2>
-            <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
+            <p className="text-lg text-gray-600 mb-8 max-w-3xl mx-auto">
               Our engineering team provides parameter setting, commissioning,
               and troubleshooting services for all products. Get free
               consultation for your automation project.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button asChild>
+              <Button size="lg" asChild>
                 <Link href="/contact">Request Technical Support</Link>
               </Button>
-              <Button variant="outline" asChild>
+              <Button size="lg" variant="outline" asChild>
                 <Link href="/services">Engineering Consultation</Link>
               </Button>
             </div>
