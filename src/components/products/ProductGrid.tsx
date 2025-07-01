@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react/no-unescaped-entities */
-// src/components/products/ProductGrid.tsx - CLEAN VERSION
+// src/components/products/ProductGrid.tsx - UPDATED FOR 4-COLUMN LAYOUT
 "use client";
 
 import { useState } from "react";
@@ -195,11 +195,11 @@ const ProductGrid = ({
         </div>
       </div>
 
-      {/* Product Grid/List */}
+      {/* Product Grid/List - UPDATED FOR 4 COLUMNS */}
       <div
         className={
           viewMode === "grid"
-            ? "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
+            ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
             : "space-y-4"
         }
       >

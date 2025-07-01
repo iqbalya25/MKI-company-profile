@@ -1,16 +1,18 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-// src/app/products/page.tsx - ENHANCED VERSION
+// src/app/products/page.tsx - CORRECT SERVER COMPONENT ARCHITECTURE
 import { Metadata } from "next";
 import { Suspense } from "react";
 import { getProducts, getProductCategories } from "@/lib/contentful";
 import { PRODUCT_CATEGORIES, TARGET_KEYWORDS } from "@/lib/contants";
-import ProductGrid from "@/components/products/ProductGrid";
-import ProductSearchCard from "@/components/products/ProductSearchCard";
-import Breadcrumb from "@/components/common/Breadcrumb";
 import { generateBreadcrumbSchema } from "@/lib/schema";
 import { extractPlainTextFromRichText } from "@/components/common/RichTextRenderer";
+import Breadcrumb from "@/components/common/Breadcrumb";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+
+// ✅ DIRECT IMPORT CLIENT COMPONENTS - This is perfectly fine!
+import ProductGrid from "@/components/products/ProductGrid";
+import ProductSearchCard from "@/components/products/ProductSearchCard";
 
 interface ProductsPageProps {
   searchParams: Promise<{
@@ -18,6 +20,8 @@ interface ProductsPageProps {
     brand?: string;
     search?: string;
     page?: string;
+    sort?: string;
+    view?: string;
   }>;
 }
 
@@ -81,6 +85,7 @@ export async function generateMetadata({
   };
 }
 
+// 🎯 SERVER COMPONENT - Fetches data and renders
 export default async function ProductsPage({
   searchParams,
 }: ProductsPageProps) {
@@ -89,13 +94,13 @@ export default async function ProductsPage({
   const currentPage = parseInt(page);
   const itemsPerPage = 12;
 
-  // Fetch data
+  // ✅ SERVER-SIDE DATA FETCHING
   const [allProducts, categories] = await Promise.all([
     getProducts({ limit: 500 }),
     getProductCategories(),
   ]);
 
-  // Filter products based on search params
+  // ✅ SERVER-SIDE FILTERING
   let filteredProducts = allProducts;
 
   if (category) {
@@ -128,7 +133,7 @@ export default async function ProductsPage({
     });
   }
 
-  // Pagination
+  // ✅ SERVER-SIDE PAGINATION
   const totalProducts = filteredProducts.length;
   const totalPages = Math.ceil(totalProducts / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -137,13 +142,12 @@ export default async function ProductsPage({
     startIndex + itemsPerPage
   );
 
-  // FIXED: Improved breadcrumb data with proper navigation
+  // ✅ BREADCRUMB DATA
   const breadcrumbItems = [
     { name: "Home", url: "/" },
     { name: "Products", url: "/products" },
   ];
 
-  // Add category to breadcrumb only if filtering by category
   if (category) {
     const categoryData = PRODUCT_CATEGORIES.find(
       (cat) => cat.slug === category
@@ -158,7 +162,7 @@ export default async function ProductsPage({
 
   return (
     <>
-      {/* Breadcrumb Schema */}
+      {/* ✅ SERVER-RENDERED SCHEMA */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -166,10 +170,9 @@ export default async function ProductsPage({
         }}
       />
 
-      {/* ENHANCED: Page Header with Teal Background - Optimized for 1366x768 */}
+      {/* ✅ SERVER-RENDERED HEADER */}
       <div className="bg-gradient-to-br from-teal-600 to-teal-700 text-white py-8 mt-20">
         <div className="container mx-auto px-4">
-          {/* Breadcrumb - White styling for dark background */}
           <Breadcrumb 
             items={breadcrumbItems} 
             className="mb-4 [&_a]:text-teal-200 [&_a:hover]:text-white [&_span]:text-white"
@@ -202,10 +205,10 @@ export default async function ProductsPage({
         </div>
       </div>
 
-      {/* Main Content */}
+      {/* ✅ MAIN CONTENT AREA */}
       <div className="container mx-auto px-4 py-8">
-        {/* Enhanced Product Search Card */}
-        <Suspense>
+        {/* ✅ CLIENT COMPONENT - Search functionality */}
+        <Suspense fallback={<SearchCardSkeleton />}>
           <ProductSearchCard
             totalProducts={totalProducts}
             currentCategory={category}
@@ -214,7 +217,7 @@ export default async function ProductsPage({
           />
         </Suspense>
 
-        {/* Product Grid */}
+        {/* ✅ CLIENT COMPONENT - Product grid with interactions */}
         <div className="mt-8">
           <Suspense fallback={<ProductGridSkeleton />}>
             <ProductGrid
@@ -229,7 +232,7 @@ export default async function ProductsPage({
         </div>
       </div>
 
-      {/* Technical Support CTA */}
+      {/* ✅ SERVER-RENDERED CTA */}
       {totalProducts > 0 && (
         <section className="py-16 bg-gray-50">
           <div className="container mx-auto px-4 text-center">
@@ -253,7 +256,7 @@ export default async function ProductsPage({
         </section>
       )}
 
-      {/* Schema Markup */}
+      {/* ✅ SERVER-RENDERED SCHEMA */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -293,18 +296,65 @@ export default async function ProductsPage({
   );
 }
 
-// Loading skeleton
+// ✅ LOADING SKELETONS - Server components can have these
+function SearchCardSkeleton() {
+  return (
+    <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-6 mb-8 animate-pulse">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 bg-gray-200 rounded-lg" />
+          <div>
+            <div className="h-4 bg-gray-200 rounded w-24 mb-2" />
+            <div className="h-3 bg-gray-200 rounded w-40" />
+          </div>
+        </div>
+        <div className="text-right">
+          <div className="h-6 bg-gray-200 rounded w-8 mb-1" />
+          <div className="h-3 bg-gray-200 rounded w-16" />
+        </div>
+      </div>
+      <div className="space-y-4">
+        <div className="h-10 bg-gray-200 rounded" />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="h-10 bg-gray-200 rounded" />
+          <div className="h-10 bg-gray-200 rounded" />
+        </div>
+        <div className="h-10 bg-gray-200 rounded" />
+      </div>
+    </div>
+  );
+}
+
 function ProductGridSkeleton() {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-      {Array.from({ length: 6 }).map((_, index) => (
-        <div key={index} className="animate-pulse">
-          <div className="bg-gray-200 h-64 rounded-lg mb-4" />
-          <div className="h-4 bg-gray-200 rounded mb-2" />
-          <div className="h-4 bg-gray-200 rounded w-3/4 mb-2" />
-          <div className="h-6 bg-gray-200 rounded w-1/2" />
+    <div>
+      {/* Toolbar Skeleton */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 p-4 bg-white border border-gray-200 rounded-lg animate-pulse">
+        <div className="h-4 bg-gray-200 rounded w-48" />
+        <div className="flex items-center gap-4">
+          <div className="h-8 bg-gray-200 rounded w-32" />
+          <div className="h-8 bg-gray-200 rounded w-16" />
         </div>
-      ))}
+      </div>
+
+      {/* Product Grid Skeleton */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {Array.from({ length: 8 }).map((_, index) => (
+          <div key={index} className="animate-pulse">
+            <div className="bg-gray-200 aspect-square rounded-lg mb-4" />
+            <div className="space-y-2">
+              <div className="h-3 bg-gray-200 rounded w-1/2" />
+              <div className="h-4 bg-gray-200 rounded" />
+              <div className="h-3 bg-gray-200 rounded w-3/4" />
+              <div className="h-6 bg-gray-200 rounded w-1/2" />
+              <div className="grid grid-cols-2 gap-1">
+                <div className="h-8 bg-gray-200 rounded" />
+                <div className="h-8 bg-gray-200 rounded" />
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
