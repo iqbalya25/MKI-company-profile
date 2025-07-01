@@ -114,10 +114,11 @@ export default async function ProductsPage({
   if (search) {
     const searchLower = search.toLowerCase();
     filteredProducts = filteredProducts.filter((product) => {
-      const plainDescription = typeof product.description === 'string' 
-        ? product.description 
-        : extractPlainTextFromRichText(product.description) || '';
-      
+      const plainDescription =
+        typeof product.description === "string"
+          ? product.description
+          : extractPlainTextFromRichText(product.description) || "";
+
       return (
         String(product.name).toLowerCase().includes(searchLower) ||
         String(product.brand).toLowerCase().includes(searchLower) ||
@@ -165,12 +166,12 @@ export default async function ProductsPage({
       />
 
       {/* Page Header */}
-      <div className="bg-gradient-to-br from-gray-50 to-white py-12 mt-20">
+      <div className="bg-teal-50 py-6 mt-20">
         <div className="container mx-auto px-4">
           <Breadcrumb items={breadcrumbItems} />
 
           <div className="mt-6">
-            <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+            <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-3">
               {category
                 ? PRODUCT_CATEGORIES.find((cat) => cat.slug === category)
                     ?.name || "Products"
@@ -179,12 +180,12 @@ export default async function ProductsPage({
                 : search
                 ? `Search Results: "${search}"`
                 : "Industrial Automation Products"}
-              <span className="block text-teal-600 text-lg font-normal mt-2">
+              <span className="block text-teal-600 text-base font-normal mt-1">
                 + Technical Support & Engineering Services
               </span>
             </h1>
 
-            <p className="text-lg text-gray-600 max-w-3xl">
+            <p className="text-base text-gray-600 max-w-3xl">
               {category
                 ? PRODUCT_CATEGORIES.find((cat) => cat.slug === category)
                     ?.description
@@ -192,40 +193,40 @@ export default async function ProductsPage({
             </p>
 
             {/* Results Summary */}
-            <div className="mt-4 text-sm text-gray-500">
-              Showing {paginatedProducts.length} of {totalProducts} products
-              {(category || brand || search) && (
-                <span className="ml-2 text-teal-600">• Filtered results</span>
-              )}
-            </div>
+            {/* <div className="mt-3 text-sm text-gray-500">
+        Showing {paginatedProducts.length} of {totalProducts} products
+        {(category || brand || search) && (
+          <span className="ml-2 text-teal-600">• Filtered results</span>
+        )}
+      </div> */}
           </div>
         </div>
       </div>
 
       {/* Main Content - FULL WIDTH WITHOUT SIDEBAR */}
-      <div className="container mx-auto px-4 py-8">
-        {/* Product Search Card */}
-        <div className="mb-8">
-          <ProductSearchCard
-            currentSearch={search}
-            totalResults={totalProducts}
-            searchParams={params}
-          />
+      <div className="container mx-auto px-4 py-6">
+        {/* Product Search Card - NEW */}
+        <ProductSearchCard
+          totalProducts={totalProducts}
+          currentCategory={category}
+          currentBrand={brand}
+          currentSearch={search}
+        />
+
+        {/* Product Grid - Full Width */}
+        <div className="mt-8">
+          <Suspense fallback={<ProductGridSkeleton />}>
+            <ProductGrid
+              products={paginatedProducts}
+              currentPage={currentPage}
+              totalPages={totalPages}
+              totalProducts={totalProducts}
+              baseUrl="/products"
+              searchParams={params}
+            />
+          </Suspense>
         </div>
-
-        {/* Product Grid */}
-        <Suspense fallback={<ProductGridSkeleton />}>
-          <ProductGrid
-            products={paginatedProducts}
-            currentPage={currentPage}
-            totalPages={totalPages}
-            totalProducts={totalProducts}
-            baseUrl="/products"
-            searchParams={params}
-          />
-        </Suspense>
       </div>
-
       {/* Technical Support CTA */}
       {totalProducts > 0 && (
         <section className="py-16 bg-teal-50">
@@ -240,14 +241,10 @@ export default async function ProductsPage({
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button asChild>
-                <Link href="/contact">
-                  Request Technical Support
-                </Link>
+                <Link href="/contact">Request Technical Support</Link>
               </Button>
               <Button variant="outline" asChild>
-                <Link href="/services">
-                  Engineering Consultation
-                </Link>
+                <Link href="/services">Engineering Consultation</Link>
               </Button>
             </div>
           </div>
@@ -281,7 +278,9 @@ export default async function ProductsPage({
                     url: `/products/${product.slug}`,
                     brand: product.brand,
                     category: product.category,
-                    description: extractPlainTextFromRichText(product.description) || 'Product description available',
+                    description:
+                      extractPlainTextFromRichText(product.description) ||
+                      "Product description available",
                   },
                 })),
             },
