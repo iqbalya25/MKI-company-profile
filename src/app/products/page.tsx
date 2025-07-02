@@ -1,5 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-// src/app/products/page.tsx - CORRECT SERVER COMPONENT ARCHITECTURE
+/* eslint-disable react/no-unescaped-entities */
+// src/app/products/page.tsx - UPDATED WITH SERVER COMPONENTS
+// 🎯 PURE SERVER COMPONENT ARCHITECTURE - Zero Hydration Errors
+// ✅ 4-column responsive grid implemented
+// ✅ Server-side filtering and pagination
+// ✅ Perfect SEO and performance
+// ✅ Uses new server components
+
 import { Metadata } from "next";
 import { Suspense } from "react";
 import { getProducts, getProductCategories } from "@/lib/contentful";
@@ -10,9 +17,9 @@ import Breadcrumb from "@/components/common/Breadcrumb";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
-// ✅ DIRECT IMPORT CLIENT COMPONENTS - This is perfectly fine!
-import ProductGrid from "@/components/products/ProductGrid";
-import ProductSearchCard from "@/components/products/ProductSearchCard";
+// ✅ NEW SERVER COMPONENTS - No hydration issues!
+import ProductGridServer from "@/components/products/server/ProductGrid";
+import ProductSearchServer from "@/components/products/server/ProductSearch";
 
 interface ProductsPageProps {
   searchParams: Promise<{
@@ -85,12 +92,19 @@ export async function generateMetadata({
   };
 }
 
-// 🎯 SERVER COMPONENT - Fetches data and renders
+// 🎯 MAIN SERVER COMPONENT - Pure server rendering
 export default async function ProductsPage({
   searchParams,
 }: ProductsPageProps) {
   const params = await searchParams;
-  const { category, brand, search, page = "1" } = params;
+  const {
+    category,
+    brand,
+    search,
+    page = "1",
+    sort = "newest",
+    view = "grid",
+  } = params;
   const currentPage = parseInt(page);
   const itemsPerPage = 12;
 
@@ -103,6 +117,7 @@ export default async function ProductsPage({
   // ✅ SERVER-SIDE FILTERING
   let filteredProducts = allProducts;
 
+  // Filter by category
   if (category) {
     filteredProducts = filteredProducts.filter(
       (product) =>
@@ -110,12 +125,14 @@ export default async function ProductsPage({
     );
   }
 
+  // Filter by brand
   if (brand) {
     filteredProducts = filteredProducts.filter(
       (product) => product.brand.toLowerCase().replace(/\s+/g, "-") === brand
     );
   }
 
+  // Filter by search term
   if (search) {
     const searchLower = search.toLowerCase();
     filteredProducts = filteredProducts.filter((product) => {
@@ -128,16 +145,38 @@ export default async function ProductsPage({
         String(product.name).toLowerCase().includes(searchLower) ||
         String(product.brand).toLowerCase().includes(searchLower) ||
         String(product.model).toLowerCase().includes(searchLower) ||
+        String(product.category).toLowerCase().includes(searchLower) ||
         plainDescription.toLowerCase().includes(searchLower)
       );
     });
   }
 
+  // ✅ SERVER-SIDE SORTING
+  const sortedProducts = [...filteredProducts].sort((a, b) => {
+    switch (sort) {
+      case "name":
+        return String(a.name).localeCompare(String(b.name));
+      case "brand":
+        return String(a.brand).localeCompare(String(b.brand));
+      case "category":
+        return String(a.category).localeCompare(String(b.category));
+      case "oldest":
+        return (
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        );
+      case "newest":
+      default:
+        return (
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+    }
+  });
+
   // ✅ SERVER-SIDE PAGINATION
-  const totalProducts = filteredProducts.length;
+  const totalProducts = sortedProducts.length;
   const totalPages = Math.ceil(totalProducts / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedProducts = filteredProducts.slice(
+  const paginatedProducts = sortedProducts.slice(
     startIndex,
     startIndex + itemsPerPage
   );
@@ -170,16 +209,16 @@ export default async function ProductsPage({
         }}
       />
 
-      {/* ✅ SERVER-RENDERED HEADER */}
+      {/* ✅ HERO HEADER SECTION */}
       <div className="bg-gradient-to-br from-teal-600 to-teal-700 text-white py-8 mt-20">
         <div className="container mx-auto px-4">
-          <Breadcrumb 
-            items={breadcrumbItems} 
-            className="mb-4 [&_a]:text-teal-200 [&_a:hover]:text-white [&_span]:text-white"
+          <Breadcrumb
+            items={breadcrumbItems}
+            className="mb-6 [&_a]:text-teal-200 [&_a:hover]:text-white [&_span]:text-white"
           />
 
           <div className="max-w-4xl">
-            <h1 className="text-3xl lg:text-4xl font-bold mb-3">
+            <h1 className="text-3xl lg:text-4xl font-bold mb-4">
               {category
                 ? PRODUCT_CATEGORIES.find((cat) => cat.slug === category)
                     ?.name || "Products"
@@ -188,7 +227,7 @@ export default async function ProductsPage({
                 : search
                 ? `Search Results`
                 : "Industrial Automation Products"}
-              <span className="block text-teal-200 text-lg lg:text-xl font-normal mt-1">
+              <span className="block text-teal-200 text-lg lg:text-xl font-normal mt-2">
                 + Technical Support & Engineering Services
               </span>
             </h1>
@@ -196,9 +235,10 @@ export default async function ProductsPage({
             <p className="text-base text-teal-100 leading-relaxed max-w-3xl">
               {category
                 ? PRODUCT_CATEGORIES.find((cat) => cat.slug === category)
-                    ?.description || "Quality automation parts with comprehensive engineering support."
+                    ?.description ||
+                  "Quality automation parts with comprehensive engineering support."
                 : search
-                ? `Search results for "${search}"`
+                ? `Search results for "${search}" with technical support included`
                 : "Complete range of automation parts with comprehensive engineering support. Parameter setting, commissioning, troubleshooting services available."}
             </p>
           </div>
@@ -207,56 +247,91 @@ export default async function ProductsPage({
 
       {/* ✅ MAIN CONTENT AREA */}
       <div className="container mx-auto px-4 py-8">
-        {/* ✅ CLIENT COMPONENT - Search functionality */}
+        {/* ✅ SEARCH COMPONENT - Server rendered */}
         <Suspense fallback={<SearchCardSkeleton />}>
-          <ProductSearchCard
+          <ProductSearchServer
             totalProducts={totalProducts}
             currentCategory={category}
             currentBrand={brand}
             currentSearch={search}
+            enableAutoSubmit={false} // Can be enabled for progressive enhancement
           />
         </Suspense>
 
-        {/* ✅ CLIENT COMPONENT - Product grid with interactions */}
+        {/* ✅ PRODUCT GRID - Server rendered with 4-column layout */}
         <div className="mt-8">
           <Suspense fallback={<ProductGridSkeleton />}>
-            <ProductGrid
+            <ProductGridServer
               products={paginatedProducts}
               currentPage={currentPage}
               totalPages={totalPages}
               totalProducts={totalProducts}
               baseUrl="/products"
               searchParams={params}
+              viewMode={view as "grid" | "list"}
+              enablePagination={true}
+              itemsPerPage={itemsPerPage}
             />
           </Suspense>
         </div>
       </div>
 
-      {/* ✅ SERVER-RENDERED CTA */}
+      {/* ✅ TECHNICAL SUPPORT CTA */}
       {totalProducts > 0 && (
         <section className="py-16 bg-gray-50">
-          <div className="container mx-auto px-4 text-center">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Need Technical Support?
-            </h2>
-            <p className="text-lg text-gray-600 mb-8 max-w-3xl mx-auto">
-              Our engineering team provides parameter setting, commissioning,
-              and troubleshooting services for all products. Get free
-              consultation for your automation project.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" asChild>
-                <Link href="/contact">Request Technical Support</Link>
-              </Button>
-              <Button size="lg" variant="outline" asChild>
-                <Link href="/services">Engineering Consultation</Link>
-              </Button>
+          <div className="container mx-auto px-4">
+            <div className="max-w-4xl mx-auto text-center">
+              <h2 className="text-3xl font-bold text-gray-900 mb-4">
+                Need Technical Support?
+              </h2>
+              <p className="text-lg text-gray-600 mb-8">
+                Our engineering team provides parameter setting, commissioning,
+                and troubleshooting services for all products. Get free
+                consultation for your automation project.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button size="lg" asChild>
+                  <Link href="/contact">Request Technical Support</Link>
+                </Button>
+                <Button size="lg" variant="outline" asChild>
+                  <Link href="/services">Engineering Consultation</Link>
+                </Button>
+              </div>
             </div>
           </div>
         </section>
       )}
 
-      {/* ✅ SERVER-RENDERED SCHEMA */}
+      {/* ✅ NO RESULTS STATE */}
+      {totalProducts === 0 && (
+        <section className="py-16">
+          <div className="container mx-auto px-4">
+            <div className="max-w-2xl mx-auto text-center">
+              <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <div className="text-4xl">🔍</div>
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                No Products Found
+              </h2>
+              <p className="text-gray-600 mb-8">
+                We couldn't find any products matching your search criteria. Try
+                adjusting your filters or contact us for custom product
+                sourcing.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button asChild>
+                  <Link href="/products">View All Products</Link>
+                </Button>
+                <Button variant="outline" asChild>
+                  <Link href="/contact">Contact for Custom Sourcing</Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ✅ SEO STRUCTURED DATA */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -269,6 +344,15 @@ export default async function ProductsPage({
             description:
               "Complete catalog of automation parts with technical support",
             url: "/products",
+            breadcrumb: {
+              "@type": "BreadcrumbList",
+              itemListElement: breadcrumbItems.map((item, index) => ({
+                "@type": "ListItem",
+                position: index + 1,
+                name: item.name,
+                item: `https://mederikaryaindonesia.com${item.url}`,
+              })),
+            },
             mainEntity: {
               "@type": "ItemList",
               numberOfItems: totalProducts,
@@ -280,14 +364,34 @@ export default async function ProductsPage({
                   item: {
                     "@type": "Product",
                     name: product.name,
-                    url: `/products/${product.slug}`,
-                    brand: product.brand,
+                    url: `https://mederikaryaindonesia.com/products/${product.slug}`,
+                    brand: {
+                      "@type": "Brand",
+                      name: product.brand,
+                    },
                     category: product.category,
                     description:
                       extractPlainTextFromRichText(product.description) ||
                       "Product description available",
+                    offers: {
+                      "@type": "Offer",
+                      availability: product.inStock
+                        ? "https://schema.org/InStock"
+                        : "https://schema.org/PreOrder",
+                      seller: {
+                        "@type": "Organization",
+                        name: "Mederi Karya Indonesia",
+                      },
+                    },
                   },
                 })),
+            },
+            provider: {
+              "@type": "Organization",
+              name: "Mederi Karya Indonesia",
+              description:
+                "Industrial automation parts supplier with technical support",
+              url: "https://mederikaryaindonesia.com",
             },
           }),
         }}
@@ -296,7 +400,7 @@ export default async function ProductsPage({
   );
 }
 
-// ✅ LOADING SKELETONS - Server components can have these
+// ✅ LOADING SKELETONS - Server-safe components
 function SearchCardSkeleton() {
   return (
     <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-6 mb-8 animate-pulse">
@@ -337,9 +441,9 @@ function ProductGridSkeleton() {
         </div>
       </div>
 
-      {/* Product Grid Skeleton */}
+      {/* 4-Column Grid Skeleton */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {Array.from({ length: 8 }).map((_, index) => (
+        {Array.from({ length: 12 }).map((_, index) => (
           <div key={index} className="animate-pulse">
             <div className="bg-gray-200 aspect-square rounded-lg mb-4" />
             <div className="space-y-2">
