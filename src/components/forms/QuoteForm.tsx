@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react/no-unescaped-entities */
-// src/components/forms/QuoteForm.tsx
+// src/components/forms/QuoteForm.tsx - IMPROVED WITH STEP VALIDATION
 "use client";
 
 import { useState, useEffect } from "react";
@@ -29,6 +30,7 @@ const QuoteForm = () => {
   const [status, setStatus] = useState<FormStatus>("idle");
   const [submitMessage, setSubmitMessage] = useState("");
   const [currentStep, setCurrentStep] = useState(1);
+  const [stepErrors, setStepErrors] = useState<{ [key: number]: string[] }>({});
   const searchParams = useSearchParams();
 
   const {
@@ -38,14 +40,16 @@ const QuoteForm = () => {
     reset,
     watch,
     setValue,
+    trigger,
     formState: { errors, isSubmitting },
   } = useForm<QuoteFormData>({
     resolver: zodResolver(quoteFormSchema),
+    mode: "onChange", // Enable real-time validation
     defaultValues: {
       products: [
         { productId: "", productName: "", quantity: 1, specifications: "" },
       ],
-      urgency: "medium", // Remove the optional nature - it's required now
+      urgency: "medium",
     },
   });
 
@@ -53,6 +57,9 @@ const QuoteForm = () => {
     control,
     name: "products",
   });
+
+  // Watch all form values for step validation
+  const watchedValues = watch();
 
   // Pre-fill product if coming from product page
   useEffect(() => {
@@ -62,6 +69,104 @@ const QuoteForm = () => {
       setValue("products.0.productId", productSlug);
     }
   }, [searchParams, setValue]);
+
+  // Step validation logic
+  const validateCurrentStep = async () => {
+    let isValid = true;
+    const currentErrors: string[] = [];
+
+    if (currentStep === 1) {
+      // Step 1: Company Information validation
+      const step1Valid = await trigger([
+        "companyName",
+        "contactPerson",
+        "email",
+        "phone",
+      ]);
+
+      if (!watchedValues.companyName?.trim()) {
+        currentErrors.push("Company name is required");
+        isValid = false;
+      }
+      if (!watchedValues.contactPerson?.trim()) {
+        currentErrors.push("Contact person is required");
+        isValid = false;
+      }
+      if (!watchedValues.email?.trim()) {
+        currentErrors.push("Email is required");
+        isValid = false;
+      }
+      if (!watchedValues.phone?.trim()) {
+        currentErrors.push("Phone number is required");
+        isValid = false;
+      }
+
+      // Check for validation errors from Zod
+      if (
+        errors.companyName ||
+        errors.contactPerson ||
+        errors.email ||
+        errors.phone
+      ) {
+        isValid = false;
+      }
+    }
+
+    if (currentStep === 2) {
+      // Step 2: Products validation
+      const step2Valid = await trigger(["products"]);
+
+      if (!watchedValues.products || watchedValues.products.length === 0) {
+        currentErrors.push("At least one product is required");
+        isValid = false;
+      } else {
+        watchedValues.products.forEach((product, index) => {
+          if (!product.productName?.trim()) {
+            currentErrors.push(`Product ${index + 1} name is required`);
+            isValid = false;
+          }
+          if (!product.quantity || product.quantity < 1) {
+            currentErrors.push(
+              `Product ${index + 1} quantity must be at least 1`
+            );
+            isValid = false;
+          }
+        });
+      }
+
+      // Check for validation errors from Zod
+      if (errors.products) {
+        isValid = false;
+      }
+    }
+
+    // Update step errors
+    setStepErrors((prev) => ({
+      ...prev,
+      [currentStep]: currentErrors,
+    }));
+
+    return isValid;
+  };
+
+  const nextStep = async () => {
+    const isValid = await validateCurrentStep();
+
+    if (isValid && currentStep < 3) {
+      setCurrentStep(currentStep + 1);
+      // Clear errors when successfully moving to next step
+      setStepErrors((prev) => ({
+        ...prev,
+        [currentStep]: [],
+      }));
+    }
+  };
+
+  const prevStep = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
 
   const onSubmit = async (data: QuoteFormData) => {
     try {
@@ -86,6 +191,8 @@ const QuoteForm = () => {
         "Thank you! Your quote request has been received. We'll send you a detailed quote within 2 hours."
       );
       reset();
+      setCurrentStep(1);
+      setStepErrors({});
 
       // Track successful quote submission
       if (typeof window !== "undefined" && window.gtag) {
@@ -108,21 +215,39 @@ const QuoteForm = () => {
     setStatus("idle");
     setSubmitMessage("");
     setCurrentStep(1);
-  };
-
-  const nextStep = () => {
-    if (currentStep < 3) {
-      setCurrentStep(currentStep + 1);
-    }
-  };
-
-  const prevStep = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
-    }
+    setStepErrors({});
   };
 
   const urgencyLevel = watch("urgency");
+
+  // Check if current step is valid for button state
+  const isCurrentStepValid = () => {
+    if (currentStep === 1) {
+      return (
+        watchedValues.companyName?.trim() &&
+        watchedValues.contactPerson?.trim() &&
+        watchedValues.email?.trim() &&
+        watchedValues.phone?.trim() &&
+        !errors.companyName &&
+        !errors.contactPerson &&
+        !errors.email &&
+        !errors.phone
+      );
+    }
+
+    if (currentStep === 2) {
+      return (
+        watchedValues.products &&
+        watchedValues.products.length > 0 &&
+        watchedValues.products.every(
+          (product) => product.productName?.trim() && product.quantity > 0
+        ) &&
+        !errors.products
+      );
+    }
+
+    return true; // Step 3 has no required fields
+  };
 
   if (status === "success") {
     return (
@@ -198,19 +323,19 @@ const QuoteForm = () => {
 
       {/* Step 1: Company Information */}
       {currentStep === 1 && (
-        <div className="space-y-6">
-          <div className="border-l-4 border-teal-500 pl-4 mb-6">
+        <div className="space-y-8">
+          <div className="border-l-4 border-teal-500 pl-4 mb-8">
             <h3 className="text-lg font-semibold text-gray-900">
               Company Information
             </h3>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-600 mt-2">
               Tell us about your company and contact details
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <Label htmlFor="companyName">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="space-y-3">
+              <Label htmlFor="companyName" className="text-base font-medium">
                 Company Name <span className="text-red-500">*</span>
               </Label>
               <Input
@@ -218,18 +343,22 @@ const QuoteForm = () => {
                 type="text"
                 placeholder="PT. Your Company Name"
                 {...register("companyName")}
-                className={errors.companyName ? "border-red-500" : ""}
+                className={
+                  errors.companyName
+                    ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                    : ""
+                }
               />
               {errors.companyName && (
-                <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
                   <AlertCircle className="h-4 w-4" />
                   {errors.companyName.message}
                 </p>
               )}
             </div>
 
-            <div>
-              <Label htmlFor="contactPerson">
+            <div className="space-y-3">
+              <Label htmlFor="contactPerson" className="text-base font-medium">
                 Contact Person <span className="text-red-500">*</span>
               </Label>
               <Input
@@ -237,18 +366,22 @@ const QuoteForm = () => {
                 type="text"
                 placeholder="Your full name"
                 {...register("contactPerson")}
-                className={errors.contactPerson ? "border-red-500" : ""}
+                className={
+                  errors.contactPerson
+                    ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                    : ""
+                }
               />
               {errors.contactPerson && (
-                <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
                   <AlertCircle className="h-4 w-4" />
                   {errors.contactPerson.message}
                 </p>
               )}
             </div>
 
-            <div>
-              <Label htmlFor="email">
+            <div className="space-y-3">
+              <Label htmlFor="email" className="text-base font-medium">
                 Email Address <span className="text-red-500">*</span>
               </Label>
               <Input
@@ -256,18 +389,22 @@ const QuoteForm = () => {
                 type="email"
                 placeholder="your.email@company.com"
                 {...register("email")}
-                className={errors.email ? "border-red-500" : ""}
+                className={
+                  errors.email
+                    ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                    : ""
+                }
               />
               {errors.email && (
-                <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
                   <AlertCircle className="h-4 w-4" />
                   {errors.email.message}
                 </p>
               )}
             </div>
 
-            <div>
-              <Label htmlFor="phone">
+            <div className="space-y-3">
+              <Label htmlFor="phone" className="text-base font-medium">
                 Phone Number <span className="text-red-500">*</span>
               </Label>
               <Input
@@ -275,10 +412,14 @@ const QuoteForm = () => {
                 type="tel"
                 placeholder="+62 812 3456 7890"
                 {...register("phone")}
-                className={errors.phone ? "border-red-500" : ""}
+                className={
+                  errors.phone
+                    ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                    : ""
+                }
               />
               {errors.phone && (
-                <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
                   <AlertCircle className="h-4 w-4" />
                   {errors.phone.message}
                 </p>
@@ -286,8 +427,32 @@ const QuoteForm = () => {
             </div>
           </div>
 
-          <div className="flex justify-end">
-            <Button type="button" onClick={nextStep}>
+          {/* Step 1 Validation Errors */}
+          {stepErrors[1] && stepErrors[1].length > 0 && (
+            <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+              <h4 className="text-sm font-medium text-red-800 mb-2">
+                Please fix the following errors:
+              </h4>
+              <ul className="text-sm text-red-600 space-y-1">
+                {stepErrors[1].map((error, index) => (
+                  <li key={index} className="flex items-center gap-1">
+                    <AlertCircle className="h-3 w-3" />
+                    {error}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          <div className="flex justify-end pt-4">
+            <Button
+              type="button"
+              onClick={nextStep}
+              disabled={!isCurrentStepValid()}
+              className={
+                isCurrentStepValid() ? "" : "opacity-50 cursor-not-allowed"
+              }
+            >
               Next: Product Details
             </Button>
           </div>
@@ -296,12 +461,12 @@ const QuoteForm = () => {
 
       {/* Step 2: Product Details */}
       {currentStep === 2 && (
-        <div className="space-y-6">
-          <div className="border-l-4 border-teal-500 pl-4 mb-6">
+        <div className="space-y-8">
+          <div className="border-l-4 border-teal-500 pl-4 mb-8">
             <h3 className="text-lg font-semibold text-gray-900">
               Product Requirements
             </h3>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-600 mt-2">
               Add the products you need quotes for
             </p>
           </div>
@@ -309,7 +474,7 @@ const QuoteForm = () => {
           <div className="space-y-6">
             {fields.map((field, index) => (
               <div key={field.id} className="bg-gray-50 p-6 rounded-lg border">
-                <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center justify-between mb-6">
                   <h4 className="font-semibold text-gray-900 flex items-center gap-2">
                     <Package className="h-5 w-5 text-teal-600" />
                     Product {index + 1}
@@ -327,9 +492,12 @@ const QuoteForm = () => {
                   )}
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor={`products.${index}.productName`}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-3">
+                    <Label
+                      htmlFor={`products.${index}.productName`}
+                      className="text-base font-medium"
+                    >
                       Product Name / Model{" "}
                       <span className="text-red-500">*</span>
                     </Label>
@@ -338,20 +506,23 @@ const QuoteForm = () => {
                       {...register(`products.${index}.productName` as const)}
                       className={
                         errors.products?.[index]?.productName
-                          ? "border-red-500"
+                          ? "border-red-500 focus:border-red-500 focus:ring-red-500"
                           : ""
                       }
                     />
                     {errors.products?.[index]?.productName && (
-                      <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                      <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
                         <AlertCircle className="h-4 w-4" />
                         {errors.products[index]?.productName?.message}
                       </p>
                     )}
                   </div>
 
-                  <div>
-                    <Label htmlFor={`products.${index}.quantity`}>
+                  <div className="space-y-3">
+                    <Label
+                      htmlFor={`products.${index}.quantity`}
+                      className="text-base font-medium"
+                    >
                       Quantity <span className="text-red-500">*</span>
                     </Label>
                     <Input
@@ -363,12 +534,12 @@ const QuoteForm = () => {
                       })}
                       className={
                         errors.products?.[index]?.quantity
-                          ? "border-red-500"
+                          ? "border-red-500 focus:border-red-500 focus:ring-red-500"
                           : ""
                       }
                     />
                     {errors.products?.[index]?.quantity && (
-                      <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                      <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
                         <AlertCircle className="h-4 w-4" />
                         {errors.products[index]?.quantity?.message}
                       </p>
@@ -376,19 +547,29 @@ const QuoteForm = () => {
                   </div>
                 </div>
 
-                <div className="mt-4">
-                  <Label htmlFor={`products.${index}.specifications`}>
-                    Specifications / Requirements (Optional)
+                <div className="mt-6 space-y-3">
+                  <Label
+                    htmlFor={`products.${index}.specifications`}
+                    className="text-base font-medium"
+                  >
+                    Technical Specifications (Optional)
                   </Label>
                   <Textarea
-                    placeholder="Specific requirements, voltage, application details..."
+                    placeholder="e.g., 24VDC input, relay output, specific mounting requirements..."
                     rows={3}
                     {...register(`products.${index}.specifications` as const)}
+                    className="resize-none"
                   />
+                  <p className="text-xs text-gray-500">
+                    Include voltage, communication protocol, mounting type, or
+                    other technical requirements
+                  </p>
                 </div>
               </div>
             ))}
+          </div>
 
+          <div className="text-center">
             <Button
               type="button"
               variant="outline"
@@ -426,11 +607,35 @@ const QuoteForm = () => {
             </div>
           </div>
 
-          <div className="flex justify-between">
+          {/* Step 2 Validation Errors */}
+          {stepErrors[2] && stepErrors[2].length > 0 && (
+            <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+              <h4 className="text-sm font-medium text-red-800 mb-2">
+                Please fix the following errors:
+              </h4>
+              <ul className="text-sm text-red-600 space-y-1">
+                {stepErrors[2].map((error, index) => (
+                  <li key={index} className="flex items-center gap-1">
+                    <AlertCircle className="h-3 w-3" />
+                    {error}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          <div className="flex justify-between pt-4">
             <Button type="button" variant="outline" onClick={prevStep}>
               Previous
             </Button>
-            <Button type="button" onClick={nextStep}>
+            <Button
+              type="button"
+              onClick={nextStep}
+              disabled={!isCurrentStepValid()}
+              className={
+                isCurrentStepValid() ? "" : "opacity-50 cursor-not-allowed"
+              }
+            >
               Next: Additional Info
             </Button>
           </div>
@@ -439,18 +644,18 @@ const QuoteForm = () => {
 
       {/* Step 3: Additional Information */}
       {currentStep === 3 && (
-        <div className="space-y-6">
-          <div className="border-l-4 border-teal-500 pl-4 mb-6">
+        <div className="space-y-8">
+          <div className="border-l-4 border-teal-500 pl-4 mb-8">
             <h3 className="text-lg font-semibold text-gray-900">
               Additional Information
             </h3>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-600 mt-2">
               Project details and urgency level
             </p>
           </div>
 
-          <div>
-            <Label htmlFor="message">
+          <div className="space-y-3">
+            <Label htmlFor="message" className="text-base font-medium">
               Project Details / Additional Requirements
             </Label>
             <Textarea
@@ -458,26 +663,32 @@ const QuoteForm = () => {
               placeholder="Tell us about your project, application, timeline, or any specific requirements..."
               rows={5}
               {...register("message")}
-              className={errors.message ? "border-red-500" : ""}
+              className={
+                errors.message
+                  ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                  : ""
+              }
             />
             {errors.message && (
-              <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+              <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
                 <AlertCircle className="h-4 w-4" />
                 {errors.message.message}
               </p>
             )}
-            <p className="mt-1 text-xs text-gray-500">
+            <p className="text-xs text-gray-500">
               Include application details, installation timeline, or technical
               requirements for better quote accuracy.
             </p>
           </div>
 
-          <div>
-            <Label htmlFor="urgency">Priority Level</Label>
+          <div className="space-y-3">
+            <Label htmlFor="urgency" className="text-base font-medium">
+              Priority Level
+            </Label>
             <select
               id="urgency"
               {...register("urgency")}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 p-2 border"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 p-3 border"
             >
               <option value="low">Low - Standard quote (24-48 hours)</option>
               <option value="medium">
@@ -526,7 +737,7 @@ const QuoteForm = () => {
             </ul>
           </div>
 
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center pt-4">
             <Button type="button" variant="outline" onClick={prevStep}>
               Previous
             </Button>
@@ -537,13 +748,13 @@ const QuoteForm = () => {
             >
               {isSubmitting || status === "loading" ? (
                 <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Sending Quote Request...
                 </>
               ) : (
                 <>
-                  <Send className="h-4 w-4 mr-2" />
-                  Submit Quote Request
+                  <Send className="mr-2 h-4 w-4" />
+                  Send Quote Request
                 </>
               )}
             </Button>

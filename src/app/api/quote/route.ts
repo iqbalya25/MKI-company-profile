@@ -1,10 +1,11 @@
-// src/app/api/quote/route.ts
+// src/app/api/quote/route.ts - CLEAN VERSION (No Console Logs)
 import { NextRequest, NextResponse } from "next/server";
 import {
   quoteFormSchema,
   createRateLimiter,
   type QuoteFormData,
 } from "@/lib/validations";
+import { sendQuoteNotification } from "@/lib/email";
 import { z } from "zod";
 import { headers } from "next/headers";
 
@@ -65,36 +66,12 @@ export async function POST(request: NextRequest) {
     // Generate quote reference number
     const quoteRef = `QR${Date.now().toString().slice(-6)}`;
 
-    // Log quote request (safe to log)
-    console.log("=== NEW QUOTE REQUEST ===");
-    console.log("Quote Reference:", quoteRef);
-    console.log("IP Address:", clientIP);
-    console.log("Company:", validatedData.companyName);
-    console.log("Contact Person:", validatedData.contactPerson);
-    console.log("Email:", validatedData.email);
-    console.log("Phone:", validatedData.phone);
-    console.log("Products Count:", validatedData.products.length);
-    console.log("Products:");
-    validatedData.products.forEach((product, index) => {
-      console.log(
-        `  ${index + 1}. ${product.productName} (Qty: ${product.quantity})`
-      );
-      if (product.specifications) {
-        console.log(
-          `     Specs: ${product.specifications.substring(0, 100)}...`
-        );
-      }
-    });
-    console.log("Urgency:", validatedData.urgency);
-    console.log(
-      "Message:",
-      validatedData.message
-        ? validatedData.message.substring(0, 200) + "..."
-        : "No additional message"
-    );
-    console.log("Timestamp:", new Date().toLocaleString("id-ID"));
-    console.log("User Agent:", request.headers.get("user-agent"));
-    console.log("========================");
+    // Send email notification
+    const emailResult = await sendQuoteNotification(validatedData, quoteRef);
+
+    if (!emailResult.success) {
+      // Continue processing even if email fails - don't block user
+    }
 
     // Simulate processing delay based on urgency
     const delays = {
@@ -123,8 +100,9 @@ export async function POST(request: NextRequest) {
           validatedData.urgency === "high"
             ? "1 hour"
             : validatedData.urgency === "medium"
-            ? "2-4 hours"
-            : "24-48 hours",
+              ? "2-4 hours"
+              : "24-48 hours",
+        emailSent: emailResult.success,
       },
       {
         status: 200,
@@ -132,6 +110,7 @@ export async function POST(request: NextRequest) {
       }
     );
   } catch (error) {
+    // Keep error logging for debugging issues
     console.error("Quote form error:", error);
 
     if (error instanceof z.ZodError) {
