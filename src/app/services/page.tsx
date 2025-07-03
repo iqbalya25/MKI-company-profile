@@ -38,26 +38,35 @@ export default async function ServicesPage() {
 
   return (
     <div className="mt-20">
-      {" "}
-      {/* Fixed navbar overlap */}
-      <div className="container mx-auto px-4 py-8">
-        <Breadcrumb
-          items={[
-            { name: "Home", url: "/" },
-            { name: "Services", url: "/services" },
-          ]}
-        />
+      {/* Header Section - Teal Background like Products page */}
+      <div className="bg-teal-600 text-white py-8">
+        <div className="container mx-auto px-4">
+          <Breadcrumb
+            items={[
+              { name: "Home", url: "/" },
+              { name: "Services", url: "/services" },
+            ]}
+            className="mb-8 [&_a]:text-teal-200 [&_a:hover]:text-white [&_span]:text-white"
+          />
 
-        {/* Header Section */}
-        <div className="mb-12 text-center">
-          <h1 className="text-4xl font-bold mt-6 mb-2">Engineering Services</h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Professional automation services with expert technical support. From
-            parameter setting to complete commissioning, we ensure your systems
-            perform optimally.
-          </p>
+          <div className="max-w-4xl">
+            <h1 className="text-3xl lg:text-4xl font-bold mb-4">
+              Engineering Services
+            </h1>
+            <p className="text-xl text-teal-100 mb-4">
+              + Technical Support & Engineering Services
+            </p>
+            <p className="text-lg text-teal-200 max-w-2xl">
+              Professional automation services with expert technical support.
+              From parameter setting to complete commissioning, we ensure your
+              systems perform optimally.
+            </p>
+          </div>
         </div>
+      </div>
 
+      {/* Content Section */}
+      <div className="container mx-auto px-4 py-8">
         {/* Featured Services */}
         {featuredServices.length > 0 && (
           <div className="mb-12">
@@ -78,35 +87,27 @@ export default async function ServicesPage() {
             {featuredServices.length > 0 ? "All Services" : "Our Services"}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {(featuredServices.length > 0 ? regularServices : services).map(
-              (service) => (
-                <ServiceCard key={service.id} service={service} />
-              )
-            )}
+            {regularServices.map((service) => (
+              <ServiceCard key={service.id} service={service} />
+            ))}
           </div>
         </div>
 
         {/* CTA Section */}
-        <div className="mt-16 bg-blue-50 rounded-lg p-8 text-center">
+        <div className="mt-16 text-center bg-gray-50 rounded-lg p-8">
           <h3 className="text-2xl font-semibold mb-4">
             Need Custom Engineering Solutions?
           </h3>
           <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-            Every automation project is unique. Contact our engineering team to
-            discuss your specific requirements and get professional
-            consultation.
+            Our experienced engineers provide tailored automation solutions for
+            your specific industrial requirements.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">
-              Schedule Consultation
-            </button>
-            <Link
-              href="/contact"
-              className="border border-blue-600 text-blue-600 px-6 py-3 rounded-lg hover:bg-blue-50 transition-colors"
-            >
-              Contact Engineering Team
-            </Link>
-          </div>
+          <Link
+            href="/contact"
+            className="inline-flex items-center bg-teal-600 text-white px-6 py-3 rounded-lg hover:bg-teal-700 transition-colors"
+          >
+            Get Expert Consultation
+          </Link>
         </div>
       </div>
     </div>

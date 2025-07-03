@@ -1,12 +1,12 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// src/app/products/[slug]/page.tsx - UPDATED TO SUPPORT RICH TEXT
+// src/app/products/[slug]/page.tsx - UPDATED WITH SERVICE-LIKE LAYOUT
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { 
-  ArrowRight, 
-  Download, 
+import {
+  Download,
   ShoppingCart,
   Settings,
   Headphones,
@@ -16,7 +16,11 @@ import {
   Package,
   Star,
   Phone,
-  Mail
+  Mail,
+  Wrench,
+  Shield,
+  Clock,
+  Users,
 } from "lucide-react";
 import { getProductBySlug, getProducts } from "@/lib/contentful";
 import { generateProductSchema, generateBreadcrumbSchema } from "@/lib/schema";
@@ -26,9 +30,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Breadcrumb from "@/components/common/Breadcrumb";
 import RelatedProducts from "@/app/products/RelatedProducts";
-import ProductSpecs from "@/app/products/ProductSpecs";
-// NEW IMPORT: Import the new RichTextRenderer component
-import RichTextRenderer from "@/components/common/RichTextRenderer";
+import { documentToReactComponents } from "@contentful/rich-text-react-renderer";
 
 interface ProductPageProps {
   params: Promise<{
@@ -36,10 +38,12 @@ interface ProductPageProps {
   }>;
 }
 
-export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: ProductPageProps): Promise<Metadata> {
   const { slug } = await params;
   const product = await getProductBySlug(slug);
-  
+
   if (!product) {
     return {
       title: "Product Not Found | Mederi Karya Indonesia",
@@ -47,9 +51,12 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
     };
   }
 
-  const title = product.seoTitle || `${product.name} + Technical Support | Mederi Karya Indonesia`;
-  const description = product.seoDescription || 
-    `${product.name} - ${product.brand} ${product.model}. ${product.description.substring(0, 120)}... Parameter setting, technical support available.`;
+  const title =
+    product.seoTitle ||
+    `${product.name} + Technical Support | Mederi Karya Indonesia`;
+  const description =
+    product.seoDescription ||
+    `${product.name} - ${product.brand} ${product.model}. Professional automation product with technical support. Parameter setting, commissioning service available.`;
 
   return {
     title,
@@ -69,14 +76,17 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
       description,
       type: "website",
       url: `/products/${product.slug}`,
-      images: product.images.length > 0 ? [
-        {
-          url: product.images[0],
-          width: 800,
-          height: 600,
-          alt: product.name,
-        }
-      ] : [],
+      images:
+        product.images.length > 0
+          ? [
+              {
+                url: product.images[0],
+                width: 800,
+                height: 600,
+                alt: product.name,
+              },
+            ]
+          : [],
     },
     alternates: {
       canonical: `/products/${product.slug}`,
@@ -87,25 +97,30 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
 export default async function ProductPage({ params }: ProductPageProps) {
   const { slug } = await params;
   const product = await getProductBySlug(slug);
-  
+
   if (!product) {
     notFound();
   }
 
   // Fetch related products (same category)
-  const relatedProducts = await getProducts({ 
-    category: product.category, 
-    limit: 4 
+  const relatedProducts = await getProducts({
+    category: product.category,
+    limit: 4,
   });
-  
+
   // Filter out current product from related
-  const filteredRelated = relatedProducts.filter(p => p.id !== product.id);
+  const filteredRelated = relatedProducts.filter((p) => p.id !== product.id);
 
   // Breadcrumb data
   const breadcrumbItems = [
     { name: "Home", url: "/" },
     { name: "Products", url: "/products" },
-    { name: product.category, url: `/products?category=${product.category.toLowerCase().replace(/\s+/g, '-')}` },
+    {
+      name: product.category,
+      url: `/products?category=${product.category
+        .toLowerCase()
+        .replace(/\s+/g, "-")}`,
+    },
     { name: product.name, url: `/products/${product.slug}` },
   ];
 
@@ -125,79 +140,346 @@ export default async function ProductPage({ params }: ProductPageProps) {
         }}
       />
 
-      {/* Page Header */}
-      <div className="bg-white py-6 mt-20 border-b">
-        <div className="container mx-auto px-4">
-          <Breadcrumb items={breadcrumbItems} />
-        </div>
-      </div>
-
       {/* Main Content */}
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
-          {/* Product Images */}
-          <div>
-            <ProductImageGallery images={product.images} productName={product.name} />
+      <div className="mt-20">
+        <div className="container mx-auto px-4 py-8">
+          {/* Product Header - Grid Layout like Service Detail */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+            {/* Left Side - Product Image */}
+            <div className="lg:col-span-1">
+              <ProductImageSection product={product} />
+            </div>
+
+            {/* Right Side - Product Info */}
+            <div className="lg:col-span-2 space-y-3">
+              {/* Breadcrumb */}
+              <div className="flex items-center gap-2 text-sm">
+                <Link
+                  href="/products"
+                  className="text-teal-600 hover:underline"
+                >
+                  Products
+                </Link>
+                <span className="text-gray-400">/</span>
+                <Link
+                  href={`/products?category=${product.category
+                    .toLowerCase()
+                    .replace(/\s+/g, "-")}`}
+                  className="text-teal-600 hover:underline"
+                >
+                  {product.category}
+                </Link>
+                <span className="text-gray-400">/</span>
+                <span className="text-gray-600">{product.name}</span>
+              </div>
+
+              {/* Brand & Category Badges */}
+              <div className="flex items-center gap-2 flex-wrap">
+                {product.feature && (
+                  <Badge className="bg-yellow-500 text-sm">
+                    <Star className="h-3 w-3 mr-1" />
+                    Featured
+                  </Badge>
+                )}
+              </div>
+
+              {/* Product Title & Model */}
+              <div>
+                <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-3">
+                  {product.name}
+                </h1>
+                {/* <p className="text-lg text-gray-600 mb-4">
+                  Model: <span className="font-semibold text-gray-900">{product.model}</span>
+                </p> */}
+              </div>
+
+              {/* Stock Status */}
+              <div className="flex items-center gap-2 mb-4">
+                {product.inStock ? (
+                  <div className="flex items-center gap-2 text-green-600">
+                    <CheckCircle className="h-5 w-5" />
+                    <span className="font-medium">
+                      Available for immediate shipping
+                    </span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2 text-orange-600">
+                    <AlertCircle className="h-5 w-5" />
+                    <span className="font-medium">
+                      Contact for availability & lead time
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {/* Price Section */}
+              <div className="bg-gray-50 p-4 rounded-lg border">
+                <h3 className="text-lg font-semibold mb-2 text-gray-900">
+                  Contact for Competitive Pricing
+                </h3>
+                <p className="text-sm text-gray-600 mb-4">
+                  We offer the best prices with comprehensive technical support
+                </p>
+                {product.showPrice && product.price && (
+                  <div className="text-2xl font-bold text-teal-600 mb-2">
+                    {formatPrice(product.price)}
+                  </div>
+                )}
+                {product.priceNote && (
+                  <p className="text-sm text-gray-500">{product.priceNote}</p>
+                )}
+              </div>
+
+              {/* Services Included */}
+              <div className="bg-teal-50 p-6 rounded-lg border border-teal-100">
+                <h3 className="text-lg font-semibold mb-4 text-teal-800">
+                  Services Option:
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="flex items-center gap-3">
+                    <Settings className="w-5 h-5 text-teal-600 flex-shrink-0" />
+                    <span className="text-sm text-teal-700">
+                      Programming / Parameter Setting
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <FileText className="w-5 h-5 text-teal-600 flex-shrink-0" />
+                    <span className="text-sm text-teal-700">
+                      Installation Documentation
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Wrench className="w-5 h-5 text-teal-600 flex-shrink-0" />
+                    <span className="text-sm text-teal-700">
+                      Commissioning Service
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Users className="w-5 h-5 text-teal-600 flex-shrink-0" />
+                    <span className="text-sm text-teal-700">
+                      Training & Support
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="space-y-3">
+                <Button
+                  size="lg"
+                  className="w-full bg-teal-600 hover:bg-teal-700 text-white px-8 py-3"
+                  asChild
+                >
+                  <Link href={`/quote?product=${product.slug}`}>
+                    <ShoppingCart className="h-5 w-5 mr-2" />
+                    Request Quote
+                  </Link>
+                </Button>
+                {product.datasheet && (
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="w-full"
+                    asChild
+                  >
+                    <a
+                      href={product.datasheet}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Download className="h-4 w-4 mr-2" />
+                      Datasheet
+                    </a>
+                  </Button>
+                )}
+              </div>
+            </div>
           </div>
 
-          {/* Product Info */}
-          <div>
-            <ProductInfo product={product} />
+          {/* Product Details - Full Width */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+            {/* Main Content */}
+            <div className="lg:col-span-2">
+              <div className="bg-white border rounded-lg p-8">
+                <h2 className="text-2xl font-semibold mb-6 text-gray-900">
+                  Product Details
+                </h2>
+                <div className="prose prose-lg max-w-none">
+                  {typeof product.description === "string" ? (
+                    <div className="text-gray-700 leading-relaxed">
+                      {product.description
+                        .split("\n")
+                        .map((paragraph, index) => (
+                          <p key={index} className="mb-4">
+                            {paragraph}
+                          </p>
+                        ))}
+                    </div>
+                  ) : product.description &&
+                    typeof product.description === "object" ? (
+                    <div className="text-gray-700">
+                      {documentToReactComponents(product.description)}
+                    </div>
+                  ) : (
+                    <div className="text-gray-700">
+                      <p>No description available</p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Specifications */}
+                {product.specification && product.specification.length > 0 && (
+                  <div className="mt-8 pt-8 border-t">
+                    <h3 className="text-xl font-semibold mb-4 text-gray-900">
+                      Technical Specifications
+                    </h3>
+                    <div className="bg-gray-50 rounded-lg p-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {product.specification.map(
+                          (spec: any, index: number) => (
+                            <div
+                              key={index}
+                              className="flex justify-between py-2 border-b border-gray-200 last:border-b-0"
+                            >
+                              <span className="font-medium text-gray-900">
+                                {spec.name || spec.key}
+                              </span>
+                              <span className="text-gray-600">
+                                {spec.value}
+                              </span>
+                            </div>
+                          )
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Sidebar */}
+            <div className="lg:col-span-1">
+              <div className="bg-gray-50 border rounded-lg p-6 sticky top-8">
+                <h3 className="text-lg font-semibold mb-4 text-gray-900">
+                  Get Expert Support
+                </h3>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3 text-sm text-gray-600">
+                    <Phone className="w-4 h-4 text-teal-600" />
+                    <span>Direct engineer consultation</span>
+                  </div>
+                  <div className="flex items-center gap-3 text-sm text-gray-600">
+                    <Clock className="w-4 h-4 text-teal-600" />
+                    <span>Fast response time</span>
+                  </div>
+                  <div className="flex items-center gap-3 text-sm text-gray-600">
+                    <Shield className="w-4 h-4 text-teal-600" />
+                    <span>Quality guarantee</span>
+                  </div>
+
+                  <div className="pt-4 border-t">
+                    <Button className="w-full bg-teal-600 hover:bg-teal-700 text-white mb-3">
+                      Contact Our Team
+                    </Button>
+                    <p className="text-xs text-gray-500 text-center mb-4">
+                      Free consultation available
+                    </p>
+                  </div>
+
+                  {/* Quick Contact */}
+                  <div className="pt-4 border-t">
+                    <h4 className="font-medium text-gray-900 mb-3">
+                      Direct Contact:
+                    </h4>
+                    <div className="space-y-2">
+                      <a
+                        href={`tel:${SITE_CONFIG.company.phone}`}
+                        className="flex items-center gap-2 text-sm text-gray-700 hover:text-teal-600 transition-colors"
+                      >
+                        <Phone className="h-4 w-4" />
+                        <span>{SITE_CONFIG.company.phone}</span>
+                      </a>
+                      <a
+                        href={`mailto:${SITE_CONFIG.company.email}`}
+                        className="flex items-center gap-2 text-sm text-gray-700 hover:text-teal-600 transition-colors"
+                      >
+                        <Mail className="h-4 w-4" />
+                        <span>{SITE_CONFIG.company.email}</span>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
 
-        {/* Product Details Tabs */}
-        <div className="mb-16">
-          {/* UPDATED: Pass the product to the new component */}
-          <ProductDetailsTabs product={product} />
+          {/* Related Products */}
+          {filteredRelated.length > 0 && (
+            <div className="mt-16">
+              <RelatedProducts products={filteredRelated} />
+            </div>
+          )}
         </div>
-
-        {/* Technical Support Section */}
-        <div className="mb-16">
-          <TechnicalSupportSection />
-        </div>
-
-        {/* Related Products */}
-        {filteredRelated.length > 0 && (
-          <RelatedProducts products={filteredRelated} />
-        )}
       </div>
     </>
   );
 }
 
-// Product Image Gallery Component - NO CHANGES
-function ProductImageGallery({ images, productName }: { images: string[]; productName: string }) {
-  if (images.length === 0) {
-    return (
-      <div className="aspect-square bg-gray-100 rounded-lg flex items-center justify-center">
-        <Package className="h-24 w-24 text-gray-300" />
-      </div>
-    );
-  }
+// Product Image Section Component
+function ProductImageSection({ product }: { product: any }) {
+  const hasImages = product.images && product.images.length > 0;
 
   return (
     <div className="space-y-4">
       {/* Main Image */}
-      <div className="aspect-square relative bg-gray-50 rounded-lg overflow-hidden">
-        <Image
-          src={images[0]}
-          alt={productName}
-          fill
-          className="object-cover hover:scale-105 transition-transform duration-300"
-          priority
-          sizes="(max-width: 768px) 100vw, 50vw"
-        />
+      <div className="relative h-64 lg:h-80 w-full rounded-lg overflow-hidden bg-gray-100">
+        {hasImages ? (
+          <Image
+            src={product.images[0]}
+            alt={product.name}
+            fill
+            className="object-cover hover:scale-105 transition-transform duration-300"
+            priority
+          />
+        ) : (
+          <div className="flex items-center justify-center h-full">
+            <Package className="h-16 w-16 text-gray-300" />
+          </div>
+        )}
+
+        {/* Badges */}
+        <div className="absolute top-4 left-4 right-4 flex items-start justify-between">
+          <div className="flex flex-col gap-2">
+            {product.feature && (
+              <Badge className="bg-yellow-500 text-white">
+                <Star className="h-3 w-3 mr-1" />
+                Featured
+              </Badge>
+            )}
+            <Badge
+              className={
+                product.inStock
+                  ? "bg-green-500 text-white"
+                  : "bg-orange-500 text-white"
+              }
+            >
+              {product.inStock ? "In Stock" : "Quote"}
+            </Badge>
+          </div>
+        </div>
       </div>
 
       {/* Thumbnail Images */}
-      {images.length > 1 && (
+      {hasImages && product.images.length > 1 && (
         <div className="grid grid-cols-4 gap-2">
-          {images.slice(1, 5).map((image, index) => (
-            <div key={index} className="aspect-square relative bg-gray-50 rounded-md overflow-hidden">
+          {product.images.slice(1, 5).map((image: string, index: number) => (
+            <div
+              key={index}
+              className="aspect-square relative bg-gray-100 rounded-md overflow-hidden"
+            >
               <Image
                 src={image}
-                alt={`${productName} view ${index + 2}`}
+                alt={`${product.name} view ${index + 2}`}
                 fill
                 className="object-cover hover:scale-105 transition-transform duration-200"
                 sizes="(max-width: 768px) 25vw, 12vw"
@@ -206,214 +488,6 @@ function ProductImageGallery({ images, productName }: { images: string[]; produc
           ))}
         </div>
       )}
-    </div>
-  );
-}
-
-// Product Info Component - NO CHANGES
-function ProductInfo({ product }: { product: any }) {
-  return (
-    <div className="space-y-6">
-      {/* Brand & Category */}
-      <div className="flex items-center gap-2">
-        <Badge variant="outline">{product.brand}</Badge>
-        <Badge variant="secondary">{product.category}</Badge>
-        {product.feature && (
-          <Badge className="bg-yellow-500">
-            <Star className="h-3 w-3 mr-1" />
-            Featured
-          </Badge>
-        )}
-      </div>
-
-      {/* Product Name */}
-      <h1 className="text-3xl lg:text-4xl font-bold text-gray-900">
-        {product.name}
-      </h1>
-
-      {/* Model */}
-      <p className="text-lg text-gray-600">
-        Model: <span className="font-semibold text-gray-900">{product.model}</span>
-      </p>
-
-      {/* Stock Status */}
-      <div className="flex items-center gap-2">
-        {product.inStock ? (
-          <div className="flex items-center gap-2 text-green-600">
-            <CheckCircle className="h-5 w-5" />
-            <span className="font-medium">Available for immediate shipping</span>
-          </div>
-        ) : (
-          <div className="flex items-center gap-2 text-orange-600">
-            <AlertCircle className="h-5 w-5" />
-            <span className="font-medium">Contact for availability & lead time</span>
-          </div>
-        )}
-      </div>
-
-      {/* Price */}
-      <div className="p-4 bg-gray-50 rounded-lg">
-        {product.showPrice && product.price ? (
-          <div>
-            <div className="text-3xl font-bold text-gray-900 mb-2">
-              {formatPrice(product.price)}
-            </div>
-            <p className="text-sm text-gray-600">
-              Price includes basic technical consultation
-            </p>
-          </div>
-        ) : (
-          <div>
-            <div className="text-lg font-semibold text-gray-900 mb-2">
-              Contact for Competitive Pricing
-            </div>
-            <p className="text-sm text-gray-600">
-              We offer the best prices with comprehensive technical support
-            </p>
-          </div>
-        )}
-      </div>
-
-      {/* Services Included */}
-      <div className="p-4 bg-teal-50 rounded-lg border border-teal-200">
-        <h3 className="font-semibold text-teal-900 mb-3">Services Included:</h3>
-        <div className="space-y-2">
-          <div className="flex items-center gap-2 text-sm text-teal-800">
-            <Settings className="h-4 w-4" />
-            <span>Parameter Setting & Configuration</span>
-          </div>
-          <div className="flex items-center gap-2 text-sm text-teal-800">
-            <Headphones className="h-4 w-4" />
-            <span>24/7 Technical Support</span>
-          </div>
-          <div className="flex items-center gap-2 text-sm text-teal-800">
-            <FileText className="h-4 w-4" />
-            <span>Installation Documentation</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Action Buttons */}
-      <div className="space-y-3">
-        <Button size="lg" className="w-full" asChild>
-          <Link href={`/quote?product=${product.slug}`}>
-            <ShoppingCart className="h-5 w-5 mr-2" />
-            Request Quote
-          </Link>
-        </Button>
-        <div className="grid grid-cols-2 gap-3">
-          <Button size="lg" variant="outline" asChild>
-            <Link href="/contact">
-              Technical Consultation
-            </Link>
-          </Button>
-          {product.datasheet && (
-            <Button size="lg" variant="outline" asChild>
-              <a href={product.datasheet} target="_blank" rel="noopener noreferrer">
-                <Download className="h-4 w-4 mr-2" />
-                Datasheet
-              </a>
-            </Button>
-          )}
-        </div>
-      </div>
-
-      {/* Quick Contact */}
-      <div className="p-4 bg-gray-50 rounded-lg border">
-        <h4 className="font-semibold text-gray-900 mb-3">Need Immediate Help?</h4>
-        <div className="space-y-2">
-          <a
-            href={`tel:${SITE_CONFIG.company.phone}`}
-            className="flex items-center gap-2 text-sm text-gray-700 hover:text-teal-600 transition-colors"
-          >
-            <Phone className="h-4 w-4" />
-            <span>{SITE_CONFIG.company.phone}</span>
-          </a>
-          <a
-            href={`mailto:${SITE_CONFIG.company.email}`}
-            className="flex items-center gap-2 text-sm text-gray-700 hover:text-teal-600 transition-colors"
-          >
-            <Mail className="h-4 w-4" />
-            <span>{SITE_CONFIG.company.email}</span>
-          </a>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// UPDATED: Product Details Tabs Component - Now uses RichTextRenderer
-function ProductDetailsTabs({ product }: { product: any }) {
-  return (
-    <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-      {/* Tab Content */}
-      <div className="p-6">
-        {/* Description - UPDATED: Now handles rich text properly */}
-        <div className="mb-8">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Product Description</h2>
-          <div className="bg-gray-50 rounded-lg p-6">
-            {/* NEW: Use RichTextRenderer for proper rich text display */}
-            {product.description && typeof product.description === 'object' ? (
-              // If description is rich text object from Contentful
-              <RichTextRenderer 
-                content={product.description} 
-                className="text-gray-700"
-              />
-            ) : (
-              // Fallback for plain text descriptions
-              <div className="prose max-w-none text-gray-700">
-                <p>{product.description || 'No description available.'}</p>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Specifications */}
-        <div className="mb-8">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Technical Specifications</h2>
-          <ProductSpecs specifications={product.specification} />
-        </div>
-
-        {/* Applications */}
-        <div>
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Applications</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {["Manufacturing", "Pharmaceutical", "Food Processing", "Automotive"].map((app) => (
-              <div key={app} className="p-3 bg-gray-50 rounded-lg text-center">
-                <span className="text-sm font-medium text-gray-700">{app}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// Technical Support Section Component - NO CHANGES
-function TechnicalSupportSection() {
-  return (
-    <div className="bg-gradient-to-br from-teal-600 to-teal-700 rounded-2xl p-8 text-white">
-      <div className="max-w-3xl mx-auto text-center">
-        <h2 className="text-2xl font-bold mb-4">Need Technical Support?</h2>
-        <p className="text-teal-100 mb-6">
-          Our engineering team provides comprehensive technical support including parameter setting, 
-          commissioning, troubleshooting, and training services.
-        </p>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button size="lg" className="bg-white text-teal-600 hover:bg-gray-100" asChild>
-            <Link href="/contact">
-              Free Technical Consultation
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Link>
-          </Button>
-          <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-teal-600" asChild>
-            <Link href="/services">
-              View All Services
-            </Link>
-          </Button>
-        </div>
-      </div>
     </div>
   );
 }
