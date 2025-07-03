@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // src/lib/schema.ts
 import { Product } from "@/types/product";
 import { SITE_CONFIG } from "./contants";
@@ -137,5 +138,35 @@ export function generateLocalBusinessSchema() {
         },
       ],
     },
+  };
+}
+
+export function generateServiceSchema(service: any) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "name": service.name,
+    "description": service.shortDescription,
+    "provider": {
+      "@type": "Organization",
+      "name": "Mederi Karya Indonesia",
+      "url": "https://mederikarya.com"
+    },
+    "areaServed": {
+      "@type": "Country",
+      "name": "Indonesia"
+    },
+    "serviceType": "Industrial Automation Service",
+    "url": `https://mederikarya.com/services/${service.slug}`,
+    "image": service.image,
+    "offers": {
+      "@type": "Offer",
+      "availability": "https://schema.org/InStock",
+      "priceSpecification": {
+        "@type": "PriceSpecification",
+        "priceCurrency": "IDR",
+        "price": "Contact for pricing"
+      }
+    }
   };
 }

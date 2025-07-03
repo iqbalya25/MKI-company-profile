@@ -18,11 +18,11 @@ function extractTextFromRichText(richText: any): string {
   let text = "";
   const traverse = (nodes: any[]) => {
     if (!Array.isArray(nodes)) return;
-    
+
     nodes.forEach((node) => {
       // Handle text nodes
-      if (node.nodeType === 'text' && node.value) {
-        text += node.value + ' ';
+      if (node.nodeType === "text" && node.value) {
+        text += node.value + " ";
       }
       // Handle paragraph and other block nodes
       if (node.content && Array.isArray(node.content)) {
@@ -65,7 +65,7 @@ export async function getProducts(
     }
 
     const response = await client.getEntries(query);
-    return response.items.map((item) => transformProduct(item, 'list'));
+    return response.items.map((item) => transformProduct(item, "list"));
   } catch (error) {
     console.error("Error fetching products:", error);
     return [];
@@ -81,7 +81,7 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
     });
 
     if (response.items.length === 0) return null;
-    return transformProduct(response.items[0], 'detail');
+    return transformProduct(response.items[0], "detail");
   } catch (error) {
     console.error("Error fetching product by slug:", error);
     return null;
@@ -117,7 +117,9 @@ export async function getFeaturedProducts(
       }
     }
 
-    const products = response.items.map((item) => transformProduct(item, 'list'));
+    const products = response.items.map((item) =>
+      transformProduct(item, "list")
+    );
     const featuredProducts = products.filter(
       (product) => product.feature === true
     );
@@ -139,7 +141,7 @@ export async function getProductsByCategory(
       order: ["-sys.createdAt"],
     });
 
-    return response.items.map((item) => transformProduct(item, 'list'));
+    return response.items.map((item) => transformProduct(item, "list"));
   } catch (error) {
     console.error("Error fetching products by category:", error);
     return [];
@@ -194,7 +196,10 @@ export async function getPageBySlug(slug: string) {
 }
 
 // Transform Contentful entry to our Product type with context-aware rich text handling
-function transformProduct(item: any, context: 'list' | 'detail' = 'list'): Product {
+function transformProduct(
+  item: any,
+  context: "list" | "detail" = "list"
+): Product {
   const fields = item.fields || {};
 
   // Helper function to safely get field values
@@ -224,7 +229,7 @@ function transformProduct(item: any, context: 'list' | 'detail' = 'list'): Produ
     if (typeof value === "string") return value;
 
     if (value && typeof value === "object" && value.nodeType && value.content) {
-      if (context === 'detail') {
+      if (context === "detail") {
         return value; // Preserve rich text object for detail pages
       } else {
         return extractTextFromRichText(value) || "No description available";
@@ -233,7 +238,7 @@ function transformProduct(item: any, context: 'list' | 'detail' = 'list'): Produ
 
     if (value && typeof value === "object") {
       try {
-        return JSON.stringify(value).substring(0, 200) + '...';
+        return JSON.stringify(value).substring(0, 200) + "...";
       } catch {
         return "Description available";
       }
@@ -293,7 +298,7 @@ export async function searchProducts(searchTerm: string): Promise<Product[]> {
       query: searchTerm,
     });
 
-    return response.items.map((item) => transformProduct(item, 'list'));
+    return response.items.map((item) => transformProduct(item, "list"));
   } catch (error) {
     console.error("Error searching products:", error);
     return [];
@@ -348,6 +353,23 @@ export async function getServices(
   } catch (error) {
     console.error("Error fetching services:", error);
     return [];
+  }
+}
+
+// ADD this function to contentful.ts
+export async function getServiceBySlug(slug: string): Promise<Service | null> {
+  try {
+    const response = await client.getEntries({
+      content_type: "services",
+      "fields.slug": slug,
+      limit: 1,
+    });
+
+    if (response.items.length === 0) return null;
+    return transformService(response.items[0]);
+  } catch (error) {
+    console.error("Error fetching service by slug:", error);
+    return null;
   }
 }
 
