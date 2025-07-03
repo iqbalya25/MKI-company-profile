@@ -339,21 +339,9 @@ export async function getServices(
   } = {}
 ): Promise<Service[]> {
   try {
-    console.log("🔍 Fetching services from Contentful...");
-    console.log("Environment:", process.env.NODE_ENV);
-    console.log(
-      "Space ID:",
-      process.env.CONTENTFUL_SPACE_ID ? "Set ✅" : "Missing ❌"
-    );
-    console.log(
-      "Access Token:",
-      process.env.CONTENTFUL_ACCESS_TOKEN ? "Set ✅" : "Missing ❌"
-    );
-
     const query: any = {
       content_type: "services",
       limit: options.limit || 100,
-      include: 1, // Include linked assets
     };
 
     if (options.featured !== undefined) {
@@ -361,37 +349,9 @@ export async function getServices(
     }
 
     const response = await client.getEntries(query);
-
-    console.log(`📊 Found ${response.items.length} services in Contentful`);
-    console.log(
-      "Services:",
-      response.items.map((item) => ({
-        id: item.sys.id,
-        name: item.fields.name,
-        slug: item.fields.slug,
-      }))
-    );
-
-    const transformedServices = response.items.map(transformService).filter(
-      (service) => service.name && service.slug // Only include services with required fields
-    );
-
-    console.log(`✅ Returning ${transformedServices.length} valid services`);
-
-    return transformedServices;
+    return response.items.map(transformService);
   } catch (error) {
-    console.error("❌ Error fetching services:", error);
-    console.error("Error details:", {
-      message: error instanceof Error ? error.message : "Unknown error",
-      stack: error instanceof Error ? error.stack : undefined,
-    });
-
-    // Return fallback services for development
-    if (process.env.NODE_ENV === "development") {
-      console.log("🔄 Using fallback services for development");
-      return getFallbackServices();
-    }
-
+    console.error("Error fetching services:", error);
     return [];
   }
 }
@@ -432,66 +392,4 @@ function transformService(item: any): Service {
     createdAt: item.sys?.createdAt || new Date().toISOString(),
     updatedAt: item.sys?.updatedAt || new Date().toISOString(),
   };
-}
-
-function getFallbackServices(): Service[] {
-  return [
-    {
-      id: "fallback-1",
-      name: "System Monitoring Energy",
-      slug: "system-monitoring-energy",
-      shortDescription: "Sistem monitoring energi",
-      description:
-        "Professional energy monitoring system configuration and optimization",
-      image: "/images/services/energy-monitoring.jpg",
-      features: ["System monitoring", "Energy Monitoring", "Efficiency Energy"],
-      featured: true,
-      seoTitle: "Energy Monitoring Services | MKI",
-      seoDescription: "Professional energy monitoring system services",
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    },
-    {
-      id: "fallback-2",
-      name: "New Panel System",
-      slug: "new-panel-system",
-      shortDescription: "New Panel System services",
-      description: "Complete panel system design and installation services",
-      image: "/images/services/panel-system.jpg",
-      features: ["Perakitan Panel", "Panel Control PLC", "Panel Inverter"],
-      featured: true,
-      seoTitle: "Panel System Services | MKI",
-      seoDescription: "Professional panel system installation services",
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    },
-    {
-      id: "fallback-3",
-      name: "Inverter Setting / VSD Programming",
-      slug: "inverter-setting-vsd-programming",
-      shortDescription: "Inverter Programming services",
-      description: "Expert inverter and VSD programming services",
-      image: "/images/services/inverter-programming.jpg",
-      features: ["Sistem Baru", "Troubleshooting", "Migrasi Sistem"],
-      featured: true,
-      seoTitle: "Inverter Programming Services | MKI",
-      seoDescription: "Professional inverter and VSD programming services",
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    },
-    {
-      id: "fallback-4",
-      name: "PLC Programming",
-      slug: "plc-programming",
-      shortDescription: "PLC Programming services",
-      description: "Complete PLC programming and automation services",
-      image: "/images/services/plc-programming.jpg",
-      features: ["Sistem Baru", "Troubleshooting", "Migrasi Sistem"],
-      featured: true,
-      seoTitle: "PLC Programming Services | MKI",
-      seoDescription: "Professional PLC programming and automation services",
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    },
-  ];
 }
