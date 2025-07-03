@@ -1,10 +1,11 @@
-// src/app/api/contact/route.ts - FIXED TYPESCRIPT ERRORS
+// src/app/api/contact/route.ts - UPDATED WITH EMAIL FUNCTIONALITY
 import { NextRequest, NextResponse } from "next/server";
 import {
   contactFormSchema,
   createRateLimiter,
   type ContactFormData,
 } from "@/lib/validations";
+import { sendContactNotification } from "@/lib/email";
 import { z } from "zod";
 import { headers } from "next/headers";
 
@@ -27,13 +28,13 @@ export async function POST(request: NextRequest) {
     const realIP = headersList.get("x-real-ip");
     const clientIP = forwardedFor?.split(",")[0] || realIP || "unknown";
 
-    // Security: Rate limiting (5 requests per minute per IP)
-    if (!rateLimiter.checkLimit(clientIP, 5, 60000)) {
+    // Security: Rate limiting (5 contact messages per hour per IP)
+    if (!rateLimiter.checkLimit(clientIP, 5, 3600000)) {
       return NextResponse.json(
         {
           success: false,
           message:
-            "Too many requests. Please wait a minute before trying again.",
+            "Too many contact requests. Please wait an hour before submitting another message.",
         },
         {
           status: 429,
@@ -57,34 +58,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Security: Limit request size (prevent DoS)
-    const contentLength = request.headers.get("content-length");
-    if (contentLength && parseInt(contentLength) > 10000) {
-      // 10KB limit
-      return NextResponse.json(
-        {
-          success: false,
-          message: "Request too large",
-        },
-        {
-          status: 413,
-          headers: securityHeaders,
-        }
-      );
-    }
-
     const body = await request.json();
 
     // Security: Validate and sanitize input
     const validatedData: ContactFormData = contactFormSchema.parse(body);
 
-    // Security: Additional server-side checks
+    // Security: Additional spam check
     if (isSpamSubmission(validatedData)) {
       return NextResponse.json(
         {
           success: false,
           message:
-            "Submission flagged as spam. Please contact us directly if this is an error.",
+            "Your message appears to be spam. Please contact us directly if this is an error.",
         },
         {
           status: 400,
@@ -93,21 +78,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Log sanitized data (safe to log)
-    console.log("=== NEW CONTACT FORM SUBMISSION ===");
-    console.log("IP Address:", clientIP);
-    console.log("Company:", validatedData.companyName);
-    console.log("Contact Person:", validatedData.contactPerson);
-    console.log("Email:", validatedData.email);
-    console.log("Phone:", validatedData.phone);
-    console.log("Message Length:", validatedData.message.length);
-    console.log(
-      "Message Preview:",
-      validatedData.message.substring(0, 100) + "..."
-    );
-    console.log("Timestamp:", new Date().toLocaleString("id-ID"));
-    console.log("User Agent:", request.headers.get("user-agent"));
-    console.log("=====================================");
+    // Send email notification
+    const emailResult = await sendContactNotification(validatedData);
+
+    if (!emailResult.success) {
+      // Continue processing even if email fails - don't block user
+    }
 
     // Simulate processing delay
     await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -117,6 +93,7 @@ export async function POST(request: NextRequest) {
         success: true,
         message:
           "Thank you! Your message has been received. We'll contact you within 2 hours during business hours.",
+        emailSent: emailResult.success,
       },
       {
         status: 200,
@@ -124,6 +101,7 @@ export async function POST(request: NextRequest) {
       }
     );
   } catch (error) {
+    // Keep error logging for debugging issues
     console.error("Contact form error:", error);
 
     if (error instanceof z.ZodError) {
@@ -158,7 +136,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// Security: Spam detection (now properly typed)
+// Security: Spam detection
 function isSpamSubmission(data: ContactFormData): boolean {
   const spamIndicators = [
     // Check for repeated characters
