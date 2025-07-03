@@ -1,3 +1,4 @@
+// src/app/services/[slug]/page.tsx - FIXED FOR NEXT.JS 15 COMPATIBILITY
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getServiceBySlug, getServices } from "@/lib/contentful";
@@ -5,8 +6,9 @@ import ServiceDetail from "@/components/services/ServiceDetail";
 import Breadcrumb from "@/components/common/Breadcrumb";
 import { generateServiceSchema } from "@/lib/schema";
 
+// ✅ FIXED: Updated interface to make params a Promise
 interface ServicePageProps {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
 export async function generateStaticParams() {
@@ -16,14 +18,16 @@ export async function generateStaticParams() {
   }));
 }
 
+// ✅ FIXED: Await params before accessing properties
 export async function generateMetadata({
   params,
 }: ServicePageProps): Promise<Metadata> {
-  const service = await getServiceBySlug(params.slug);
+  const { slug } = await params; // 🔧 Await params first
+  const service = await getServiceBySlug(slug);
 
   if (!service) {
     return {
-      title: "Service Not Found",
+      title: "Service Not Found | Mederi Karya Indonesia",
       description: "The requested service could not be found.",
     };
   }
@@ -71,8 +75,10 @@ export async function generateMetadata({
   };
 }
 
+// ✅ FIXED: Await params in main component function
 export default async function ServicePage({ params }: ServicePageProps) {
-  const service = await getServiceBySlug(params.slug);
+  const { slug } = await params; // 🔧 Await params first
+  const service = await getServiceBySlug(slug);
 
   if (!service) {
     notFound();
@@ -88,8 +94,6 @@ export default async function ServicePage({ params }: ServicePageProps) {
       />
 
       <div className="min-h-screen mt-20">
-        {" "}
-        {/* Fixed navbar overlap */}
         <div className="container mx-auto px-4 py-4">
           <Breadcrumb
             items={[
