@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Metadata } from "next";
 import { getServices } from "@/lib/contentful";
 import ServiceCard from "@/components/services/ServiceCard";
 import Breadcrumb from "@/components/common/Breadcrumb";
 import { TARGET_KEYWORDS } from "@/lib/contants";
 import Link from "next/link";
+import { ArrowRight, Clock, Settings, Shield, Users } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Engineering Services + Technical Support | Mederi Karya Indonesia",
@@ -70,7 +72,7 @@ export default async function ServicesPage() {
         {/* Featured Services */}
         {featuredServices.length > 0 && (
           <div className="mb-12">
-            <h2 className="text-2xl font-semibold mb-6 text-center">
+            <h2 className="text-3xl font-semibold mb-6 py-8 text-center">
               Featured Services
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -80,36 +82,70 @@ export default async function ServicesPage() {
             </div>
           </div>
         )}
+      </div>
 
-        {/* All Services */}
-        <div>
-          <h2 className="text-2xl font-semibold mb-6 text-center">
-            {featuredServices.length > 0 ? "All Services" : "Our Services"}
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {regularServices.map((service) => (
-              <ServiceCard key={service.id} service={service} />
-            ))}
+      {/* Enhanced CTA Section - Products Page Style */}
+      <section className="py-16 bg-teal-600 relative overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage: `radial-gradient(circle at 20% 50%, white 1px, transparent 1px),
+                               radial-gradient(circle at 80% 80%, white 1px, transparent 1px)`,
+              backgroundSize: "50px 50px",
+            }}
+          />
+        </div>
+
+        {/* Decorative Elements */}
+        <div className="absolute top-10 right-10 w-64 h-64 bg-teal-500 rounded-full blur-3xl opacity-20 animate-pulse" />
+        <div className="absolute bottom-10 left-10 w-80 h-80 bg-teal-400 rounded-full blur-3xl opacity-20 animate-pulse" />
+
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="max-w-4xl mx-auto text-center">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+              Need Custom Engineering Solutions?
+            </h2>
+            <p className="text-xl text-teal-100 mb-10 leading-relaxed">
+              Our experienced engineers provide tailored automation solutions
+              for your specific industrial requirements. Get expert consultation
+              today.
+            </p>
+
+            {/* Enhanced Single Button */}
+            <Link
+              href="/contact"
+              className="group relative inline-flex items-center justify-center px-8 py-4 bg-white text-teal-600 font-semibold rounded-lg hover:bg-gray-50 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+            >
+              <Settings className="h-5 w-5 mr-2" />
+              <span>Get Expert Consultation</span>
+              <ArrowRight className="h-5 w-5 ml-2 transition-transform duration-300 group-hover:translate-x-2" />
+
+              {/* Shine effect on hover */}
+              <div className="absolute inset-0 rounded-lg overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+              </div>
+            </Link>
+
+            {/* Trust Indicators */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-8 mt-12 text-teal-100">
+              <div className="flex items-center gap-2">
+                <Clock className="h-5 w-5" />
+                <span className="text-sm">Response within 2 hours</span>
+              </div>
+              {/* <div className="flex items-center gap-2">
+                <Users className="h-5 w-5" />
+                <span className="text-sm">8+ Years Experience</span>
+              </div> */}
+              <div className="flex items-center gap-2">
+                <Shield className="h-5 w-5" />
+                <span className="text-sm">Experienced Engineer</span>
+              </div>
+            </div>
           </div>
         </div>
-
-        {/* CTA Section */}
-        <div className="mt-16 text-center bg-gray-50 rounded-lg p-8">
-          <h3 className="text-2xl font-semibold mb-4">
-            Need Custom Engineering Solutions?
-          </h3>
-          <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-            Our experienced engineers provide tailored automation solutions for
-            your specific industrial requirements.
-          </p>
-          <Link
-            href="/contact"
-            className="inline-flex items-center bg-teal-600 text-white px-6 py-3 rounded-lg hover:bg-teal-700 transition-colors"
-          >
-            Get Expert Consultation
-          </Link>
-        </div>
-      </div>
+      </section>
     </div>
   );
 }
