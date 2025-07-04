@@ -375,7 +375,7 @@ export default async function BlogPage({
   }
 }
 
-// Blog Post Card Component - CONSISTENT HEIGHT VERSION
+// Blog Post Card Component - FIXED MOBILE LAYOUT
 function BlogPostCard({
   post,
 }: {
@@ -386,12 +386,18 @@ function BlogPostCard({
   return (
     <Link
       href={`/blog/${post.slug}`}
-      className="group block bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-lg hover:border-teal-200 transition-all duration-300 overflow-hidden h-80"
+      className="group block bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-lg hover:border-teal-200 transition-all duration-300 overflow-hidden md:h-80" // FIXED: h-80 only on desktop
     >
-      <div className="flex flex-col md:flex-row h-full">
-        {/* Image Section - Left Side */}
-        <div className="md:w-80 md:flex-shrink-0">
+      <div className="flex flex-col md:flex-row md:h-full">
+        {" "}
+        {/* FIXED: Always flex-col on mobile */}
+        {/* Image Section - Top on Mobile, Left on Desktop */}
+        <div className="w-full md:w-80 md:flex-shrink-0">
+          {" "}
+          {/* FIXED: Full width on mobile */}
           <div className="aspect-video md:aspect-square relative bg-gray-100">
+            {" "}
+            {/* FIXED: aspect-video on mobile */}
             {post.featuredImage?.url ? (
               <Image
                 src={post.featuredImage.url}
@@ -412,28 +418,28 @@ function BlogPostCard({
             )}
           </div>
         </div>
-
-        {/* Content Section - Right Side */}
-        <div className="flex-1 p-6 flex flex-col">
+        {/* Content Section - Bottom on Mobile, Right on Desktop */}
+        <div className="flex-1 p-6 md:flex md:flex-col">
+          {" "}
+          {/* FIXED: flex-col only on desktop */}
           {/* Category Badge */}
           <div className="mb-3">
             <Badge variant="secondary" className="text-xs">
               {post.category}
             </Badge>
           </div>
-
           {/* Title */}
           <h2 className="text-xl font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-teal-600 transition-colors">
             {post.title}
           </h2>
-
           {/* Excerpt */}
           {post.excerpt && (
-            <p className="text-gray-600 mb-4 line-clamp-3 text-sm leading-relaxed flex-grow">
+            <p className="text-gray-600 mb-4 line-clamp-3 text-sm leading-relaxed md:flex-grow">
+              {" "}
+              {/* FIXED: flex-grow only on desktop */}
               {post.excerpt}
             </p>
           )}
-
           {/* Tags */}
           {post.tags.length > 0 && (
             <div className="flex flex-wrap gap-2 mb-4">
@@ -452,9 +458,10 @@ function BlogPostCard({
               )}
             </div>
           )}
-
           {/* Meta Info & Read More */}
-          <div className="flex items-center justify-between mt-auto">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 md:mt-auto">
+            {" "}
+            {/* FIXED: flex-col on mobile, mt-auto only on desktop */}
             <div className="flex items-center gap-4 text-xs text-gray-500">
               <div className="flex items-center gap-1">
                 <User className="h-3 w-3" />
@@ -475,9 +482,8 @@ function BlogPostCard({
                 <span>{readingTime} min read</span>
               </div>
             </div>
-
             {/* Read More Link */}
-            <span className="inline-flex items-center text-teal-600 font-medium text-sm group-hover:text-teal-700">
+            <span className="inline-flex items-center text-teal-600 font-medium text-sm group-hover:text-teal-700 sm:flex-shrink-0">
               Read More
               <ArrowRight className="ml-1 h-4 w-4 group-hover:translate-x-1 transition-transform" />
             </span>
