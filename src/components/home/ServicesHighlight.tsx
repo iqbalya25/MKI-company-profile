@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // src/components/home/ServicesHighlight.tsx
 import Link from "next/link";
 import Image from "next/image";
@@ -223,50 +224,6 @@ const ServicesHighlight = ({ services }: ServicesHighlightProps) => {
               </div>
             );
           })}
-        </div>
-
-        {/* CTA Section - Premium Design */}
-        <div className="bg-gradient-to-br from-teal-600 to-teal-700 rounded-2xl p-10 text-center relative overflow-hidden">
-          {/* Pattern Overlay */}
-          <div className="absolute inset-0 opacity-10">
-            <div
-              className="absolute inset-0"
-              style={{
-                backgroundImage: `radial-gradient(circle at 2px 2px, white 1px, transparent 1px)`,
-                backgroundSize: "30px 30px",
-              }}
-            />
-          </div>
-
-          <div className="relative z-10">
-            <h3 className="text-3xl font-bold text-white mb-4">
-              Need Technical Assistance?
-            </h3>
-            <p className="text-teal-100 mb-8 max-w-2xl mx-auto text-lg">
-              Our engineering team is ready to help with your automation
-              challenges. Get free consultation for your project.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button
-                size="lg"
-                className="bg-white text-teal-600 hover:bg-gray-100 font-semibold shadow-lg"
-                asChild
-              >
-                <Link href="/contact">
-                  Get Free Consultation
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Link>
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="border-2 border-white text-teal-600 hover:bg-gray-200 font-semibold shadow-lg hover:text-teal-600 font-semibold"
-                asChild
-              >
-                <Link href="/services">View All Services</Link>
-              </Button>
-            </div>
-          </div>
         </div>
       </div>
     </section>
