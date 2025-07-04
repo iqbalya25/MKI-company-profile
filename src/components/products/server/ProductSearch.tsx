@@ -1,9 +1,10 @@
 /* eslint-disable react/no-unescaped-entities */
-// src/components/products/server/ProductSearch.tsx - FIXED VERSION
+// src/components/products/server/ProductSearch.tsx - MOBILE OPTIMIZED VERSION
 // 🔍 PURE SERVER COMPONENT - Native HTML Form Search
 // ✅ No JavaScript required - Works with disabled JS
 // ✅ Server-side form handling - SEO friendly
 // ✅ URL-based state - Bookmarkable searches
+// ✅ MOBILE RESPONSIVE - Fixed active filters layout
 // ✅ NO EVENT HANDLERS - Pure server component
 
 import Link from "next/link";
@@ -58,7 +59,7 @@ export default function ProductSearchServer({
 
   return (
     <div className={`${productStyles.search.container} ${className}`}>
-      {/* 📊 HEADER */}
+      {/* 📊 HEADER - MOBILE RESPONSIVE */}
       <div className={productStyles.search.header.container}>
         <div className={productStyles.search.header.info}>
           <div className={productStyles.search.header.icon}>
@@ -83,9 +84,10 @@ export default function ProductSearchServer({
         </div>
       </div>
 
-      {/* 🏷️ ACTIVE FILTERS DISPLAY */}
+      {/* 🏷️ ACTIVE FILTERS DISPLAY - MOBILE OPTIMIZED */}
       {hasActiveFilters && (
         <div className={productStyles.search.filters.container}>
+          {/* DESKTOP LAYOUT */}
           <div className={productStyles.search.filters.header}>
             <div className={productStyles.search.filters.label}>
               <Filter className={productStyles.search.filters.labelIcon} />
@@ -137,7 +139,7 @@ export default function ProductSearchServer({
               </div>
             </div>
 
-            {/* Clear All Button */}
+            {/* Clear All Button - Desktop */}
             <Button
               variant="outline"
               size="sm"
@@ -149,6 +151,134 @@ export default function ProductSearchServer({
                 Clear All
               </Link>
             </Button>
+          </div>
+
+          {/* MOBILE LAYOUT - NEW OPTIMIZED DESIGN */}
+          <div className={productStyles.search.filters.mobileContainer}>
+            {/* Mobile Header */}
+            <div className={productStyles.search.filters.mobileHeader}>
+              <div className={productStyles.search.filters.mobileTitle}>
+                <Filter
+                  className={productStyles.search.filters.mobileTitleIcon}
+                />
+                <span className={productStyles.search.filters.mobileTitleText}>
+                  Active Filters
+                </span>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                asChild
+                className={productStyles.search.filters.mobileClearButton}
+              >
+                <Link href="/products">Clear All</Link>
+              </Button>
+            </div>
+
+            {/* Mobile Filter Cards - Stacked Layout */}
+            <div className={productStyles.search.filters.mobileFiltersGroup}>
+              {/* Category Filter - Mobile */}
+              {currentCategory && (
+                <div className={productStyles.search.filters.mobileFilterCard}>
+                  <div
+                    className={productStyles.search.filters.mobileFilterContent}
+                  >
+                    <span
+                      className={productStyles.search.filters.mobileFilterLabel}
+                    >
+                      Category:
+                    </span>
+                    <span
+                      className={productStyles.search.filters.mobileFilterValue}
+                    >
+                      {getCategoryDisplayName(currentCategory)}
+                    </span>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    asChild
+                    className={productStyles.search.filters.mobileRemoveButton}
+                  >
+                    <Link href={buildRemoveFilterUrl("category")}>
+                      <X
+                        className={
+                          productStyles.search.filters.mobileRemoveIcon
+                        }
+                      />
+                    </Link>
+                  </Button>
+                </div>
+              )}
+
+              {/* Brand Filter - Mobile */}
+              {currentBrand && (
+                <div className={productStyles.search.filters.mobileFilterCard}>
+                  <div
+                    className={productStyles.search.filters.mobileFilterContent}
+                  >
+                    <span
+                      className={productStyles.search.filters.mobileFilterLabel}
+                    >
+                      Brand:
+                    </span>
+                    <span
+                      className={productStyles.search.filters.mobileFilterValue}
+                    >
+                      {getBrandDisplayName(currentBrand)}
+                    </span>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    asChild
+                    className={productStyles.search.filters.mobileRemoveButton}
+                  >
+                    <Link href={buildRemoveFilterUrl("brand")}>
+                      <X
+                        className={
+                          productStyles.search.filters.mobileRemoveIcon
+                        }
+                      />
+                    </Link>
+                  </Button>
+                </div>
+              )}
+
+              {/* Search Filter - Mobile */}
+              {currentSearch && (
+                <div className={productStyles.search.filters.mobileFilterCard}>
+                  <div
+                    className={productStyles.search.filters.mobileFilterContent}
+                  >
+                    <span
+                      className={productStyles.search.filters.mobileFilterLabel}
+                    >
+                      Search:
+                    </span>
+                    <span
+                      className={productStyles.search.filters.mobileFilterValue}
+                    >
+                      "{currentSearch}"
+                    </span>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    asChild
+                    className={productStyles.search.filters.mobileRemoveButton}
+                  >
+                    <Link href={buildRemoveFilterUrl("search")}>
+                      <X
+                        className={
+                          productStyles.search.filters.mobileRemoveIcon
+                        }
+                      />
+                    </Link>
+                  </Button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}
@@ -180,7 +310,6 @@ export default function ProductSearchServer({
               name="category"
               defaultValue={currentCategory || ""}
               className={productStyles.search.form.select}
-              // ✅ REMOVED onChange - Pure server component
             >
               <option value="">All Categories</option>
               {PRODUCT_CATEGORIES.map((category) => (
@@ -198,7 +327,6 @@ export default function ProductSearchServer({
               name="brand"
               defaultValue={currentBrand || ""}
               className={productStyles.search.form.select}
-              // ✅ REMOVED onChange - Pure server component
             >
               <option value="">All Brands</option>
               {BRANDS.map((brand) => (
@@ -220,109 +348,6 @@ export default function ProductSearchServer({
           Search Products
         </Button>
       </form>
-
-      {/* 💡 SEARCH TIPS */}
-      <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-        <h4 className="text-sm font-semibold text-blue-900 mb-2">
-          🔍 Search Tips:
-        </h4>
-        <ul className="text-xs text-blue-800 space-y-1">
-          <li>• Try specific model numbers: "FX5U-32MR", "ATV320U15N4"</li>
-          <li>• Search by application: "pump control", "safety relay"</li>
-          <li>• Use brand names: "Mitsubishi PLC", "Schneider Inverter"</li>
-          <li>• Include specifications: "24VDC", "5.5kW", "Ethernet"</li>
-        </ul>
-      </div>
-
-      {/* 🏷️ POPULAR SEARCHES (if no active filters) */}
-      {!hasActiveFilters && (
-        <div className="mt-6">
-          <h4 className="text-sm font-semibold text-gray-900 mb-3">
-            Popular Searches:
-          </h4>
-          <div className="flex flex-wrap gap-2">
-            {[
-              { term: "PLC Mitsubishi", category: "plc", brand: "mitsubishi" },
-              {
-                term: "Inverter Schneider",
-                category: "inverter",
-                brand: "schneider",
-              },
-              { term: "HMI Proface", category: "hmi", brand: "proface" },
-              { term: "Safety Relay", category: "safety-relay" },
-              { term: "Power Meter", category: "power-meter" },
-              { term: "Servo Motor", category: "servo" },
-            ].map((item, index) => (
-              <Link
-                key={index}
-                href={`/products?${
-                  item.category ? `category=${item.category}` : ""
-                }${item.brand ? `&brand=${item.brand}` : ""}${
-                  item.term && !item.category && !item.brand
-                    ? `search=${encodeURIComponent(item.term)}`
-                    : ""
-                }`}
-                className="inline-flex items-center px-3 py-1 bg-white border border-gray-300 rounded-full text-xs text-gray-700 hover:bg-gray-50 hover:border-teal-300 hover:text-teal-700 transition-colors"
-              >
-                {item.term}
-              </Link>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* 📞 QUICK CONTACT (if no results) */}
-      {totalProducts === 0 && hasActiveFilters && (
-        <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-          <h4 className="text-sm font-semibold text-yellow-900 mb-2">
-            Can't find what you're looking for?
-          </h4>
-          <p className="text-xs text-yellow-800 mb-3">
-            We can source almost any automation part. Contact our engineering
-            team for custom product sourcing and technical consultation.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-2">
-            <Button size="sm" variant="outline" asChild>
-              <Link href="/contact">Contact Engineering Team</Link>
-            </Button>
-            <Button size="sm" variant="outline" asChild>
-              <Link href="/quote">Request Custom Quote</Link>
-            </Button>
-          </div>
-        </div>
-      )}
-
-      {/* 🎯 SEO ENHANCEMENT: Hidden semantic markup */}
-      <div className="sr-only" aria-hidden="true">
-        <h2>Industrial Automation Parts Search</h2>
-        <p>
-          Search through our extensive catalog of {totalProducts} automation
-          products including PLCs, HMIs, Inverters, Safety Relays, and Power
-          Meters from leading brands like Mitsubishi, Schneider, Omron, and
-          Siemens.
-        </p>
-        {hasActiveFilters && (
-          <div>
-            <h3>Current Search Filters:</h3>
-            {currentCategory && (
-              <p>Category: {getCategoryDisplayName(currentCategory)}</p>
-            )}
-            {currentBrand && <p>Brand: {getBrandDisplayName(currentBrand)}</p>}
-            {currentSearch && <p>Search term: {currentSearch}</p>}
-          </div>
-        )}
-      </div>
-
-      {/* 🔧 DEBUG INFO (Development only) */}
-      {/* {process.env.NODE_ENV === "development" && (
-        <div className="mt-4 p-2 bg-gray-100 rounded text-xs text-gray-600">
-          <strong>Search Debug:</strong> 
-          {totalProducts} products | 
-          Category: {currentCategory || "none"} | 
-          Brand: {currentBrand || "none"} | 
-          Search: {currentSearch || "none"}
-        </div>
-      )} */}
     </div>
   );
 }
