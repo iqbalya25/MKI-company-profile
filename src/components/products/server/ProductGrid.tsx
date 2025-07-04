@@ -6,9 +6,10 @@
 // ✅ Server-side pagination - SEO friendly
 // ✅ NO EVENT HANDLERS - Pure server component
 // ✅ 4-column responsive grid - UPDATED LAYOUT
+// ✅ VIEW TOGGLE REMOVED - Grid only
 
 import Link from "next/link";
-import { ChevronLeft, ChevronRight, Grid, List } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { productStyles, getGridClasses } from "../shared/ProductStyles";
 import type { ProductGridServerProps, ViewMode } from "../shared/ProductTypes";
@@ -32,7 +33,7 @@ export default function ProductGridServer({
 
     // Preserve existing search params
     Object.entries(searchParams).forEach(([key, value]) => {
-      if (value && key !== "page" && key !== "view" && key !== "sort") {
+      if (value && key !== "page" && key !== "sort") {
         urlParams.set(key, value);
       }
     });
@@ -51,10 +52,6 @@ export default function ProductGridServer({
   const getPaginationUrl = (page: number) => {
     if (page < 1 || page > totalPages) return baseUrl;
     return generateUrl({ page: page === 1 ? undefined : page });
-  };
-
-  const getViewModeUrl = (mode: ViewMode) => {
-    return generateUrl({ view: mode === "grid" ? undefined : mode });
   };
 
   // 📄 PAGINATION LOGIC
@@ -98,22 +95,19 @@ export default function ProductGridServer({
   ];
 
   const currentSort = searchParams.sort || "newest";
-  const currentView = (searchParams.view as ViewMode) || viewMode;
+  const currentView = "grid"; // Fixed to grid view
 
   // 🚫 NO PRODUCTS STATE
   if (products.length === 0) {
     return (
-      <div className="text-center py-16">
+      <div className="bg-white border border-gray-200 rounded-lg p-12 text-center">
         <div className="max-w-md mx-auto">
-          <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <Grid className="h-12 w-12 text-gray-400" />
-          </div>
-          <h3 className="text-xl font-semibold text-gray-900 mb-4">
-            No Products Found
+          <div className="mb-6 text-6xl">🔍</div>
+          <h3 className="text-xl font-semibold text-gray-900 mb-3">
+            No products found
           </h3>
           <p className="text-gray-600 mb-6">
-            We couldn't find any products matching your criteria. Try adjusting
-            your filters or search terms.
+            Try adjusting your filters or search terms.
           </p>
           <div className="space-y-3">
             <Button asChild>
@@ -180,7 +174,6 @@ export default function ProductGridServer({
                 name="sort"
                 defaultValue={currentSort}
                 className={productStyles.toolbar.sortSelect}
-                // ✅ REMOVED onChange - Pure server component
               >
                 {sortOptions.map((option) => (
                   <option key={option.value} value={option.value}>
@@ -197,31 +190,8 @@ export default function ProductGridServer({
             </form>
           </div>
 
-          {/* View Mode Toggle - LINK BASED (NO EVENT HANDLERS) */}
-          <div className={productStyles.toolbar.viewToggle}>
-            <Link
-              href={getViewModeUrl("grid")}
-              className={`${productStyles.toolbar.viewButton} ${
-                currentView === "grid"
-                  ? productStyles.toolbar.viewButtonActive
-                  : productStyles.toolbar.viewButtonInactive
-              }`}
-              title="Grid view"
-            >
-              <Grid className="h-4 w-4" />
-            </Link>
-            <Link
-              href={getViewModeUrl("list")}
-              className={`${productStyles.toolbar.viewButton} ${
-                currentView === "list"
-                  ? productStyles.toolbar.viewButtonActive
-                  : productStyles.toolbar.viewButtonInactive
-              }`}
-              title="List view"
-            >
-              <List className="h-4 w-4" />
-            </Link>
-          </div>
+          {/* VIEW MODE TOGGLE SECTION REMOVED */}
+          {/* This section has been completely removed */}
         </div>
       </div>
 
@@ -320,14 +290,6 @@ export default function ProductGridServer({
           </Button>
         </div>
       )}
-
-      {/* 📊 GRID STATISTICS (Hidden but useful for debugging) */}
-      {/* {process.env.NODE_ENV === "development" && (
-        <div className="mt-4 p-2 bg-gray-100 rounded text-xs text-gray-600">
-          <strong>Grid Debug:</strong> {currentView} mode | {products.length}{" "}
-          items | Classes: {gridClasses.replace(/\s+/g, " ")}
-        </div>
-      )} */}
     </div>
   );
 }
