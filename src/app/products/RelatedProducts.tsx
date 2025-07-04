@@ -13,10 +13,10 @@ interface RelatedProductsProps {
   showAll?: boolean;
 }
 
-const RelatedProducts = ({ 
-  products, 
+const RelatedProducts = ({
+  products,
   title = "Related Products",
-  showAll = true 
+  showAll = true,
 }: RelatedProductsProps) => {
   if (!products || products.length === 0) {
     return null;
@@ -43,29 +43,6 @@ const RelatedProducts = ({
         {displayProducts.map((product) => (
           <RelatedProductCard key={product.id} product={product} />
         ))}
-      </div>
-
-      {/* Cross-selling CTA */}
-      <div className="mt-12 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl p-8 text-center">
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">
-          Looking for Complete Automation Solutions?
-        </h3>
-        <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-          Our engineering team can help you design complete automation systems with compatible components. 
-          Get free consultation for your project requirements.
-        </p>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button asChild>
-            <Link href="/contact">
-              Free System Design Consultation
-            </Link>
-          </Button>
-          <Button variant="outline" asChild>
-            <Link href="/quote">
-              Request Custom Quote
-            </Link>
-          </Button>
-        </div>
       </div>
     </section>
   );
@@ -95,7 +72,7 @@ function RelatedProductCard({ product }: { product: Product }) {
 
         {/* Stock Status Badge */}
         <div className="absolute top-3 right-3">
-          <Badge 
+          <Badge
             variant={product.inStock ? "default" : "secondary"}
             className={`text-xs ${product.inStock ? "bg-green-500" : "bg-orange-500"}`}
           >
@@ -106,9 +83,7 @@ function RelatedProductCard({ product }: { product: Product }) {
         {/* Quick View Overlay */}
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
           <Button size="sm" variant="secondary" asChild>
-            <Link href={`/products/${product.slug}`}>
-              Quick View
-            </Link>
+            <Link href={`/products/${product.slug}`}>Quick View</Link>
           </Button>
         </div>
       </div>
@@ -124,15 +99,11 @@ function RelatedProductCard({ product }: { product: Product }) {
 
         {/* Product Name */}
         <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-teal-600 transition-colors">
-          <Link href={`/products/${product.slug}`}>
-            {product.name}
-          </Link>
+          <Link href={`/products/${product.slug}`}>{product.name}</Link>
         </h3>
 
         {/* Model */}
-        <p className="text-xs text-gray-600 mb-3">
-          Model: {product.model}
-        </p>
+        <p className="text-xs text-gray-600 mb-3">Model: {product.model}</p>
 
         {/* Price */}
         <div className="mb-3">
@@ -141,18 +112,14 @@ function RelatedProductCard({ product }: { product: Product }) {
               {formatPrice(product.price)}
             </div>
           ) : (
-            <div className="text-sm text-gray-600">
-              Contact for pricing
-            </div>
+            <div className="text-sm text-gray-600">Contact for pricing</div>
           )}
         </div>
 
         {/* Actions */}
         <div className="flex gap-2">
           <Button size="sm" className="flex-1 text-xs" asChild>
-            <Link href={`/products/${product.slug}`}>
-              View Details
-            </Link>
+            <Link href={`/products/${product.slug}`}>View Details</Link>
           </Button>
           <Button size="sm" variant="outline" asChild>
             <Link href={`/quote?product=${product.slug}`}>
