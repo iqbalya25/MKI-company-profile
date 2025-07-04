@@ -1,17 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// src/app/blog/[slug]/page.tsx - FIXED FOR NEXT.JS 15 COMPATIBILITY
+// src/app/blog/[slug]/page.tsx - FIXED VERSION WITH ORIGINAL RICH TEXT RENDERER
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { 
-  ArrowLeft, 
-  Calendar, 
-  User, 
-  Clock, 
+import {
+  ArrowLeft,
+  Calendar,
+  User,
+  Clock,
   Tag,
   BookOpen,
-  ArrowRight
+  ArrowRight,
 } from "lucide-react";
 import { getBlogPostBySlug, getBlogPosts } from "@/lib/contentful";
 import { generateBreadcrumbSchema } from "@/lib/schema";
@@ -20,7 +20,13 @@ import { Badge } from "@/components/ui/badge";
 import Breadcrumb from "@/components/common/Breadcrumb";
 import { SITE_CONFIG } from "@/lib/contants";
 import ShareButton from "./shareButton";
-import { ReactElement, JSXElementConstructor, ReactNode, ReactPortal, Key } from "react";
+import {
+  ReactElement,
+  JSXElementConstructor,
+  ReactNode,
+  ReactPortal,
+  Key,
+} from "react";
 
 interface BlogPageProps {
   params: Promise<{
@@ -42,13 +48,18 @@ function extractBlogFields(entry: any) {
     slug: fields.slug || "",
     excerpt: fields.excerpt || "",
     content: fields.content || null,
-    featuredImage: fields.featuredImage ? {
-      url: fields.featuredImage.fields?.file?.url ? 
-        `https:${fields.featuredImage.fields.file.url}` : null,
-      title: fields.featuredImage.fields?.title || "",
-      width: fields.featuredImage.fields?.file?.details?.image?.width || 800,
-      height: fields.featuredImage.fields?.file?.details?.image?.height || 600,
-    } : null,
+    featuredImage: fields.featuredImage
+      ? {
+          url: fields.featuredImage.fields?.file?.url
+            ? `https:${fields.featuredImage.fields.file.url}`
+            : null,
+          title: fields.featuredImage.fields?.title || "",
+          width:
+            fields.featuredImage.fields?.file?.details?.image?.width || 800,
+          height:
+            fields.featuredImage.fields?.file?.details?.image?.height || 600,
+        }
+      : null,
     author: fields.author || "MKI Engineering Team",
     publishDate: fields.publishDate || sys.createdAt,
     tags: Array.isArray(fields.tags) ? fields.tags : [],
@@ -60,10 +71,12 @@ function extractBlogFields(entry: any) {
   };
 }
 
-export async function generateMetadata({ params }: BlogPageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: BlogPageProps): Promise<Metadata> {
   const { slug } = await params;
   const entry = await getBlogPostBySlug(slug);
-  
+
   if (!entry) {
     return {
       title: "Blog Post Not Found | Mederi Karya Indonesia",
@@ -74,13 +87,15 @@ export async function generateMetadata({ params }: BlogPageProps): Promise<Metad
   const blog = extractBlogFields(entry);
   if (!blog) {
     return {
-      title: "Blog Post Not Found | Mederi Karya Indonesia", 
+      title: "Blog Post Not Found | Mederi Karya Indonesia",
       description: "The requested blog post could not be found.",
     };
   }
 
   const title = blog.seoTitle || `${blog.title} | MKI Technical Blog`;
-  const description = blog.seoDescription || blog.excerpt || 
+  const description =
+    blog.seoDescription ||
+    blog.excerpt ||
     `${blog.title} - Technical insights and automation guides from Mederi Karya Indonesia engineering team.`;
 
   return {
@@ -88,7 +103,7 @@ export async function generateMetadata({ params }: BlogPageProps): Promise<Metad
     description,
     keywords: [
       "automation tutorial",
-      "plc programming guide", 
+      "plc programming guide",
       "technical blog indonesia",
       "automation troubleshooting",
       "engineering insights",
@@ -103,14 +118,16 @@ export async function generateMetadata({ params }: BlogPageProps): Promise<Metad
       publishedTime: blog.publishDate,
       modifiedTime: blog.updatedAt,
       authors: [blog.author],
-      images: blog.featuredImage?.url ? [
-        {
-          url: blog.featuredImage.url,
-          width: blog.featuredImage.width,
-          height: blog.featuredImage.height,
-          alt: blog.title,
-        }
-      ] : [],
+      images: blog.featuredImage?.url
+        ? [
+            {
+              url: blog.featuredImage.url,
+              width: blog.featuredImage.width,
+              height: blog.featuredImage.height,
+              alt: blog.title,
+            },
+          ]
+        : [],
     },
     alternates: {
       canonical: `/blog/${blog.slug}`,
@@ -121,7 +138,7 @@ export async function generateMetadata({ params }: BlogPageProps): Promise<Metad
 export default async function BlogPostPage({ params }: BlogPageProps) {
   const { slug } = await params;
   const entry = await getBlogPostBySlug(slug);
-  
+
   if (!entry) {
     notFound();
   }
@@ -135,18 +152,19 @@ export default async function BlogPostPage({ params }: BlogPageProps) {
   const relatedPostsEntries = await getBlogPosts(3);
   const relatedPosts = relatedPostsEntries
     .map(extractBlogFields)
-    .filter((post): post is NonNullable<typeof post> => 
-      post !== null && post.slug !== blog.slug
+    .filter(
+      (post): post is NonNullable<typeof post> =>
+        post !== null && post.slug !== blog.slug
     )
     .slice(0, 3);
 
   // Calculate reading time
   const readingTime = calculateReadingTime(blog.content);
 
-  // Breadcrumb data
+  // FIXED: Correct breadcrumb data
   const breadcrumbItems = [
     { name: "Home", url: "/" },
-    { name: "Blog", url: "/blog" },
+    { name: "Blog", url: "/blog" }, // FIXED: This now correctly links to /blog
     { name: blog.title, url: `/blog/${blog.slug}` },
   ];
 
@@ -192,10 +210,13 @@ export default async function BlogPostPage({ params }: BlogPageProps) {
         }}
       />
 
-      {/* Page Header */}
-      <div className="bg-white py-6 mt-20 border-b">
+      {/* FIXED: Page Header with Solid Color and Correct Breadcrumb */}
+      <div className="bg-teal-600 py-8 mt-20 text-white">
         <div className="container mx-auto px-4">
-          <Breadcrumb items={breadcrumbItems} />
+          <Breadcrumb
+            items={breadcrumbItems}
+            className="[&_a]:text-teal-200 [&_a:hover]:text-white [&_span]:text-white [&_svg]:text-teal-200"
+          />
         </div>
       </div>
 
@@ -203,18 +224,52 @@ export default async function BlogPostPage({ params }: BlogPageProps) {
       <article className="py-12">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
-            
             {/* Article Header */}
             <header className="mb-12">
               {/* Tags */}
               {blog.tags.length > 0 && (
                 <div className="flex flex-wrap gap-2 mb-6">
-                  {blog.tags.map((tag: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined, index: Key | null | undefined) => (
-                    <Badge key={index} variant="secondary" className="text-xs">
-                      <Tag className="h-3 w-3 mr-1" />
-                      {tag}
-                    </Badge>
-                  ))}
+                  {blog.tags.map(
+                    (
+                      tag:
+                        | string
+                        | number
+                        | bigint
+                        | boolean
+                        | ReactElement<
+                            unknown,
+                            string | JSXElementConstructor<any>
+                          >
+                        | Iterable<ReactNode>
+                        | ReactPortal
+                        | Promise<
+                            | string
+                            | number
+                            | bigint
+                            | boolean
+                            | ReactPortal
+                            | ReactElement<
+                                unknown,
+                                string | JSXElementConstructor<any>
+                              >
+                            | Iterable<ReactNode>
+                            | null
+                            | undefined
+                          >
+                        | null
+                        | undefined,
+                      index: Key | null | undefined
+                    ) => (
+                      <Badge
+                        key={index}
+                        variant="secondary"
+                        className="text-xs"
+                      >
+                        <Tag className="h-3 w-3 mr-1" />
+                        {tag}
+                      </Badge>
+                    )
+                  )}
                 </div>
               )}
 
@@ -239,10 +294,10 @@ export default async function BlogPostPage({ params }: BlogPageProps) {
                 <div className="flex items-center gap-2">
                   <Calendar className="h-4 w-4" />
                   <time dateTime={blog.publishDate}>
-                    {new Date(blog.publishDate).toLocaleDateString('id-ID', {
-                      year: 'numeric',
-                      month: 'long', 
-                      day: 'numeric'
+                    {new Date(blog.publishDate).toLocaleDateString("id-ID", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
                     })}
                   </time>
                 </div>
@@ -254,23 +309,36 @@ export default async function BlogPostPage({ params }: BlogPageProps) {
               </div>
             </header>
 
-            {/* Featured Image */}
+            {/* FIXED: Featured Image - Smaller Size with Border */}
             {blog.featuredImage?.url && (
               <div className="mb-12">
-                <div className="aspect-video relative bg-gray-100 rounded-xl overflow-hidden">
-                  <Image
-                    src={blog.featuredImage.url}
-                    alt={blog.featuredImage.title || blog.title}
-                    fill
-                    className="object-cover"
-                    priority
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
-                  />
+                <div className="max-w-2xl mx-auto">
+                  {" "}
+                  {/* FIXED: Smaller container */}
+                  <div className="relative bg-gray-100 rounded-xl overflow-hidden border border-gray-200 shadow-sm">
+                    {" "}
+                    {/* FIXED: Added border */}
+                    <Image
+                      src={blog.featuredImage.url}
+                      alt={blog.featuredImage.title || blog.title}
+                      width={800}
+                      height={500}
+                      className="w-full h-auto object-contain" /* FIXED: object-contain to show full image */
+                      priority
+                      sizes="(max-width: 768px) 100vw, 800px"
+                    />
+                  </div>
+                  {/* Image Caption */}
+                  {blog.featuredImage.title && (
+                    <p className="text-center text-sm text-gray-500 mt-3 italic">
+                      {blog.featuredImage.title}
+                    </p>
+                  )}
                 </div>
               </div>
             )}
 
-            {/* Article Content */}
+            {/* Article Content - USING YOUR ORIGINAL BlogContent COMPONENT */}
             <div className="prose prose-lg max-w-none">
               <BlogContent content={blog.content} />
             </div>
@@ -292,6 +360,20 @@ export default async function BlogPostPage({ params }: BlogPageProps) {
         </div>
       </article>
 
+      {/* Back to Blog */}
+      <section className="py-8 bg-white border-t">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <Button variant="outline" asChild>
+              <Link href="/blog">
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Back to All Articles
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
       {/* Related Posts */}
       {relatedPosts.length > 0 && (
         <section className="py-16 bg-gray-50">
@@ -311,41 +393,29 @@ export default async function BlogPostPage({ params }: BlogPageProps) {
       )}
 
       {/* CTA Section */}
-      <section className="py-16 bg-teal-600 text-white">
+      <section className="py-16 bg-teal-600">
         <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl font-bold mb-4">
-              Need Technical Support?
-            </h2>
-            <p className="text-teal-100 mb-8 text-lg">
-              Our engineering team is ready to help with your automation challenges. 
-              Get professional consultation and support services.
+          <div className="max-w-3xl mx-auto text-center text-white">
+            <h2 className="text-3xl font-bold mb-4">Need Technical Support?</h2>
+            <p className="text-xl text-teal-100 mb-8">
+              Our engineering team provides direct technical consultation and
+              troubleshooting services for your automation projects.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="bg-white text-teal-600 hover:bg-gray-100" asChild>
-                <Link href="/contact">
-                  Contact Engineers
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Link>
-              </Button>
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-teal-600" asChild>
-                <Link href="/services">Our Services</Link>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Back to Blog */}
-      <section className="py-8 bg-white border-t">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <Button variant="outline" asChild>
-              <Link href="/blog">
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Back to All Articles
+              <Link
+                href="/contact"
+                className="inline-flex items-center justify-center px-6 py-3 bg-white text-teal-600 font-semibold rounded-lg hover:bg-teal-50 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
+              >
+                Contact Engineers
+                <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </Link>
-            </Button>
+              <Link
+                href="/services"
+                className="inline-flex items-center justify-center px-6 py-3 border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-teal-600 hover:scale-105 transition-all duration-300"
+              >
+                Technical Services
+              </Link>
+            </div>
           </div>
         </div>
       </section>
@@ -356,14 +426,14 @@ export default async function BlogPostPage({ params }: BlogPageProps) {
 // Helper function to calculate reading time
 function calculateReadingTime(content: any): number {
   if (!content) return 1;
-  
+
   // Simple word count estimation for rich text
   const wordCount = JSON.stringify(content).split(/\s+/).length;
   const wordsPerMinute = 200;
   return Math.max(1, Math.ceil(wordCount / wordsPerMinute));
 }
 
-// Component for rendering rich text content
+// Component for rendering rich text content - YOUR ORIGINAL WORKING VERSION
 function BlogContent({ content }: { content: any }) {
   if (!content) {
     return (
@@ -374,26 +444,26 @@ function BlogContent({ content }: { content: any }) {
     );
   }
 
-  // Simple rich text rendering - you can enhance this with a proper rich text renderer
+  // Simple rich text rendering - YOUR ORIGINAL VERSION
   return (
     <div className="space-y-4">
       {content.content?.map((node: any, index: number) => (
         <RenderNode key={index} node={node} />
       )) || (
         <p className="text-gray-600">
-          {typeof content === 'string' ? content : 'Content not available'}
+          {typeof content === "string" ? content : "Content not available"}
         </p>
       )}
     </div>
   );
 }
 
-// Simple rich text node renderer
+// Simple rich text node renderer - YOUR ORIGINAL WORKING VERSION
 function RenderNode({ node }: { node: any }) {
   if (!node) return null;
 
   switch (node.nodeType) {
-    case 'paragraph':
+    case "paragraph":
       return (
         <p className="mb-4">
           {node.content?.map((child: any, index: number) => (
@@ -401,8 +471,8 @@ function RenderNode({ node }: { node: any }) {
           ))}
         </p>
       );
-    
-    case 'heading-1':
+
+    case "heading-1":
       return (
         <h1 className="text-3xl font-bold mt-8 mb-4">
           {node.content?.map((child: any, index: number) => (
@@ -410,8 +480,8 @@ function RenderNode({ node }: { node: any }) {
           ))}
         </h1>
       );
-    
-    case 'heading-2':
+
+    case "heading-2":
       return (
         <h2 className="text-2xl font-bold mt-6 mb-3">
           {node.content?.map((child: any, index: number) => (
@@ -419,8 +489,8 @@ function RenderNode({ node }: { node: any }) {
           ))}
         </h2>
       );
-    
-    case 'heading-3':
+
+    case "heading-3":
       return (
         <h3 className="text-xl font-bold mt-4 mb-2">
           {node.content?.map((child: any, index: number) => (
@@ -428,8 +498,8 @@ function RenderNode({ node }: { node: any }) {
           ))}
         </h3>
       );
-    
-    case 'unordered-list':
+
+    case "unordered-list":
       return (
         <ul className="list-disc pl-6 mb-4">
           {node.content?.map((child: any, index: number) => (
@@ -437,8 +507,8 @@ function RenderNode({ node }: { node: any }) {
           ))}
         </ul>
       );
-    
-    case 'ordered-list':
+
+    case "ordered-list":
       return (
         <ol className="list-decimal pl-6 mb-4">
           {node.content?.map((child: any, index: number) => (
@@ -446,8 +516,8 @@ function RenderNode({ node }: { node: any }) {
           ))}
         </ol>
       );
-    
-    case 'list-item':
+
+    case "list-item":
       return (
         <li className="mb-1">
           {node.content?.map((child: any, index: number) => (
@@ -455,36 +525,44 @@ function RenderNode({ node }: { node: any }) {
           ))}
         </li>
       );
-    
-    case 'text':
-      let text = node.value || '';
-      
+
+    case "text":
+      let text = node.value || "";
+
       // Apply text formatting
       if (node.marks?.length > 0) {
         node.marks.forEach((mark: any) => {
           switch (mark.type) {
-            case 'bold':
+            case "bold":
               text = <strong key="bold">{text}</strong>;
               break;
-            case 'italic':
+            case "italic":
               text = <em key="italic">{text}</em>;
               break;
-            case 'code':
-              text = <code key="code" className="bg-gray-100 px-1 rounded">{text}</code>;
+            case "code":
+              text = (
+                <code key="code" className="bg-gray-100 px-1 rounded">
+                  {text}
+                </code>
+              );
               break;
           }
         });
       }
-      
+
       return text;
-    
+
     default:
       return null;
   }
 }
 
 // Related post card component
-function RelatedPostCard({ post }: { post: NonNullable<ReturnType<typeof extractBlogFields>> }) {
+function RelatedPostCard({
+  post,
+}: {
+  post: NonNullable<ReturnType<typeof extractBlogFields>>;
+}) {
   return (
     <Link
       href={`/blog/${post.slug}`}
@@ -514,7 +592,7 @@ function RelatedPostCard({ post }: { post: NonNullable<ReturnType<typeof extract
           <span>{post.author}</span>
           <span>•</span>
           <time dateTime={post.publishDate}>
-            {new Date(post.publishDate).toLocaleDateString('id-ID')}
+            {new Date(post.publishDate).toLocaleDateString("id-ID")}
           </time>
         </div>
       </div>
