@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // src/app/services/[slug]/page.tsx - FIXED FOR NEXT.JS 15 COMPATIBILITY
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -94,7 +95,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
       />
 
       <div className="min-h-screen mt-20">
-        <div className="container mx-auto px-4 py-4">
+        {/* <div className="container mx-auto px-4 py-4">
           <Breadcrumb
             items={[
               { name: "Home", url: "/" },
@@ -102,7 +103,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
               { name: service.name, url: `/services/${service.slug}` },
             ]}
           />
-        </div>
+        </div> */}
         <ServiceDetail service={service} />
       </div>
     </>

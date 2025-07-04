@@ -1,7 +1,17 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Service } from "@/types/service";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, Settings } from "lucide-react";
+import {
+  Calendar,
+  Clock,
+  Mail,
+  MessageSquare,
+  Phone,
+  Settings,
+  Shield,
+  Users,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { documentToReactComponents } from "@contentful/rich-text-react-renderer";
@@ -78,7 +88,7 @@ export default function ServiceDetail({ service }: ServiceDetailProps) {
           )}
 
           {/* CTA Button */}
-          <div className="pt-4">
+          {/* <div className="pt-4">
             <Button
               size="lg"
               className="w-full lg:w-auto bg-teal-600 hover:bg-teal-700 text-white px-8 py-3"
@@ -86,7 +96,7 @@ export default function ServiceDetail({ service }: ServiceDetailProps) {
               <Calendar className="w-4 h-4 mr-2" />
               Schedule Consultation
             </Button>
-          </div>
+          </div> */}
         </div>
       </div>
 
@@ -121,7 +131,7 @@ export default function ServiceDetail({ service }: ServiceDetailProps) {
           </div>
         </div>
 
-        {/* Sidebar */}
+        {/* Enhanced Sidebar */}
         <div className="lg:col-span-1">
           <div className="bg-gray-50 border rounded-lg p-6 sticky top-8">
             <h3 className="text-lg font-semibold mb-4 text-gray-900">
@@ -141,13 +151,112 @@ export default function ServiceDetail({ service }: ServiceDetailProps) {
                 <span>Comprehensive support included</span>
               </div>
 
-              <div className="pt-4 border-t">
-                <Button className="w-full bg-teal-600 hover:bg-teal-700 text-white">
+              {/* Functional Buttons Section */}
+              <div className="pt-4 border-t space-y-3">
+                {/* WhatsApp Button - Contact Our Team */}
+                <a
+                  href="https://wa.me/6285210067755?text=Halo MKI, saya membutuhkan konsultasi untuk layanan automation. Mohon informasi lebih lanjut."
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full bg-teal-600 hover:bg-teal-700 text-white px-4 py-3 rounded-lg transition-colors font-medium flex items-center justify-center gap-2 group"
+                >
+                  <MessageSquare className="w-4 h-4 group-hover:scale-110 transition-transform" />
                   Contact Our Team
-                </Button>
-                <p className="text-xs text-gray-500 mt-2 text-center">
+                </a>
+
+                {/* Contact Page Button - Schedule Consultation */}
+                <Link
+                  href="/contact"
+                  className="w-full bg-white border-2 border-teal-600 text-teal-600 hover:bg-teal-50 px-4 py-3 rounded-lg transition-colors font-medium flex items-center justify-center gap-2 group"
+                >
+                  <Calendar className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                  Schedule Consultation
+                </Link>
+
+                {/* <p className="text-xs text-gray-500 text-center">
                   Free consultation available
-                </p>
+                </p> */}
+              </div>
+
+              {/* Contact Information Section */}
+              <div className="pt-4 border-t space-y-3">
+                <h4 className="font-medium text-gray-900 text-sm mb-3">
+                  Direct Contact Information
+                </h4>
+
+                {/* Phone */}
+                <div className="flex items-center gap-3 text-sm">
+                  <div className="w-8 h-8 bg-green-50 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Phone className="w-4 h-4 text-green-600" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs text-gray-500 uppercase tracking-wide">
+                      Phone
+                    </p>
+                    <a
+                      href="tel:+6285210067755"
+                      className="text-sm font-medium text-gray-900 hover:text-teal-600 transition-colors"
+                    >
+                      +62 852-1006-7755
+                    </a>
+                  </div>
+                </div>
+
+                {/* Email */}
+                <div className="flex items-center gap-3 text-sm">
+                  <div className="w-8 h-8 bg-blue-50 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Mail className="w-4 h-4 text-blue-600" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs text-gray-500 uppercase tracking-wide">
+                      Email
+                    </p>
+                    <a
+                      href="mailto:iqbalya25@gmail.com"
+                      className="text-sm font-medium text-gray-900 hover:text-teal-600 transition-colors break-all"
+                    >
+                      iqbalya25@gmail.com
+                    </a>
+                  </div>
+                </div>
+
+                {/* WhatsApp */}
+                <div className="flex items-center gap-3 text-sm">
+                  <div className="w-8 h-8 bg-green-50 rounded-full flex items-center justify-center flex-shrink-0">
+                    <MessageSquare className="w-4 h-4 text-green-600" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs text-gray-500 uppercase tracking-wide">
+                      WhatsApp
+                    </p>
+                    <a
+                      href="https://wa.me/6285210067755"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm font-medium text-gray-900 hover:text-teal-600 transition-colors"
+                    >
+                      Quick Response
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              {/* Trust Indicators */}
+              <div className="pt-4 border-t">
+                <div className="grid grid-cols-1 gap-2 text-xs text-gray-600">
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-3 h-3 text-teal-600" />
+                    <span>Response within 2 hours</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Shield className="w-3 h-3 text-teal-600" />
+                    <span>8+ Years Experience</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Users className="w-3 h-3 text-teal-600" />
+                    <span>Certified Solutions</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
