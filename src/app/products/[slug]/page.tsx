@@ -420,153 +420,154 @@ export default async function ProductPage({ params }: ProductPageProps) {
               <RelatedProducts products={filteredRelated} />
             </div>
           )}
-
-          <section className="py-16 bg-gradient-to-br from-teal-600 to-teal-700 relative overflow-hidden">
-            {/* Background Pattern */}
-            <div className="absolute inset-0 opacity-10">
-              <div
-                className="absolute inset-0"
-                style={{
-                  backgroundImage: `radial-gradient(circle at 20% 50%, white 1px, transparent 1px),
-                             radial-gradient(circle at 80% 80%, white 1px, transparent 1px)`,
-                  backgroundSize: "50px 50px",
-                }}
-              />
-            </div>
-
-            <div className="px-4 relative z-10">
-              <div className="max-w-4xl mx-auto text-center">
-                <h2 className="text-3xl font-bold text-white mb-4">
-                  Looking for Complete Automation Solutions?
-                </h2>
-                <p className="text-lg text-teal-100 mb-8">
-                  Our engineering team can help you design complete automation
-                  systems with compatible components. Get free consultation for
-                  your project requirements.
-                </p>
-
-                {/* CTA Buttons */}
-                <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-                  {/* Primary Button - Free System Design */}
-                  <Link
-                    href="/contact"
-                    className="group relative inline-flex items-center justify-center px-8 py-3 bg-white text-teal-600 font-semibold rounded-lg hover:bg-gray-50 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-                  >
-                    <Settings className="h-5 w-5 mr-2" />
-                    <span>Free System Design Consultation</span>
-                    <ArrowRight className="h-5 w-5 ml-2 transition-transform duration-300 group-hover:translate-x-2" />
-                    {/* Shine effect on hover */}
-                    <div className="absolute inset-0 rounded-lg overflow-hidden">
-                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
-                    </div>
-                  </Link>
-
-                  {/* Secondary Button - Request Quote */}
-                  <Link
-                    href="/quote"
-                    className="group relative inline-flex items-center justify-center px-8 py-3 bg-transparent text-white font-semibold rounded-lg border-2 border-white hover:bg-white hover:text-teal-600 transition-all duration-300 transform hover:-translate-y-0.5"
-                  >
-                    <FileText className="h-5 w-5 mr-2" />
-                    <span>Request Custom Quote</span>
-                    <ArrowRight className="h-5 w-5 ml-2 transition-transform duration-300 group-hover:translate-x-2" />
-                  </Link>
-                </div>
-
-                {/* Contact Information Card */}
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 max-w-3xl mx-auto">
-                  <h3 className="text-white font-semibold mb-6 text-lg">
-                    Direct Contact Information
-                  </h3>
-
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {/* Phone Contact */}
-                    <a
-                      href={`tel:${SITE_CONFIG.company.phone}`}
-                      className="group flex items-center gap-3 p-4 rounded-lg hover:bg-white/10 transition-all duration-300 transform hover:scale-105"
-                    >
-                      <div className="flex-shrink-0">
-                        <Phone className="h-6 w-6 text-teal-200 group-hover:rotate-12 transition-transform duration-300" />
-                      </div>
-                      <div className="text-left min-w-0">
-                        <p className="text-xs text-teal-200 uppercase tracking-wide mb-1">
-                          Call Direct
-                        </p>
-                        <p className="font-semibold text-white text-sm group-hover:text-teal-100 transition-colors">
-                          {SITE_CONFIG.company.phone}
-                        </p>
-                      </div>
-                    </a>
-
-                    {/* Email Contact */}
-                    <a
-                      href={`mailto:${SITE_CONFIG.company.email}`}
-                      className="group flex items-center gap-3 p-4 rounded-lg hover:bg-white/10 transition-all duration-300 transform hover:scale-105"
-                    >
-                      <div className="flex-shrink-0">
-                        <Mail className="h-6 w-6 text-teal-200 group-hover:rotate-12 transition-transform duration-300" />
-                      </div>
-                      <div className="text-left min-w-0">
-                        <p className="text-xs text-teal-200 uppercase tracking-wide mb-1">
-                          Email Us
-                        </p>
-                        <p className="font-semibold text-white text-sm group-hover:text-teal-100 transition-colors truncate">
-                          {SITE_CONFIG.company.email}
-                        </p>
-                      </div>
-                    </a>
-
-                    {/* WhatsApp Contact */}
-                    <a
-                      href="https://wa.me/6285210067755?text=Halo MKI, saya membutuhkan technical support untuk automation"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group flex items-center gap-3 p-4 rounded-lg hover:bg-white/10 transition-all duration-300 transform hover:scale-105"
-                    >
-                      <div className="flex-shrink-0">
-                        <MessageSquare className="h-6 w-6 text-teal-200 group-hover:rotate-12 transition-transform duration-300" />
-                      </div>
-                      <div className="text-left min-w-0">
-                        <p className="text-xs text-teal-200 uppercase tracking-wide mb-1">
-                          WhatsApp
-                        </p>
-                        <p className="font-semibold text-white text-sm group-hover:text-teal-100 transition-colors">
-                          Quick Response
-                        </p>
-                      </div>
-                    </a>
-                  </div>
-
-                  {/* Additional Info */}
-                  <div className="mt-6 pt-6 border-t border-white/20">
-                    <div className="flex flex-col sm:flex-row items-center justify-center gap-6 text-sm text-teal-100">
-                      <div className="flex items-center gap-2">
-                        <Clock className="h-4 w-4" />
-                        <span>Response within 2 hours</span>
-                      </div>
-                      <div className="hidden sm:block w-1 h-1 bg-teal-200 rounded-full"></div>
-                      <div className="flex items-center gap-2">
-                        <Users className="h-4 w-4" />
-                        <span>8+ Years Experience</span>
-                      </div>
-                      <div className="hidden sm:block w-1 h-1 bg-teal-200 rounded-full"></div>
-                      <div className="flex items-center gap-2">
-                        <Shield className="h-4 w-4" />
-                        <span>Certified Solutions</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* WhatsApp Note */}
-                <p className="text-teal-100 text-sm mt-6 opacity-80">
-                  💡 For fastest response, use the floating WhatsApp button or
-                  call directly
-                </p>
-              </div>
-            </div>
-          </section>
         </div>
       </div>
+
+      {/*CTA Section*/}
+      <section className="py-16 bg-gradient-to-br from-teal-600 to-teal-700 relative overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage: `radial-gradient(circle at 20% 50%, white 1px, transparent 1px),
+                             radial-gradient(circle at 80% 80%, white 1px, transparent 1px)`,
+              backgroundSize: "50px 50px",
+            }}
+          />
+        </div>
+
+        <div className="px-4 relative z-10">
+          <div className="max-w-4xl mx-auto text-center">
+            <h2 className="text-3xl font-bold text-white mb-4">
+              Looking for Complete Automation Solutions?
+            </h2>
+            <p className="text-lg text-teal-100 mb-8">
+              Our engineering team can help you design complete automation
+              systems with compatible components. Get free consultation for your
+              project requirements.
+            </p>
+
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+              {/* Primary Button - Free System Design */}
+              <Link
+                href="/contact"
+                className="group relative inline-flex items-center justify-center px-8 py-3 bg-white text-teal-600 font-semibold rounded-lg hover:bg-gray-50 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              >
+                <Settings className="h-5 w-5 mr-2" />
+                <span>Free System Design Consultation</span>
+                <ArrowRight className="h-5 w-5 ml-2 transition-transform duration-300 group-hover:translate-x-2" />
+                {/* Shine effect on hover */}
+                <div className="absolute inset-0 rounded-lg overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+                </div>
+              </Link>
+
+              {/* Secondary Button - Request Quote */}
+              <Link
+                href="/quote"
+                className="group relative inline-flex items-center justify-center px-8 py-3 bg-transparent text-white font-semibold rounded-lg border-2 border-white hover:bg-white hover:text-teal-600 transition-all duration-300 transform hover:-translate-y-0.5"
+              >
+                <FileText className="h-5 w-5 mr-2" />
+                <span>Request Custom Quote</span>
+                <ArrowRight className="h-5 w-5 ml-2 transition-transform duration-300 group-hover:translate-x-2" />
+              </Link>
+            </div>
+
+            {/* Contact Information Card */}
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 max-w-3xl mx-auto">
+              <h3 className="text-white font-semibold mb-6 text-lg">
+                Direct Contact Information
+              </h3>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* Phone Contact */}
+                <a
+                  href={`tel:${SITE_CONFIG.company.phone}`}
+                  className="group flex items-center gap-3 p-4 rounded-lg hover:bg-white/10 transition-all duration-300 transform hover:scale-105"
+                >
+                  <div className="flex-shrink-0">
+                    <Phone className="h-6 w-6 text-teal-200 group-hover:rotate-12 transition-transform duration-300" />
+                  </div>
+                  <div className="text-left min-w-0">
+                    <p className="text-xs text-teal-200 uppercase tracking-wide mb-1">
+                      Call Direct
+                    </p>
+                    <p className="font-semibold text-white text-sm group-hover:text-teal-100 transition-colors">
+                      {SITE_CONFIG.company.phone}
+                    </p>
+                  </div>
+                </a>
+
+                {/* Email Contact */}
+                <a
+                  href={`mailto:${SITE_CONFIG.company.email}`}
+                  className="group flex items-center gap-3 p-4 rounded-lg hover:bg-white/10 transition-all duration-300 transform hover:scale-105"
+                >
+                  <div className="flex-shrink-0">
+                    <Mail className="h-6 w-6 text-teal-200 group-hover:rotate-12 transition-transform duration-300" />
+                  </div>
+                  <div className="text-left min-w-0">
+                    <p className="text-xs text-teal-200 uppercase tracking-wide mb-1">
+                      Email Us
+                    </p>
+                    <p className="font-semibold text-white text-sm group-hover:text-teal-100 transition-colors truncate">
+                      {SITE_CONFIG.company.email}
+                    </p>
+                  </div>
+                </a>
+
+                {/* WhatsApp Contact */}
+                <a
+                  href="https://wa.me/6285210067755?text=Halo MKI, saya membutuhkan technical support untuk automation"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex items-center gap-3 p-4 rounded-lg hover:bg-white/10 transition-all duration-300 transform hover:scale-105"
+                >
+                  <div className="flex-shrink-0">
+                    <MessageSquare className="h-6 w-6 text-teal-200 group-hover:rotate-12 transition-transform duration-300" />
+                  </div>
+                  <div className="text-left min-w-0">
+                    <p className="text-xs text-teal-200 uppercase tracking-wide mb-1">
+                      WhatsApp
+                    </p>
+                    <p className="font-semibold text-white text-sm group-hover:text-teal-100 transition-colors">
+                      Quick Response
+                    </p>
+                  </div>
+                </a>
+              </div>
+
+              {/* Additional Info */}
+              <div className="mt-6 pt-6 border-t border-white/20">
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-6 text-sm text-teal-100">
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-4 w-4" />
+                    <span>Response within 2 hours</span>
+                  </div>
+                  <div className="hidden sm:block w-1 h-1 bg-teal-200 rounded-full"></div>
+                  <div className="flex items-center gap-2">
+                    <Users className="h-4 w-4" />
+                    <span>8+ Years Experience</span>
+                  </div>
+                  <div className="hidden sm:block w-1 h-1 bg-teal-200 rounded-full"></div>
+                  <div className="flex items-center gap-2">
+                    <Shield className="h-4 w-4" />
+                    <span>Certified Solutions</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* WhatsApp Note */}
+            <p className="text-teal-100 text-sm mt-6 opacity-80">
+              💡 For fastest response, use the floating WhatsApp button or call
+              directly
+            </p>
+          </div>
+        </div>
+      </section>
     </>
   );
 }
