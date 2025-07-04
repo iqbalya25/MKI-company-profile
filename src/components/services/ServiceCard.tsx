@@ -11,7 +11,8 @@ interface ServiceCardProps {
 export default function ServiceCard({ service }: ServiceCardProps) {
   return (
     <Link href={`/services/${service.slug}`} className="group block">
-      <div className="border rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300 bg-white">
+      {/* Just add these 3 simple classes: h-full flex flex-col */}
+      <div className="border rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300 bg-white h-full flex flex-col">
         {service.image && (
           <div className="relative h-48 overflow-hidden">
             <Image
@@ -31,7 +32,9 @@ export default function ServiceCard({ service }: ServiceCardProps) {
             )}
           </div>
         )}
-        <div className="p-6">
+
+        {/* Add flex-1 to this div so it takes remaining space */}
+        <div className="p-6 flex-1">
           <h3 className="text-xl font-semibold mb-2 group-hover:text-teal-600 transition-colors">
             {service.name}
           </h3>
