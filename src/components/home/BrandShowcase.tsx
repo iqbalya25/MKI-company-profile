@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-// src/components/home/BrandShowcase.tsx
+/* eslint-disable react/no-unescaped-entities */
+// src/components/home/BrandShowcase.tsx - SIMPLIFIED VERSION
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
@@ -57,81 +58,38 @@ const BrandShowcase = () => {
   ];
 
   return (
-    <section className="mt-24 py-16 bg-white relative overflow-hidden">
-      {/* Subtle Background Pattern */}
-      <div className="absolute inset-0 opacity-[0.01]">
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: `
-              linear-gradient(90deg, #e5e7eb 1px, transparent 1px),
-              linear-gradient(180deg, #e5e7eb 1px, transparent 1px)
-            `,
-            backgroundSize: "100px 100px",
-          }}
-        />
-      </div>
-
-      {/* Top Gradient Line */}
-      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-teal-500 to-transparent opacity-20" />
-
-      <div className="container mx-auto px-4 relative z-10">
-        {/* Section Header - Enhanced */}
+    <section className="py-16 bg-gray-50">
+      <div className="container mx-auto px-4">
+        {/* Simple Section Header */}
         <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-3 mb-6">
-            <div className="h-px w-12 bg-gradient-to-r from-transparent to-teal-500" />
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900">
-              Products
-              <span className="text-teal-600"> Brand</span>
-            </h2>
-            <div className="h-px w-12 bg-gradient-to-l from-transparent to-teal-500" />
-          </div>
+          <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+            Products Brand
+          </h2>
         </div>
 
-        {/* Brands Container with Border */}
-        <div className="bg-white rounded-2xl border border-gray-100 p-8 shadow-sm">
-          {/* Inner Border Decoration */}
-          <div className="relative">
-            {/* Corner Accents */}
-            <div className="absolute -top-4 -left-4 w-8 h-8 border-t-2 border-l-2 border-teal-500 rounded-tl-lg" />
-            <div className="absolute -top-4 -right-4 w-8 h-8 border-t-2 border-r-2 border-teal-500 rounded-tr-lg" />
-            <div className="absolute -bottom-4 -left-4 w-8 h-8 border-b-2 border-l-2 border-teal-500 rounded-bl-lg" />
-            <div className="absolute -bottom-4 -right-4 w-8 h-8 border-b-2 border-r-2 border-teal-500 rounded-br-lg" />
-
-            {/* Brand Logos Grid - Enhanced */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 p-4">
-              {brands.map((brand, index) => (
-                <Link
-                  key={brand.slug}
-                  href={`/products?brand=${brand.slug}`}
-                  className="group relative"
-                >
-                  <div className="bg-white rounded-xl p-8 h-36 flex items-center justify-center transition-all duration-300 border border-gray-100 hover:border-teal-200 hover:shadow-xl hover:-translate-y-1 relative overflow-hidden">
-                    {/* Hover Background Effect */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-teal-50 to-blue-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-                    {/* Logo - Bigger and Colored */}
-                    <Image
-                      src={brand.logo}
-                      alt={brand.name}
-                      width={140}
-                      height={70}
-                      className="max-h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-110 relative z-10"
-                    />
-
-                    {/* Hover Tooltip */}
-                    <div className="absolute -bottom-10 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-3 py-1 rounded-md opacity-0 group-hover:opacity-100 group-hover:-bottom-8 transition-all duration-300 whitespace-nowrap pointer-events-none">
-                      {brand.description}
-                      <div className="absolute -top-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-gray-900 rotate-45" />
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </div>
+        {/* Simplified Brand Grid - Mobile Optimized */}
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-6 md:gap-8">
+          {brands.map((brand, index) => (
+            <Link
+              key={brand.slug}
+              href={`/products?brand=${brand.slug}`}
+              className="group"
+            >
+              <div className="bg-white rounded-xl p-6 md:p-8 h-32 md:h-36 flex items-center justify-center transition-all duration-300 border border-gray-100 hover:border-teal-200 hover:shadow-xl hover:scale-105 hover:-translate-y-1">
+                {/* Logo - Mobile Optimized Sizes */}
+                <Image
+                  src={brand.logo}
+                  alt={brand.name}
+                  width={160}
+                  height={80}
+                  className="max-h-12 md:max-h-16 w-auto object-contain transition-all duration-300 group-hover:scale-110 opacity-70 hover:opacity-100"
+                />
+              </div>
+            </Link>
+          ))}
         </div>
 
-        {/* Bottom CTA */}
+        {/* Bottom CTA - Simplified */}
         <div className="text-center mt-12">
           <p className="text-gray-600 mb-4">
             Looking for a specific brand or model?
@@ -145,9 +103,6 @@ const BrandShowcase = () => {
           </Link>
         </div>
       </div>
-
-      {/* Bottom Gradient Line */}
-      <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-20" />
     </section>
   );
 };
