@@ -45,12 +45,12 @@ const HeroSection = () => {
           </p>
 
           {/* CTA Buttons - Enhanced with Hover Animations */}
-          <div className="flex flex-col sm:flex-row gap-4 mb-8">
+          <div className="flex flex-col sm:flex-row gap-4 mb-8 w-full">
             {/* Primary Button - Get Quote Now with Shine Effect */}
-            <div className="relative group">
+            <div className="relative group w-full sm:w-auto">
               <Link
                 href="/quote"
-                className="group relative inline-flex items-center justify-center gap-2 bg-teal-600 hover:bg-teal-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 px-4 py-2 text-lg font-medium rounded-lg transform hover:-translate-y-0.5 overflow-hidden"
+                className="group relative flex items-center justify-center gap-2 bg-teal-600 hover:bg-teal-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 px-6 py-4 text-lg font-medium rounded-lg transform hover:-translate-y-0.5 overflow-hidden w-full sm:inline-flex sm:w-auto"
               >
                 <span className="relative z-10">Get Quote Now</span>
                 <ArrowRight className="h-5 w-5 relative z-10 transition-transform duration-300 group-hover:translate-x-2" />
@@ -61,10 +61,10 @@ const HeroSection = () => {
             </div>
 
             {/* Secondary Button - Browse Products with Enhanced Hover */}
-            <div className="relative group">
+            <div className="relative group w-full sm:w-auto">
               <Link
                 href="/products"
-                className="group relative inline-flex items-center justify-center gap-2 bg-white/10 backdrop-blur-sm border-2 border-white/30 text-white hover:bg-white/20 hover:border-white/50 transition-all duration-300 px-4 py-2 text-lg font-medium rounded-lg transform hover:-translate-y-0.5"
+                className="group relative flex items-center justify-center gap-2 bg-white/10 backdrop-blur-sm border-2 border-white/30 text-white hover:bg-white/20 hover:border-white/50 transition-all duration-300 px-6 py-4 text-lg font-medium rounded-lg transform hover:-translate-y-0.5 w-full sm:inline-flex sm:w-auto"
               >
                 <span>Browse Products</span>
                 <ArrowRight className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-2" />
