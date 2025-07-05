@@ -439,35 +439,6 @@ export default async function ProductsPage({
         </section>
       )}
 
-      {/* ✅ NO RESULTS STATE */}
-      {totalProducts === 0 && (
-        <section className="py-16">
-          <div className="container mx-auto px-4">
-            <div className="max-w-2xl mx-auto text-center">
-              <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <div className="text-4xl">🔍</div>
-              </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                No Products Found
-              </h2>
-              <p className="text-gray-600 mb-8">
-                We couldn't find any products matching your search criteria. Try
-                adjusting your filters or contact us for custom product
-                sourcing.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button asChild>
-                  <Link href="/products">View All Products</Link>
-                </Button>
-                <Button variant="outline" asChild>
-                  <Link href="/contact">Contact for Custom Sourcing</Link>
-                </Button>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-
       {/* ✅ SEO STRUCTURED DATA */}
       <script
         type="application/ld+json"

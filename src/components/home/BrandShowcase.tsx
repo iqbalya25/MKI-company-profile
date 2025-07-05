@@ -14,7 +14,7 @@ const BrandShowcase = () => {
     },
     {
       name: "Schneider",
-      logo: "/images/brands/schneider.jpg",
+      logo: "/images/brands/schneider.png",
       slug: "schneider",
       description: "Global automation leader",
     },
@@ -50,7 +50,7 @@ const BrandShowcase = () => {
     },
     {
       name: "Proface",
-      logo: "/images/brands/proface.jpg",
+      logo: "/images/brands/proface.png",
       slug: "proface",
       description: "HMI technology expert",
     },

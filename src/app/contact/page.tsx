@@ -250,10 +250,14 @@ export default function ContactPage() {
                 <div className="grid grid-cols-2 gap-3 text-sm text-gray-600">
                   <div>Jakarta</div>
                   <div>Bekasi</div>
+                  <div>Cikarang</div>
                   <div>Surabaya</div>
                   <div>Bandung</div>
                   <div>Tangerang</div>
                   <div>Karawang</div>
+                  <div>Bali</div>
+                  <div>Balikpapan</div>
+                  <div>Makassar</div>
                 </div>
                 <p className="text-xs text-gray-500 mt-3">
                   On-site services available. Remote support nationwide.
