@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react/no-unescaped-entities */
-// src/app/about/page.tsx - COMPLETE ABOUT PAGE
+// src/app/about/page.tsx - REVISED PROFESSIONAL ABOUT PAGE
 import { Metadata } from "next";
 import Link from "next/link";
 import {
@@ -12,33 +12,36 @@ import {
   Settings,
   Wrench,
   GraduationCap,
-  MapPin,
-  Phone,
-  Mail,
-  ArrowRight,
   Shield,
+  Building,
+  ArrowRight,
+  Lightbulb,
+  TrendingUp,
   MessageSquare,
+  Mail,
+  Phone,
+  MapPin,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SITE_CONFIG } from "@/lib/contants";
 
 export const metadata: Metadata = {
-  title: "About Mederi Karya Indonesia - 8+ Years Automation Expertise",
+  title: "About Mederi Karya Indonesia - Professional Automation Solutions",
   description:
-    "Professional automation supplier with 8+ years engineering experience. Technical support, parameter setting, commissioning services. Trusted partner for industrial automation Indonesia.",
+    "MKI delivers professional industrial automation solutions with engineering expertise. Trusted partner for PLC, HMI, VFD, and safety systems across Indonesia manufacturing industry.",
   keywords: [
     "about mederi karya indonesia",
     "automation company indonesia",
-    "engineering expertise automation",
-    "industrial automation supplier",
-    "plc programming services",
-    "technical support automation",
-    "bekasi automation company",
+    "professional automation supplier",
+    "industrial automation expertise",
+    "plc hmi supplier indonesia",
+    "automation technical support",
+    "manufacturing automation solutions",
   ],
   openGraph: {
-    title: "About Mederi Karya Indonesia - Automation Engineering Excellence",
+    title: "About Mederi Karya Indonesia - Professional Automation Excellence",
     description:
-      "8+ years of engineering expertise in industrial automation. Professional technical support and quality products.",
+      "Professional automation solutions with engineering expertise and comprehensive technical support for Indonesian manufacturing industry.",
     url: "/about",
     type: "website",
   },
@@ -46,56 +49,86 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   const achievements = [
-    { number: "8+", label: "Years Experience", icon: Clock },
+    { number: "2019", label: "Company Founded", icon: Building },
     { number: "500+", label: "Products Available", icon: Settings },
-    { number: "100+", label: "Happy Customers", icon: Users },
+    { number: "100+", label: "Satisfied Customers", icon: Users },
     { number: "24/7", label: "Technical Support", icon: Wrench },
   ];
 
   const services = [
     {
       icon: Settings,
-      title: "Parameter Setting",
+      title: "System Integration",
       description:
-        "Expert configuration of inverters, PLCs, and HMIs for optimal performance",
+        "Complete automation system design, configuration, and integration services",
     },
     {
       icon: Wrench,
-      title: "Commissioning",
-      description: "Complete system testing, startup, and validation services",
+      title: "Technical Support",
+      description:
+        "Expert troubleshooting, maintenance, and optimization services",
     },
     {
       icon: GraduationCap,
-      title: "Technical Training",
-      description: "Operator and maintenance training for your technical team",
+      title: "Engineering Consultation",
+      description:
+        "Professional advice for automation system design and improvements",
     },
     {
-      icon: CheckCircle,
+      icon: Shield,
       title: "Quality Assurance",
-      description: "Rigorous testing and documentation for all installations",
+      description:
+        "Rigorous testing and quality control for all products and services",
     },
   ];
 
-  const values = [
+  const coreValues = [
     {
+      icon: Target,
+      title: "Customer-Centric Solutions",
+      description:
+        "We prioritize understanding your specific automation needs and delivering tailored solutions that drive real business results.",
+    },
+    {
+      icon: Award,
       title: "Engineering Excellence",
       description:
-        "We believe in delivering solutions that exceed expectations through deep technical expertise and attention to detail.",
+        "Our team combines deep technical knowledge with practical experience to solve complex automation challenges effectively.",
     },
     {
-      title: "Customer Success",
+      icon: TrendingUp,
+      title: "Continuous Innovation",
       description:
-        "Your success is our priority. We provide comprehensive support to ensure your automation systems perform optimally.",
+        "We stay ahead of automation technology trends to provide cutting-edge solutions that future-proof your operations.",
     },
     {
-      title: "Continuous Learning",
-      description:
-        "We stay current with the latest automation technologies to provide you with cutting-edge solutions.",
-    },
-    {
+      icon: CheckCircle,
       title: "Reliable Partnership",
       description:
-        "Building long-term relationships through consistent quality, honest communication, and dependable service.",
+        "Building long-term relationships through consistent quality delivery, transparent communication, and dependable service.",
+    },
+  ];
+
+  const whyChooseUs = [
+    {
+      title: "Comprehensive Product Range",
+      description:
+        "From PLCs and HMIs to safety systems and power monitoring - we supply everything you need for complete automation projects.",
+    },
+    {
+      title: "Engineering Expertise",
+      description:
+        "Our technical team provides professional consultation, system design, and troubleshooting services backed by years of industry experience.",
+    },
+    {
+      title: "Competitive Pricing",
+      description:
+        "Direct supplier relationships and efficient operations allow us to offer competitive prices without compromising on quality.",
+    },
+    {
+      title: "Local Support",
+      description:
+        "Based in Indonesia with local technical support team, ensuring quick response times and understanding of local industry requirements.",
     },
   ];
 
@@ -126,10 +159,10 @@ export default function AboutPage() {
               <span className="block text-teal-200">Industrial Automation</span>
             </h1>
             <p className="text-xl text-teal-100 mb-10 leading-relaxed">
-              For over 8 years, Mederi Karya Indonesia has been providing
-              professional automation solutions with comprehensive technical
-              support. We combine quality products with expert engineering
-              services.
+              Mederi Karya Indonesia delivers comprehensive industrial
+              automation solutions combining quality products, engineering
+              expertise, and dedicated technical support to help manufacturing
+              companies achieve operational excellence.
             </p>
 
             {/* Enhanced CTA Buttons */}
@@ -159,27 +192,11 @@ export default function AboutPage() {
                 <ArrowRight className="h-5 w-5 ml-2 transition-transform duration-300 group-hover:translate-x-2" />
               </Link>
             </div>
-
-            {/* Trust Indicators */}
-            {/* <div className="flex flex-col sm:flex-row items-center justify-center gap-8 text-teal-100">
-              <div className="flex items-center gap-2">
-                <Clock className="h-5 w-5" />
-                <span className="text-sm">Response within 2 hours</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Users className="h-5 w-5" />
-                <span className="text-sm">8+ Years Experience</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Shield className="h-5 w-5" />
-                <span className="text-sm">Certified Solutions</span>
-              </div>
-            </div> */}
           </div>
         </div>
       </section>
 
-      {/* Achievement Stats */}
+      {/* Company Stats */}
       <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
@@ -203,81 +220,70 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Our Story */}
+      {/* Company Story */}
       <section className="py-20 bg-gray-50">
         <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
               <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                Our Story
+                Our Mission
               </h2>
-              <p className="text-lg text-gray-600">
-                Building automation excellence through engineering expertise
+              <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+                Empowering Indonesian manufacturing through professional
+                automation solutions
               </p>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-16">
               <div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-6">
-                  From Engineering Experience to Automation Excellence
-                </h3>
-                <div className="space-y-4 text-gray-600">
-                  <p>
-                    Mederi Karya Indonesia was founded with a simple vision: to
-                    provide industrial automation solutions that combine quality
-                    products with genuine engineering expertise. With over 8
-                    years of hands-on experience in the automation industry, we
-                    understand the challenges businesses face.
-                  </p>
-                  <p>
-                    Our founder's background includes 2 years at PT. Prestasi
-                    Jaya Maju, a successful automation parts company, where
-                    valuable insights were gained into customer needs and
-                    technical support requirements.
-                  </p>
-                  <p>
-                    Today, we serve manufacturing companies, pharmaceutical
-                    facilities, food processing plants, and automotive
-                    manufacturers across Indonesia, providing not just products,
-                    but complete technical solutions.
+                <div className="bg-gradient-to-br from-teal-600 to-teal-700 rounded-2xl p-8 text-white">
+                  <Lightbulb className="h-12 w-12 mb-6 text-teal-200" />
+                  <h3 className="text-2xl font-bold mb-4">
+                    Founded on Industry Insight
+                  </h3>
+                  <p className="text-teal-100 leading-relaxed">
+                    Mederi Karya Indonesia was established in 2019 with a clear
+                    vision: to bridge the gap between advanced automation
+                    technology and practical industrial applications. We
+                    recognized that Indonesian manufacturers needed more than
+                    just products - they needed a partner who understands both
+                    the technology and the local market.
                   </p>
                 </div>
               </div>
 
-              <div className="relative">
-                <div className="bg-white p-8 rounded-xl shadow-lg">
-                  <div className="grid grid-cols-2 gap-6">
-                    <div className="text-center">
-                      <Award className="h-12 w-12 text-teal-600 mx-auto mb-3" />
-                      <h4 className="font-semibold text-gray-900 mb-1">
-                        Certified
-                      </h4>
-                      <p className="text-sm text-gray-600">
-                        Engineering expertise
-                      </p>
-                    </div>
-                    <div className="text-center">
-                      <Target className="h-12 w-12 text-blue-600 mx-auto mb-3" />
-                      <h4 className="font-semibold text-gray-900 mb-1">
-                        Focused
-                      </h4>
-                      <p className="text-sm text-gray-600">Customer success</p>
-                    </div>
-                    <div className="text-center">
-                      <CheckCircle className="h-12 w-12 text-green-600 mx-auto mb-3" />
-                      <h4 className="font-semibold text-gray-900 mb-1">
-                        Reliable
-                      </h4>
-                      <p className="text-sm text-gray-600">Quality assurance</p>
-                    </div>
-                    <div className="text-center">
-                      <Users className="h-12 w-12 text-purple-600 mx-auto mb-3" />
-                      <h4 className="font-semibold text-gray-900 mb-1">
-                        Trusted
-                      </h4>
-                      <p className="text-sm text-gray-600">By 100+ companies</p>
-                    </div>
-                  </div>
+              <div className="space-y-6">
+                <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
+                  <h4 className="text-xl font-semibold text-gray-900 mb-3">
+                    Market Understanding
+                  </h4>
+                  <p className="text-gray-600">
+                    Our deep understanding of Indonesian manufacturing
+                    challenges allows us to recommend solutions that truly fit
+                    local operational requirements and constraints.
+                  </p>
+                </div>
+
+                <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
+                  <h4 className="text-xl font-semibold text-gray-900 mb-3">
+                    Technical Excellence
+                  </h4>
+                  <p className="text-gray-600">
+                    We combine product supply with genuine engineering
+                    expertise, ensuring our customers receive not just
+                    components, but complete technical solutions.
+                  </p>
+                </div>
+
+                <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
+                  <h4 className="text-xl font-semibold text-gray-900 mb-3">
+                    Long-term Partnership
+                  </h4>
+                  <p className="text-gray-600">
+                    Our goal is to build lasting relationships by consistently
+                    delivering value through quality products, expert support,
+                    and reliable service.
+                  </p>
                 </div>
               </div>
             </div>
@@ -285,68 +291,112 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Our Services */}
+      {/* Core Values */}
       <section className="py-20 bg-white">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              What Sets Us Apart
-            </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              More than just a supplier - we're your automation engineering
-              partner
-            </p>
-          </div>
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl font-bold text-gray-900 mb-4">
+                Our Core Values
+              </h2>
+              <p className="text-lg text-gray-600">
+                The principles that guide everything we do
+              </p>
+            </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {services.map((service, index) => {
-              const Icon = service.icon;
-              return (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {coreValues.map((value, index) => {
+                const Icon = value.icon;
+                return (
+                  <div key={index} className="bg-gray-50 rounded-xl p-8">
+                    <div className="flex items-start space-x-4">
+                      <div className="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <Icon className="h-6 w-6 text-teal-600" />
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                          {value.title}
+                        </h3>
+                        <p className="text-gray-600 leading-relaxed">
+                          {value.description}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Why Choose Us */}
+      <section className="py-20 bg-gradient-to-br from-gray-900 to-gray-800 text-white">
+        <div className="container mx-auto px-4">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl font-bold mb-4">Why Choose MKI?</h2>
+              <p className="text-xl text-gray-300">
+                What sets us apart in the automation industry
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {whyChooseUs.map((item, index) => (
                 <div
                   key={index}
-                  className="text-center p-6 bg-gray-50 rounded-xl hover:shadow-lg transition-shadow"
+                  className="bg-gray-800 rounded-xl p-8 border border-gray-700"
                 >
-                  <div className="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Icon className="h-8 w-8 text-teal-600" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                    {service.title}
+                  <h3 className="text-xl font-semibold mb-4 text-teal-400">
+                    {item.title}
                   </h3>
-                  <p className="text-gray-600 text-sm">{service.description}</p>
+                  <p className="text-gray-300 leading-relaxed">
+                    {item.description}
+                  </p>
                 </div>
-              );
-            })}
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Our Values */}
-      <section className="py-20 bg-gray-50">
+      {/* Services Overview */}
+      <section className="py-20 bg-white">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Our Values
-            </h2>
-            <p className="text-lg text-gray-600">
-              The principles that guide everything we do
-            </p>
-          </div>
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl font-bold text-gray-900 mb-4">
+                Our Services
+              </h2>
+              <p className="text-lg text-gray-600">
+                Comprehensive support for your automation needs
+              </p>
+            </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {values.map((value, index) => (
-              <div key={index} className="bg-white p-8 rounded-xl shadow-sm">
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                  {value.title}
-                </h3>
-                <p className="text-gray-600">{value.description}</p>
-              </div>
-            ))}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {services.map((service, index) => {
+                const Icon = service.icon;
+                return (
+                  <div key={index} className="text-center">
+                    <div className="w-16 h-16 bg-gradient-to-br from-teal-600 to-teal-700 rounded-xl flex items-center justify-center mx-auto mb-6">
+                      <Icon className="h-8 w-8 text-white" />
+                    </div>
+                    <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                      {service.title}
+                    </h3>
+                    <p className="text-gray-600 leading-relaxed">
+                      {service.description}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Contact Section */}
-      <section className="py-20 bg-teal-600 text-white relative overflow-hidden">
+      {/* Call to Action */}
+      <section className="bg-teal-600 text-white py-20 mt-20 relative overflow-hidden">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-10">
           <div
@@ -359,7 +409,7 @@ export default function AboutPage() {
           />
         </div>
 
-        {/* Decorative Elements */}
+        {/* Enhanced CTA Buttons */}
         <div className="absolute top-10 right-10 w-64 h-64 bg-teal-500 rounded-full blur-3xl opacity-20 animate-pulse" />
         <div className="absolute bottom-10 left-10 w-80 h-80 bg-teal-400 rounded-full blur-3xl opacity-20 animate-pulse" />
 
@@ -452,41 +502,6 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
-
-      {/* Schema Markup */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "AboutPage",
-            name: "About Mederi Karya Indonesia",
-            description:
-              "Professional automation supplier with 8+ years engineering experience",
-            url: "/about",
-            mainEntity: {
-              "@type": "Organization",
-              name: "Mederi Karya Indonesia",
-              foundingDate: "2016",
-              description:
-                "Industrial automation parts supplier with comprehensive technical support",
-              address: {
-                "@type": "PostalAddress",
-                addressLocality: "Bekasi",
-                addressRegion: "West Java",
-                addressCountry: "ID",
-              },
-              contactPoint: {
-                "@type": "ContactPoint",
-                telephone: SITE_CONFIG.company.phone,
-                contactType: "Customer Service",
-              },
-              areaServed: "Indonesia",
-              serviceArea: ["Jakarta", "Surabaya", "Bandung", "Tangerang"],
-            },
-          }),
-        }}
-      />
     </>
   );
 }
