@@ -337,21 +337,27 @@ export default function ProductCardServer({
             )}
           </div>
 
-          {/* Action Buttons */}
+          {/* Enhanced Action Buttons - Fixed Width */}
           <div className={productStyles.card.actions.container}>
-            <Button
-              size="sm"
-              className={productStyles.card.actions.primary}
-              asChild
+            {/* Primary Button - View Details */}
+            <Link
+              href={`/products/${safeSlug}`}
+              className="group relative inline-flex items-center justify-center px-2 py-2 bg-black text-white text-sm font-medium rounded-md hover:bg-teal-600 transition-all duration-300 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 flex-1"
             >
-              <Link href={`/products/${safeSlug}`}>View Details</Link>
-            </Button>
-            <Button size="sm" variant="outline" asChild>
-              <Link href={`/quote?product=${safeSlug}`}>
-                <ShoppingCart className="h-4 w-4 mr-1" />
-                Quote
-              </Link>
-            </Button>
+              <span>View Details</span>
+              <div className="absolute inset-0 rounded-md overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-500" />
+              </div>
+            </Link>
+
+            {/* Secondary Button - Quote */}
+            <Link
+              href={`/quote?product=${safeSlug}`}
+              className="group relative inline-flex items-center justify-center px-2 py-2 bg-transparent text-teal-600 text-sm font-medium rounded-md border border-gray-300 hover:border-teal-600 hover:bg-teal-50 transition-all duration-300 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 min-w-[80px]"
+            >
+              <ShoppingCart className="h-4 w-4 mr-1 transition-transform duration-300 group-hover:scale-110" />
+              <span>Quote</span>
+            </Link>
           </div>
         </div>
       </div>
