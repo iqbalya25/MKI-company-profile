@@ -1,10 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react/no-unescaped-entities */
-// src/components/home/CategoryShowcase.tsx
+// src/components/home/CategoryShowcase.tsx - REVISED WITH FIXED HEIGHTS
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, Cpu, Zap, Monitor, Shield, Gauge } from "lucide-react";
+import {
+  ArrowRight,
+  Cpu,
+  Zap,
+  Monitor,
+  Gauge,
+  Radar,
+  Power,
+  CircuitBoard,
+  Settings,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PRODUCT_CATEGORIES } from "@/lib/contants";
 
@@ -17,27 +27,33 @@ interface CategoryShowcaseProps {
 }
 
 const CategoryShowcase = ({ categories }: CategoryShowcaseProps) => {
-  // Category images mapping
+  // Category images mapping - UPDATED
   const categoryImages: Record<string, string> = {
     plc: "/images/plc3.jpeg",
     inverter: "/images/inverter2.jpeg",
     hmi: "/images/hmi2.jpeg",
-    "safety-relay": "/images/safetysensor.png",
     "power-meter": "/images/power-meter.jpg",
+    "power-supply": "/images/power-supply.jpg", // NEW
     servo: "/images/servo.jpg",
+    sensor: "/images/sensors.jpg", // NEW (note: singular in constants)
+    breaker: "/images/breaker.jpg", // NEW
+    accesories: "/images/accessories.jpg", // NEW
   };
 
-  // Category icons mapping
+  // Category icons mapping - UPDATED
   const categoryIcons: Record<string, any> = {
     plc: Cpu,
     inverter: Zap,
     hmi: Monitor,
-    "safety-relay": Shield,
     "power-meter": Gauge,
+    "power-supply": Power, // NEW
     servo: Zap,
+    sensor: Radar, // NEW
+    breaker: CircuitBoard, // NEW
+    accesories: Settings, // NEW
   };
 
-  // Top categories to highlight
+  // Top categories to highlight (first 4)
   const topCategories = PRODUCT_CATEGORIES.slice(0, 4).map((cat) => cat.slug);
 
   return (
@@ -66,12 +82,12 @@ const CategoryShowcase = ({ categories }: CategoryShowcaseProps) => {
           </h2>
           <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
             Complete range of automation parts with engineering support. PLC,
-            HMI, Inverter, Servo, Power Meter, Sensors , we have everything for
+            HMI, Inverter, Servo, Power Meter, Sensors, we have everything for
             your industrial needs.
           </p>
         </div>
 
-        {/* Main Categories Grid - Enhanced */}
+        {/* Main Categories Grid - FLEXIBLE HEIGHT WITH FIXED BUTTON */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
           {topCategories.map((categorySlug, index) => {
             const category = PRODUCT_CATEGORIES.find(
@@ -92,6 +108,7 @@ const CategoryShowcase = ({ categories }: CategoryShowcaseProps) => {
                 key={category.slug}
                 href={`/products?category=${category.slug}`}
                 className="group relative bg-white rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 border border-gray-100"
+                style={{ display: "grid", gridTemplateRows: "auto 1fr auto" }}
               >
                 {/* Card Badge */}
                 <div className="absolute top-4 left-4 z-20">
@@ -103,8 +120,8 @@ const CategoryShowcase = ({ categories }: CategoryShowcaseProps) => {
                   </div>
                 </div>
 
-                {/* Image Section - Enhanced with overlay */}
-                <div className="h-52 relative overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
+                {/* Image Section - Fixed Height */}
+                <div className="h-44 relative overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
                   <Image
                     src={categoryImage}
                     alt={category.name}
@@ -116,19 +133,21 @@ const CategoryShowcase = ({ categories }: CategoryShowcaseProps) => {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-300" />
                 </div>
 
-                {/* Content Section - Enhanced */}
-                <div className="p-6 relative">
-                  {/* Category Name */}
-                  <h3 className="font-bold text-xl text-gray-900 mb-3 group-hover:text-teal-600 transition-colors duration-300">
+                {/* Content Section - Flexible Space */}
+                <div className="p-6 relative min-h-0">
+                  {/* Category Name - Truncated */}
+                  <h3 className="font-bold text-xl text-gray-900 mb-3 group-hover:text-teal-600 transition-colors duration-300 line-clamp-2">
                     {category.name.split("(")[0].trim()}
                   </h3>
 
-                  {/* Short Description */}
-                  <p className="text-sm text-gray-600 mb-4 line-clamp-2 leading-relaxed">
+                  {/* Short Description - Truncated with Ellipsis */}
+                  <p className="text-sm text-gray-600 mb-4 leading-relaxed line-clamp-3">
                     {category.description}
                   </p>
+                </div>
 
-                  {/* CTA with Arrow */}
+                {/* CTA with Arrow - Always at Bottom */}
+                <div className="p-6 pt-0 relative">
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium text-teal-600 group-hover:text-teal-700">
                       Browse Products
@@ -146,7 +165,7 @@ const CategoryShowcase = ({ categories }: CategoryShowcaseProps) => {
           })}
         </div>
 
-        {/* Secondary Categories - Redesigned */}
+        {/* Secondary Categories - FLEXIBLE HEIGHT WITH BETTER LAYOUT */}
         {PRODUCT_CATEGORIES.length > 4 && (
           <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
             <h3 className="font-semibold text-gray-900 mb-6 text-center text-lg">
@@ -166,13 +185,26 @@ const CategoryShowcase = ({ categories }: CategoryShowcaseProps) => {
                     href={`/products?category=${category.slug}`}
                     className="group"
                   >
-                    <div className="bg-gray-50 rounded-xl p-5 hover:bg-white hover:shadow-lg transition-all duration-300 text-center border border-transparent hover:border-gray-200">
-                      <div className="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center mx-auto mb-3 group-hover:bg-teal-600 transition-colors">
+                    {/* Flexible Height Secondary Cards with Better Layout */}
+                    <div
+                      className="bg-gray-50 rounded-xl p-4 hover:bg-white hover:shadow-lg transition-all duration-300 text-center border border-transparent hover:border-gray-200 min-h-[120px]"
+                      style={{
+                        display: "grid",
+                        gridTemplateRows: "auto 1fr auto",
+                        gap: "8px",
+                      }}
+                    >
+                      {/* Icon - Fixed */}
+                      <div className="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center mx-auto group-hover:bg-teal-600 transition-colors">
                         <CategoryIcon className="h-6 w-6 text-teal-600 group-hover:text-white transition-colors" />
                       </div>
-                      <div className="text-sm font-medium text-gray-900 group-hover:text-teal-600 transition-colors mb-1">
+
+                      {/* Title - Flexible with Truncation */}
+                      <div className="text-sm font-medium text-gray-900 group-hover:text-teal-600 transition-colors line-clamp-2 text-center flex items-center justify-center">
                         {category.name.split("(")[0].trim()}
                       </div>
+
+                      {/* Count - Fixed at Bottom */}
                       <div className="text-xs text-gray-500">
                         {productCount > 0
                           ? `${productCount} items`
