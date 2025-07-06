@@ -33,6 +33,10 @@ import Breadcrumb from "@/components/common/Breadcrumb";
 import RelatedProducts from "@/app/products/RelatedProducts";
 import { documentToReactComponents } from "@contentful/rich-text-react-renderer";
 
+export const dynamic = "force-dynamic"; // For immediate Contentful updates
+// OR
+// export const revalidate = 3600; // For 1-hour cache with automatic updates
+
 interface ProductPageProps {
   params: Promise<{
     slug: string;
