@@ -65,9 +65,9 @@ const CategoryShowcase = ({ categories }: CategoryShowcaseProps) => {
             <span className="block text-teal-600">Solutions</span>
           </h2>
           <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            Complete range of automation parts with engineering support. From
-            PLCs to Safety Systems, we have everything for your industrial
-            needs.
+            Complete range of automation parts with engineering support. PLC,
+            HMI, Inverter, Servo, Power Meter, Sensors , we have everything for
+            your industrial needs.
           </p>
         </div>
 
@@ -150,7 +150,7 @@ const CategoryShowcase = ({ categories }: CategoryShowcaseProps) => {
         {PRODUCT_CATEGORIES.length > 4 && (
           <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
             <h3 className="font-semibold text-gray-900 mb-6 text-center text-lg">
-              More Specialized Categories
+              More Categories
             </h3>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
               {PRODUCT_CATEGORIES.slice(4).map((category) => {
@@ -193,7 +193,7 @@ const CategoryShowcase = ({ categories }: CategoryShowcaseProps) => {
             part you need.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" variant="outline" asChild className="group" >
+            <Button size="lg" variant="outline" asChild className="group">
               <Link href="/products">
                 Browse All Products
                 <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />

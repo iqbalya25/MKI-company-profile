@@ -44,7 +44,7 @@ export const PRODUCT_CATEGORIES = [
     slug: "hmi",
     name: "HMI (Human Machine Interface)",
     description:
-      "Touch panel operator dengan configuration dan troubleshooting support - Proface, Weintek, Delta",
+      "Touch panel operator dengan configuration dan troubleshooting support - Mitsubishi, Proface, Weintek, Omron",
     keywords: [
       "hmi proface",
       "touchscreen industrial",
@@ -63,15 +63,11 @@ export const PRODUCT_CATEGORIES = [
     ],
   },
   {
-    slug: "safety-relay",
-    name: "Safety Relay & Emergency Stop",
+    slug: "power-supply",
+    name: "Power Supply",
     description:
-      "Komponen keamanan industri dengan wiring consultation service - Pilz, Phoenix Contact, Sick",
-    keywords: [
-      "safety relay pilz",
-      "emergency stop relay",
-      "safety system indonesia",
-    ],
+      "Power supply unit untuk kebutuhan power supply industrial automation",
+    keywords: ["pwoer supply", "external power supply", "power supply plc"],
   },
   {
     slug: "servo",
@@ -79,6 +75,39 @@ export const PRODUCT_CATEGORIES = [
     description:
       "Pengontrol kecepatan motor presisi tinggi dengan parameter setting dan commissioning - Panasonic, Mitsubishi, Yaskawa",
     keywords: ["Servo Mitsubishi", "Servo Drive", "Servo Motor"],
+  },
+  {
+    slug: "sensor",
+    name: "Sensor",
+    description:
+      "Berbagai macam jenis sensor untuk kebutuhan industri proximity, safety sensor, vision sensor",
+    keywords: [
+      "Sensor",
+      "Proximity Sensor",
+      "Photoelectric Sensor",
+      "Vision Sensor",
+      "Safety Sensor",
+      "Encoder",
+    ],
+  },
+  {
+    slug: "breaker",
+    name: "Circuit Breaker",
+    description:
+      "Berbagai pengaman circuit breaker untuk safety industrial automation",
+    keywords: [
+      "Circuit Breaker",
+      "MCCB",
+      "Molded Case Circuit Breaker",
+      "Motor Starter",
+    ],
+  },
+  {
+    slug: "accesories",
+    name: "Accesories",
+    description:
+      "Accesories untuk komponen industrial automation push button, pilot lamp, relay",
+    keywords: ["Push Button", "Pilot Lamp", "Relay"],
   },
 ];
 
@@ -118,7 +147,7 @@ export const TARGET_KEYWORDS = {
   longTail: [
     "cara setting parameter inverter schneider",
     "troubleshooting plc communication error",
-    "supplier safety relay pilz indonesia",
+    "supplier power supply indonesia",
     "parameter setting plc mitsubishi fx5u",
     "hmi proface gp4000 configuration",
   ],
