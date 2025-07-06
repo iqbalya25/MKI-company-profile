@@ -56,11 +56,6 @@ export async function generateMetadata({
     };
   }
 
-  console.log("🐛 DEBUG - Product Slug:", slug);
-  console.log("🐛 DEBUG - SEO Title:", product.seoTitle);
-  console.log("🐛 DEBUG - SEO Description:", product.seoDescription);
-  console.log("🐛 DEBUG - Product Name:", product.name);
-
   const title = product.seoTitle;
   const description = product.seoDescription;
 
