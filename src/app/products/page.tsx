@@ -55,7 +55,7 @@ export async function generateMetadata({
 
   let title = "Industrial Automation Products + Technical Support | MKI";
   let description =
-    "Complete catalog automation parts: PLC, HMI, Inverter, Safety Relay dengan technical support. Parameter setting, commissioning, engineering consultation.";
+    "Complete catalog automation parts: PLC, HMI, Inverter, Servo , Power Meter & Sensors dengan technical support. Programming, Parameter setting, commissioning, & engineering consultation.";
 
   if (category) {
     const categoryData = PRODUCT_CATEGORIES.find(
@@ -71,12 +71,12 @@ export async function generateMetadata({
     title = `${
       brand.charAt(0).toUpperCase() + brand.slice(1)
     } Products + Technical Support | MKI`;
-    description = `${brand} automation products dengan parameter setting dan commissioning service. Engineering consultation available.`;
+    description = `${brand} automation products dengan programming, parameter setting dan commissioning service. Engineering consultation available.`;
   }
 
   if (search) {
     title = `Search: "${search}" - Automation Parts + Technical Support | MKI`;
-    description = `Search results for "${search}" - automation parts dengan engineering services. Parameter setting, troubleshooting, consultation.`;
+    description = `Search results for "${search}" - automation parts dengan engineering services. programming, Parameter setting, troubleshooting, consultation.`;
   }
 
   return {
@@ -254,7 +254,7 @@ export default async function ProductsPage({
                   "Quality automation parts with comprehensive engineering support."
                 : search
                   ? `Search results for "${search}" with technical support included`
-                  : "Complete range of automation parts with comprehensive engineering support. Parameter setting, commissioning, troubleshooting services available."}
+                  : "Complete range of automation parts with comprehensive engineering support. Programming, Parameter setting, commissioning, troubleshooting services available."}
             </p>
           </div>
         </div>
