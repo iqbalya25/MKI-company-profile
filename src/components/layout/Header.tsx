@@ -1,4 +1,5 @@
-// src/components/layout/Header.tsx - ENHANCED WITH MOBILE DRAWER
+/* eslint-disable @typescript-eslint/no-unused-vars */
+// src/components/layout/Header.tsx - LOGO SIZE FIXED
 "use client";
 
 import { useState } from "react";
@@ -45,13 +46,13 @@ const Header = () => {
       {/* Main Header */}
       <div className="container mx-auto px-4">
         <div className="flex h-16 lg:h-20 items-center justify-between">
-          {/* Logo */}
+          {/* Logo - FIXED SIZE */}
           <Link
             href="/"
             className="flex items-center gap-3 group focus:outline-none"
             tabIndex={-1}
           >
-            <div className="relative w-52 h-52 lg:w-64 lg:h-64 pointer-events-none select-none">
+            <div className="relative w-40 h-9 lg:w-56 lg:h-13 pointer-events-none select-none">
               <Image
                 src="/images/mkilogo.png"
                 alt="MKI Logo"
@@ -111,7 +112,7 @@ const Header = () => {
 
           {/* Desktop Actions */}
           <div className="hidden lg:flex items-center gap-3">
-            <Button
+            {/* <Button
               variant="ghost"
               size="sm"
               asChild
@@ -121,7 +122,7 @@ const Header = () => {
                 <Search className="h-4 w-4 mr-2" />
                 Search
               </Link>
-            </Button>
+            </Button> */}
             <Button
               size="sm"
               asChild
@@ -228,14 +229,14 @@ const Header = () => {
                   {/* Mobile Actions */}
                   <div className="p-6 border-t bg-slate-50">
                     <div className="space-y-3">
-                      <SheetClose asChild>
+                      {/* <SheetClose asChild>
                         <Button variant="outline" className="w-full" asChild>
                           <Link href="/products">
                             <Search className="h-4 w-4 mr-2" />
                             Search Products
                           </Link>
                         </Button>
-                      </SheetClose>
+                      </SheetClose> */}
                       <SheetClose asChild>
                         <Button
                           className="w-full bg-gradient-to-r from-teal-600 to-teal-500 hover:from-teal-700 hover:to-teal-600 text-white"
@@ -248,37 +249,6 @@ const Header = () => {
                         </Button>
                       </SheetClose>
                     </div>
-
-                    {/* Contact Info */}
-                    {/* <div className="mt-6 space-y-3 pt-6 border-t border-slate-200">
-                      <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">
-                        Quick Contact
-                      </h3>
-                      <a
-                        href={`tel:${SITE_CONFIG.company.phone}`}
-                        className="flex items-center gap-3 text-sm text-slate-600 hover:text-teal-600 transition-colors"
-                      >
-                        <div className="w-8 h-8 bg-teal-100 rounded-lg flex items-center justify-center">
-                          <Phone className="h-4 w-4 text-teal-600" />
-                        </div>
-                        <div>
-                          <p className="text-xs text-slate-500">Call us</p>
-                          <p className="font-medium">{SITE_CONFIG.company.phone}</p>
-                        </div>
-                      </a>
-                      <a
-                        href={`mailto:${SITE_CONFIG.company.email}`}
-                        className="flex items-center gap-3 text-sm text-slate-600 hover:text-teal-600 transition-colors"
-                      >
-                        <div className="w-8 h-8 bg-teal-100 rounded-lg flex items-center justify-center">
-                          <Mail className="h-4 w-4 text-teal-600" />
-                        </div>
-                        <div>
-                          <p className="text-xs text-slate-500">Email us</p>
-                          <p className="font-medium text-xs">{SITE_CONFIG.company.email}</p>
-                        </div>
-                      </a>
-                    </div> */}
                   </div>
                 </div>
               </SheetContent>

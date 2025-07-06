@@ -35,7 +35,7 @@ interface QuotePageProps {
 
 export default async function QuotePage({ searchParams }: QuotePageProps) {
   const params = await searchParams;
-  
+
   return (
     <>
       {/* Hero Section */}
@@ -237,7 +237,7 @@ export default async function QuotePage({ searchParams }: QuotePageProps) {
               </div>
 
               {/* Testimonial */}
-              <div className="bg-white rounded-xl shadow-lg p-6">
+              {/* <div className="bg-white rounded-xl shadow-lg p-6">
                 <div className="text-yellow-400 text-lg mb-2">★★★★★</div>
                 <blockquote className="text-gray-600 text-sm mb-3">
                   "Fast quote response and excellent technical support. The
@@ -247,7 +247,7 @@ export default async function QuotePage({ searchParams }: QuotePageProps) {
                 <cite className="text-xs text-gray-500">
                   - Manufacturing Manager, PT. Example Company
                 </cite>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

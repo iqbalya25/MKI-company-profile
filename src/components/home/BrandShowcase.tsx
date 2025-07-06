@@ -82,7 +82,7 @@ const BrandShowcase = () => {
                   alt={brand.name}
                   width={160}
                   height={80}
-                  className="max-h-12 md:max-h-16 w-auto object-contain transition-all duration-300 group-hover:scale-110 opacity-70 hover:opacity-100"
+                  className="max-h-12 md:max-h-16 w-auto object-contain transition-all duration-300 group-hover:scale-110 "
                 />
               </div>
             </Link>

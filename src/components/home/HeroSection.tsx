@@ -39,7 +39,7 @@ const HeroSection = () => {
             Premium automation parts with comprehensive engineering support.
             <span className="font-semibold text-white">
               {" "}
-              PLC, HMI, Inverter, Safety Systems
+              PLC, HMI, Inverter, Sensor & Power Meter
             </span>{" "}
             - all backed by our expert technical team.
           </p>
