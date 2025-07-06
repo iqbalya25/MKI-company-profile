@@ -165,7 +165,7 @@ export default function AboutPage() {
       icon: CheckCircle,
       title: "Quality Assurance",
       description:
-        "Testing ketat dan dokumentasi lengkap untuk semua instalasi automation yang kami tangani",
+        "Testing dan dokumentasi lengkap untuk semua instalasi automation yang kami tangani",
       features: [
         "Quality Testing",
         "Complete Documentation",

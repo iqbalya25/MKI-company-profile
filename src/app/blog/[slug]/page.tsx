@@ -92,11 +92,8 @@ export async function generateMetadata({
     };
   }
 
-  const title = blog.seoTitle || `${blog.title} | MKI Technical Blog`;
-  const description =
-    blog.seoDescription ||
-    blog.excerpt ||
-    `${blog.title} - Technical insights and automation guides from Mederi Karya Indonesia engineering team.`;
+  const title = blog.seoTitle;
+  const description = blog.seoDescription;
 
   return {
     title,

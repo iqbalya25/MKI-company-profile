@@ -52,12 +52,8 @@ export async function generateMetadata({
     };
   }
 
-  const title =
-    product.seoTitle ||
-    `${product.name} + Technical Support | Mederi Karya Indonesia`;
-  const description =
-    product.seoDescription ||
-    `${product.name} - ${product.brand} ${product.model}. Professional automation product with technical support. Parameter setting, commissioning service available.`;
+  const title = product.seoTitle;
+  const description = product.seoDescription;
 
   return {
     title,

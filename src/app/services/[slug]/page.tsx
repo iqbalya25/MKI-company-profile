@@ -33,12 +33,8 @@ export async function generateMetadata({
     };
   }
 
-  const title =
-    service.seoTitle ||
-    `${service.name} | Professional Automation Service | MKI`;
-  const description =
-    service.seoDescription ||
-    `${service.shortDescription} Expert engineering support with professional consultation. Contact Mederi Karya Indonesia.`;
+  const title = service.seoTitle;
+  const description = service.seoDescription;
 
   return {
     title,

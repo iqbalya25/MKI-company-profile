@@ -9,11 +9,9 @@ import { SITE_CONFIG } from "@/lib/contants";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: {
-    default: SITE_CONFIG.name,
-    template: `%s | ${SITE_CONFIG.name}`,
-  },
+  title: SITE_CONFIG.name,
   description: SITE_CONFIG.description,
+  
   keywords: [
     // Primary Indonesian keywords
     "supplier automation parts indonesia",
