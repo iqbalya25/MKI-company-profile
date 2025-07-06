@@ -36,7 +36,7 @@ const HeroSection = () => {
           </h1>
 
           {/* Description - REVISED */}
-          <p className="text-sm lg:text-xl text-gray-200 mb-16 leading-relaxed max-w-2xl">
+          <p className="text-sm lg:text-xl text-gray-200 mb-16 leading-relaxed max-w-2xl text-justify">
             Complete automation solutions from product supply to technical
             implementation.
             <span className="font-semibold text-white">
