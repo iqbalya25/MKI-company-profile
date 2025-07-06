@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-// src/components/home/HeroSection.tsx - IMPROVED VERSION
+// src/components/home/HeroSection.tsx - REVISED BASED ON PROVIDED CODE
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
@@ -27,21 +27,24 @@ const HeroSection = () => {
       {/* Content */}
       <div className="container mx-auto px-4 relative z-10 pt-24 pb-16">
         <div className="max-w-3xl">
-          {/* Main Headline */}
-          <h1 className="text-5xl lg:text-7xl font-bold text-white mb-6 leading-tight">
-            Industrial
+          {/* Main Headline - REVISED */}
+          <h1 className="text-3xl lg:text-5xl font-bold text-white mt-16 mb-10 leading-tight">
+            One Stop Solution for
             <span className="block bg-gradient-to-r from-teal-400 via-cyan-500 to-blue-600 bg-clip-text text-transparent">
-              Automation Excellence
+              Industrial Automation
             </span>
           </h1>
 
-          <p className="text-xl lg:text-2xl text-gray-200 mb-8 leading-relaxed max-w-2xl">
-            Premium automation parts with comprehensive engineering support.
+          {/* Description - REVISED */}
+          <p className="text-sm lg:text-xl text-gray-200 mb-16 leading-relaxed max-w-2xl">
+            Complete automation solutions from product supply to technical
+            implementation.
             <span className="font-semibold text-white">
               {" "}
-              PLC, HMI, Inverter, Sensor & Power Meter
+              PLC, HMI, Inverter, Servo, Power Meter & Sensors
             </span>{" "}
-            - all backed by our expert technical team.
+            with engineering services programming, parameter setting,
+            installation, commissioning, and consultation.
           </p>
 
           {/* CTA Buttons - Enhanced with Hover Animations */}

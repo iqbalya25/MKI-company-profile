@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react/no-unescaped-entities */
-// src/app/about/page.tsx - REVISED PROFESSIONAL ABOUT PAGE
+// src/app/about/page.tsx - ENHANCED SEO-OPTIMIZED ABOUT PAGE
 import { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import {
   Award,
   Users,
@@ -12,129 +13,245 @@ import {
   Settings,
   Wrench,
   GraduationCap,
-  Shield,
-  Building,
+  MapPin,
+  Phone,
+  Mail,
   ArrowRight,
+  MessageSquare,
+  Shield,
   Lightbulb,
   TrendingUp,
-  MessageSquare,
-  Mail,
-  Phone,
-  MapPin,
+  Star,
+  Handshake,
+  BookOpen,
+  Zap,
+  Eye,
+  Heart,
+  Rocket,
+  Brain,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { SITE_CONFIG } from "@/lib/contants";
 
+// SEO Metadata with comprehensive keywords
 export const metadata: Metadata = {
-  title: "About Mederi Karya Indonesia - Professional Automation Solutions",
+  title:
+    "Tentang Mederi Karya Indonesia - 8+ Tahun Expertise Automation Engineering",
   description:
-    "MKI delivers professional industrial automation solutions with engineering expertise. Trusted partner for PLC, HMI, VFD, and safety systems across Indonesia manufacturing industry.",
+    "Engineering Services Company terpercaya untuk industrial automation Indonesia. 8+ tahun pengalaman engineering, technical support, parameter setting, commissioning, konsultasi teknis PLC HMI Inverter.",
   keywords: [
-    "about mederi karya indonesia",
+    "tentang mederi karya indonesia",
     "automation company indonesia",
-    "professional automation supplier",
-    "industrial automation expertise",
-    "plc hmi supplier indonesia",
-    "automation technical support",
-    "manufacturing automation solutions",
+    "engineering services bekasi",
+    "industrial automation supplier",
+    "plc programming services",
+    "technical support automation",
+    "parameter setting inverter",
+    "commissioning automation",
+    "konsultasi teknis automation",
+    "automation engineering jakarta",
+    "automation parts supplier",
+    "one stop solution automation",
   ],
   openGraph: {
-    title: "About Mederi Karya Indonesia - Professional Automation Excellence",
+    title:
+      "Tentang Mederi Karya Indonesia - Engineering Excellence in Automation",
     description:
-      "Professional automation solutions with engineering expertise and comprehensive technical support for Indonesian manufacturing industry.",
+      "8+ tahun pengalaman engineering dalam industrial automation. Partner terpercaya untuk solusi automation Indonesia.",
     url: "/about",
     type: "website",
+    siteName: "Mederi Karya Indonesia",
+    locale: "id_ID",
+  },
+  alternates: {
+    canonical: "/about",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
 };
 
+// Structured Data Schema
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "Mederi Karya Indonesia",
+  alternateName: "MKI",
+  url: "https://mederikarya.com",
+  logo: "https://mederikarya.com/logo.png",
+  description:
+    "Engineering Services Company untuk industrial automation dengan 8+ tahun pengalaman",
+  foundingDate: "2016",
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Bekasi",
+    addressRegion: "Jawa Barat",
+    addressCountry: "ID",
+  },
+  contactPoint: {
+    "@type": "ContactPoint",
+    telephone: "+6285210067755",
+    contactType: "customer service",
+    areaServed: "ID",
+    availableLanguage: ["Indonesian", "English"],
+  },
+  sameAs: ["https://wa.me/6285210067755"],
+};
+
 export default function AboutPage() {
+  // Achievement stats with icons
   const achievements = [
-    { number: "2019", label: "Company Founded", icon: Building },
-    { number: "500+", label: "Products Available", icon: Settings },
-    { number: "100+", label: "Satisfied Customers", icon: Users },
-    { number: "24/7", label: "Technical Support", icon: Wrench },
+    {
+      number: "8+",
+      label: "Tahun Pengalaman",
+      icon: Clock,
+      color: "bg-teal-600",
+    },
+    {
+      number: "500+",
+      label: "Produk Tersedia",
+      icon: Settings,
+      color: "bg-teal-700",
+    },
+    {
+      number: "100+",
+      label: "Customer Puas",
+      icon: Users,
+      color: "bg-cyan-600",
+    },
+    {
+      number: "24/7",
+      label: "Technical Support",
+      icon: Wrench,
+      color: "bg-cyan-700",
+    },
   ];
 
+  // Our services with detailed descriptions
   const services = [
     {
       icon: Settings,
-      title: "System Integration",
+      title: "Parameter Setting",
       description:
-        "Complete automation system design, configuration, and integration services",
+        "Konfigurasi expert untuk inverter, PLC, dan HMI untuk performa optimal sistem automation Anda",
+      features: ["Inverter Configuration", "PLC Programming", "HMI Setup"],
     },
     {
       icon: Wrench,
-      title: "Technical Support",
+      title: "Commissioning",
       description:
-        "Expert troubleshooting, maintenance, and optimization services",
+        "Testing sistem lengkap, startup, dan validasi untuk memastikan sistem berjalan sempurna",
+      features: ["System Testing", "Startup Support", "Performance Validation"],
     },
     {
       icon: GraduationCap,
-      title: "Engineering Consultation",
+      title: "Technical Training",
       description:
-        "Professional advice for automation system design and improvements",
-    },
-    {
-      icon: Shield,
-      title: "Quality Assurance",
-      description:
-        "Rigorous testing and quality control for all products and services",
-    },
-  ];
-
-  const coreValues = [
-    {
-      icon: Target,
-      title: "Customer-Centric Solutions",
-      description:
-        "We prioritize understanding your specific automation needs and delivering tailored solutions that drive real business results.",
-    },
-    {
-      icon: Award,
-      title: "Engineering Excellence",
-      description:
-        "Our team combines deep technical knowledge with practical experience to solve complex automation challenges effectively.",
-    },
-    {
-      icon: TrendingUp,
-      title: "Continuous Innovation",
-      description:
-        "We stay ahead of automation technology trends to provide cutting-edge solutions that future-proof your operations.",
+        "Pelatihan operator dan maintenance untuk tim teknis customer agar dapat mengoperasikan sistem dengan optimal",
+      features: [
+        "Operator Training",
+        "Maintenance Guide",
+        "Technical Documentation",
+      ],
     },
     {
       icon: CheckCircle,
-      title: "Reliable Partnership",
+      title: "Quality Assurance",
       description:
-        "Building long-term relationships through consistent quality delivery, transparent communication, and dependable service.",
+        "Testing ketat dan dokumentasi lengkap untuk semua instalasi automation yang kami tangani",
+      features: [
+        "Quality Testing",
+        "Complete Documentation",
+        "Performance Report",
+      ],
     },
   ];
 
-  const whyChooseUs = [
+  // Company values with engaging descriptions
+  const values = [
     {
-      title: "Comprehensive Product Range",
+      icon: Wrench,
+      title: "Engineering Excellence",
+      iconColor: "bg-teal-600",
       description:
-        "From PLCs and HMIs to safety systems and power monitoring - we supply everything you need for complete automation projects.",
+        "Kami percaya bahwa keunggulan engineering adalah fondasi dari setiap solusi yang berhasil. Setiap project kami tangani dengan detail, presisi, dan standar kualitas tertinggi.",
     },
     {
-      title: "Engineering Expertise",
+      icon: Target,
+      title: "Customer Success First",
+      iconColor: "bg-teal-700",
       description:
-        "Our technical team provides professional consultation, system design, and troubleshooting services backed by years of industry experience.",
+        "Kesuksesan customer adalah prioritas utama kami. Kami tidak hanya menjual produk, tetapi memastikan customer mendapatkan hasil optimal dari setiap investasi automation mereka.",
     },
     {
-      title: "Competitive Pricing",
+      icon: BookOpen,
+      title: "Continuous Learning",
+      iconColor: "bg-cyan-600",
       description:
-        "Direct supplier relationships and efficient operations allow us to offer competitive prices without compromising on quality.",
+        "Industri automation terus berkembang pesat. Kami berkomitmen untuk selalu update dengan teknologi terbaru agar dapat memberikan solusi yang paling efektif dan efisien.",
     },
     {
-      title: "Local Support",
+      icon: Handshake,
+      title: "Reliable Partnership",
+      iconColor: "bg-cyan-700",
       description:
-        "Based in Indonesia with local technical support team, ensuring quick response times and understanding of local industry requirements.",
+        "Kepercayaan adalah aset paling berharga dalam bisnis. Kami membangun reputasi melalui konsistensi dalam kualitas, ketepatan waktu, dan komunikasi yang transparan.",
+    },
+    {
+      icon: Lightbulb,
+      title: "Innovation & Adaptability",
+      iconColor: "bg-teal-800",
+      description:
+        "Setiap challenge customer adalah opportunity untuk berinovasi. Kami selalu mencari cara terbaik untuk menyelesaikan masalah teknis dengan pendekatan yang kreatif dan adaptif.",
+    },
+  ];
+
+  // Mission points
+  const missions = [
+    {
+      icon: Award,
+      title: "Memberikan Solusi Teknis Terbaik",
+      description:
+        "Menyediakan produk automation berkualitas tinggi yang didukung dengan layanan engineering profesional untuk memastikan implementasi yang optimal dan hasil yang maksimal.",
+    },
+    {
+      icon: Handshake,
+      title: "Membangun Partnership Jangka Panjang",
+      description:
+        "Mengembangkan hubungan kemitraan yang saling menguntungkan dengan customer melalui konsistensi kualitas, komunikasi yang jujur, dan komitmen pada customer success.",
+    },
+    {
+      icon: TrendingUp,
+      title: "Mengembangkan Expertise Berkelanjutan",
+      description:
+        "Terus meningkatkan kapabilitas engineering dan mengikuti perkembangan teknologi automation terkini untuk memberikan solusi yang selalu relevant dan cutting-edge.",
+    },
+    {
+      icon: Star,
+      title: "Mendukung Pertumbuhan Industri Indonesia",
+      description:
+        "Berkontribusi pada kemajuan sektor manufaktur Indonesia dengan menyediakan akses mudah ke teknologi automation modern dan knowledge transfer melalui training dan konsultasi.",
     },
   ];
 
   return (
     <>
-      {/* Hero Section */}
+      {/* SEO Schema Markup */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(organizationSchema),
+        }}
+      />
+
+      {/* EXISTING HERO SECTION - TIDAK DIUBAH */}
       <section className="bg-teal-600 text-white py-20 mt-20 relative overflow-hidden">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-10">
@@ -165,7 +282,7 @@ export default function AboutPage() {
               companies achieve operational excellence.
             </p>
 
-            {/* Enhanced CTA Buttons */}
+            {/* Enhanced CTA Buttons - TIDAK DIUBAH */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
               {/* Primary Button - Get Technical Consultation */}
               <Link
@@ -196,162 +313,142 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Company Stats */}
+      {/* NEW CONTENT SECTIONS */}
+
+      {/* Tentang Kami Section */}
       <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {achievements.map((achievement, index) => {
-              const Icon = achievement.icon;
-              return (
-                <div key={index} className="text-center">
-                  <div className="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Icon className="h-8 w-8 text-teal-600" />
+          <div className="max-w-6xl mx-auto">
+            {/* Main Description */}
+            <div className="text-center mb-16">
+              <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-8">
+                Tentang Kami
+              </h2>
+              <div className="max-w-4xl mx-auto text-lg text-gray-700 leading-relaxed space-y-6">
+                <p>
+                  <strong className="text-teal-600">
+                    Mederi Karya Indonesia (MKI)
+                  </strong>{" "}
+                  adalah Engineering Services Company yang menghadirkan solusi
+                  lengkap untuk kebutuhan industrial automation Anda. Didukung
+                  oleh lebih dari 8 tahun pengalaman engineering di industri
+                  otomasi.
+                </p>
+                <p>
+                  Sebagai <strong>one stop solution provider</strong>, kami
+                  tidak hanya menyediakan komponen automation berkualitas tinggi
+                  seperti PLC, HMI, Inverter, Servo, Sensor, dan Power Meter,
+                  tetapi juga memberikan nilai tambah melalui layanan
+                  engineering komprehensif yang mencakup technical support,
+                  parameter setting, commissioning, dan konsultasi teknis.
+                </p>
+              </div>
+            </div>
+
+            {/* Achievement Stats */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+              {achievements.map((stat, index) => (
+                <div key={index} className="text-center group">
+                  <div
+                    className={`${stat.color} w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300`}
+                  >
+                    <stat.icon className="h-8 w-8 text-white" />
                   </div>
                   <div className="text-3xl font-bold text-gray-900 mb-2">
-                    {achievement.number}
+                    {stat.number}
                   </div>
-                  <div className="text-sm text-gray-600">
-                    {achievement.label}
-                  </div>
+                  <div className="text-gray-600 font-medium">{stat.label}</div>
                 </div>
-              );
-            })}
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Company Story */}
-      <section className="py-20 bg-gray-50">
+      {/* Visi Section */}
+      <section className="py-16 bg-gradient-to-br from-teal-50 to-blue-50">
         <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                Our Mission
-              </h2>
-              <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-                Empowering Indonesian manufacturing through professional
-                automation solutions
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-16">
-              <div>
-                <div className="bg-gradient-to-br from-teal-600 to-teal-700 rounded-2xl p-8 text-white">
-                  <Lightbulb className="h-12 w-12 mb-6 text-teal-200" />
-                  <h3 className="text-2xl font-bold mb-4">
-                    Founded on Industry Insight
-                  </h3>
-                  <p className="text-teal-100 leading-relaxed">
-                    Mederi Karya Indonesia was established in 2019 with a clear
-                    vision: to bridge the gap between advanced automation
-                    technology and practical industrial applications. We
-                    recognized that Indonesian manufacturers needed more than
-                    just products - they needed a partner who understands both
-                    the technology and the local market.
-                  </p>
+          <div className="max-w-4xl mx-auto text-center">
+            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-8">
+              Visi Perusahaan
+            </h2>
+            <div className="bg-white rounded-2xl p-8 shadow-lg border border-teal-100">
+              <div className="flex justify-center mb-6">
+                <div className="bg-teal-600 p-4 rounded-full">
+                  <Eye className="h-8 w-8 text-white" />
                 </div>
               </div>
-
-              <div className="space-y-6">
-                <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
-                  <h4 className="text-xl font-semibold text-gray-900 mb-3">
-                    Market Understanding
-                  </h4>
-                  <p className="text-gray-600">
-                    Our deep understanding of Indonesian manufacturing
-                    challenges allows us to recommend solutions that truly fit
-                    local operational requirements and constraints.
-                  </p>
-                </div>
-
-                <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
-                  <h4 className="text-xl font-semibold text-gray-900 mb-3">
-                    Technical Excellence
-                  </h4>
-                  <p className="text-gray-600">
-                    We combine product supply with genuine engineering
-                    expertise, ensuring our customers receive not just
-                    components, but complete technical solutions.
-                  </p>
-                </div>
-
-                <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
-                  <h4 className="text-xl font-semibold text-gray-900 mb-3">
-                    Long-term Partnership
-                  </h4>
-                  <p className="text-gray-600">
-                    Our goal is to build lasting relationships by consistently
-                    delivering value through quality products, expert support,
-                    and reliable service.
-                  </p>
-                </div>
-              </div>
+              <blockquote className="text-xl lg:text-2xl text-gray-700 leading-relaxed italic">
+                "Menjadi partner terpercaya dalam transformasi industrial
+                automation di Indonesia, menghadirkan solusi engineering yang
+                inovatif dan berkelanjutan untuk meningkatkan produktivitas dan
+                efisiensi industri nasional."
+              </blockquote>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Core Values */}
-      <section className="py-20 bg-white">
+      {/* Misi Section */}
+      <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                Our Core Values
-              </h2>
-              <p className="text-lg text-gray-600">
-                The principles that guide everything we do
-              </p>
-            </div>
+            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 text-center mb-16">
+              Misi Perusahaan
+            </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {coreValues.map((value, index) => {
-                const Icon = value.icon;
-                return (
-                  <div key={index} className="bg-gray-50 rounded-xl p-8">
-                    <div className="flex items-start space-x-4">
-                      <div className="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <Icon className="h-6 w-6 text-teal-600" />
-                      </div>
-                      <div>
-                        <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                          {value.title}
-                        </h3>
-                        <p className="text-gray-600 leading-relaxed">
-                          {value.description}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Why Choose Us */}
-      <section className="py-20 bg-gradient-to-br from-gray-900 to-gray-800 text-white">
-        <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl font-bold mb-4">Why Choose MKI?</h2>
-              <p className="text-xl text-gray-300">
-                What sets us apart in the automation industry
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {whyChooseUs.map((item, index) => (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {missions.map((mission, index) => (
                 <div
                   key={index}
-                  className="bg-gray-800 rounded-xl p-8 border border-gray-700"
+                  className="bg-gradient-to-br from-white to-gray-50 rounded-xl p-8 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 group"
                 >
-                  <h3 className="text-xl font-semibold mb-4 text-teal-400">
-                    {item.title}
-                  </h3>
-                  <p className="text-gray-300 leading-relaxed">
-                    {item.description}
+                  <div className="flex items-start gap-4">
+                    <div className="bg-teal-600 p-3 rounded-lg group-hover:bg-teal-700 transition-colors">
+                      <mission.icon className="h-6 w-6 text-white" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-xl font-bold text-gray-900 mb-3">
+                        {index + 1}. {mission.title}
+                      </h3>
+                      <p className="text-gray-700 leading-relaxed">
+                        {mission.description}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Nilai-Nilai Perusahaan */}
+      <section className="py-16 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="max-w-6xl mx-auto">
+            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 text-center mb-16">
+              Nilai-Nilai Perusahaan
+            </h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {values.map((value, index) => (
+                <div
+                  key={index}
+                  className="bg-white rounded-xl p-8 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 group hover:-translate-y-1"
+                >
+                  <div className="text-center mb-6">
+                    <div
+                      className={`${value.iconColor} w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300`}
+                    >
+                      <value.icon className="h-8 w-8 text-white" />
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">
+                      {value.title}
+                    </h3>
+                  </div>
+                  <p className="text-gray-700 leading-relaxed text-center">
+                    {value.description}
                   </p>
                 </div>
               ))}
@@ -360,55 +457,77 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Services Overview */}
-      <section className="py-20 bg-white">
+      {/* Our Services Section */}
+      <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                Our Services
-              </h2>
-              <p className="text-lg text-gray-600">
-                Comprehensive support for your automation needs
-              </p>
-            </div>
+            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 text-center mb-16">
+              Layanan Engineering Kami
+            </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {services.map((service, index) => {
-                const Icon = service.icon;
-                return (
-                  <div key={index} className="text-center">
-                    <div className="w-16 h-16 bg-gradient-to-br from-teal-600 to-teal-700 rounded-xl flex items-center justify-center mx-auto mb-6">
-                      <Icon className="h-8 w-8 text-white" />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {services.map((service, index) => (
+                <div
+                  key={index}
+                  className="bg-gradient-to-br from-teal-50 to-blue-50 rounded-xl p-8 border border-teal-100 hover:shadow-lg transition-all duration-300 group"
+                >
+                  <div className="flex items-start gap-4 mb-6">
+                    <div className="bg-teal-600 p-3 rounded-lg group-hover:bg-teal-700 transition-colors">
+                      <service.icon className="h-6 w-6 text-white" />
                     </div>
-                    <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                      {service.title}
-                    </h3>
-                    <p className="text-gray-600 leading-relaxed">
-                      {service.description}
-                    </p>
+                    <div className="flex-1">
+                      <h3 className="text-xl font-bold text-gray-900 mb-3">
+                        {service.title}
+                      </h3>
+                      <p className="text-gray-700 leading-relaxed mb-4">
+                        {service.description}
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {service.features.map((feature, idx) => (
+                          <span
+                            key={idx}
+                            className="text-xs px-3 py-1 bg-teal-100 text-teal-700 rounded-full"
+                          >
+                            {feature}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
                   </div>
-                );
-              })}
+                </div>
+              ))}
             </div>
           </div>
         </div>
       </section>
 
-      {/* Call to Action */}
-      <section className="bg-teal-600 text-white py-20 mt-20 relative overflow-hidden">
-        {/* Background Pattern */}
-        <div className="absolute inset-0 opacity-10">
-          <div
-            className="absolute inset-0"
-            style={{
-              backgroundImage: `radial-gradient(circle at 20% 50%, white 1px, transparent 1px),
-                             radial-gradient(circle at 80% 80%, white 1px, transparent 1px)`,
-              backgroundSize: "50px 50px",
-            }}
-          />
+      {/* Komitmen Section */}
+      <section className="py-16 bg-gradient-to-br from-teal-600 to-teal-700 text-white">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto text-center">
+            <h2 className="text-3xl lg:text-4xl font-bold mb-8">
+              Komitmen Kami
+            </h2>
+            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
+              <div className="flex justify-center mb-6">
+                <div className="bg-white/20 p-4 rounded-full">
+                  <Heart className="h-8 w-8 text-white" />
+                </div>
+              </div>
+              <blockquote className="text-xl lg:text-2xl leading-relaxed italic">
+                "Kami tidak hanya menyediakan produk automation, tetapi menjadi
+                partner engineering yang mendampingi kesuksesan bisnis Anda.
+                Setiap project adalah kesempatan untuk membuktikan bahwa
+                kombinasi produk berkualitas dan expertise engineering yang
+                tepat dapat menghasilkan solusi yang melebihi ekspektasi."
+              </blockquote>
+            </div>
+          </div>
         </div>
+      </section>
 
+      {/* EXISTING ENHANCED CTA SECTION - TIDAK DIUBAH */}
+      <section className="bg-teal-600 text-white py-20 relative overflow-hidden">
         {/* Enhanced CTA Buttons */}
         <div className="absolute top-10 right-10 w-64 h-64 bg-teal-500 rounded-full blur-3xl opacity-20 animate-pulse" />
         <div className="absolute bottom-10 left-10 w-80 h-80 bg-teal-400 rounded-full blur-3xl opacity-20 animate-pulse" />
