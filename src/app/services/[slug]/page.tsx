@@ -6,6 +6,7 @@ import { getServiceBySlug, getServices } from "@/lib/contentful";
 import ServiceDetail from "@/components/services/ServiceDetail";
 import Breadcrumb from "@/components/common/Breadcrumb";
 import { generateServiceSchema } from "@/lib/schema";
+import { getCanonicalUrl } from "@/lib/url";
 
 // ✅ FIXED: Updated interface to make params a Promise
 interface ServicePageProps {
@@ -67,7 +68,7 @@ export async function generateMetadata({
         : [],
     },
     alternates: {
-      canonical: `/services/${service.slug}`,
+      canonical: getCanonicalUrl(`/services/${service.slug}`),
     },
   };
 }

@@ -24,6 +24,7 @@ import {
   ReactPortal,
   Key,
 } from "react";
+import { getCanonicalUrl } from "@/lib/url";
 
 export const metadata: Metadata = {
   title: "Technical Blog & Automation Guides | Mederi Karya Indonesia",
@@ -44,6 +45,9 @@ export const metadata: Metadata = {
     description: "Expert engineering insights and automation tutorials",
     url: "/blog",
     type: "website",
+  },
+  alternates: {
+    canonical: getCanonicalUrl("/blog"),
   },
 };
 

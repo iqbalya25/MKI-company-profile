@@ -35,6 +35,7 @@ import Link from "next/link";
 // ✅ NEW SERVER COMPONENTS - No hydration issues!
 import ProductGridServer from "@/components/products/server/ProductGrid";
 import ProductSearchServer from "@/components/products/server/ProductSearch";
+import { getCanonicalUrl } from "@/lib/url";
 
 interface ProductsPageProps {
   searchParams: Promise<{
@@ -79,6 +80,16 @@ export async function generateMetadata({
     description = `Search results for "${search}" - automation parts dengan engineering services. programming, Parameter setting, troubleshooting, consultation.`;
   }
 
+  let canonicalPath = "/products";
+
+  if (category) {
+    canonicalPath += `?category=${category}`;
+  } else if (brand) {
+    canonicalPath += `?brand=${brand}`;
+  } else if (search) {
+    canonicalPath += `?search=${search}`;
+  }
+
   return {
     title,
     description,
@@ -98,11 +109,7 @@ export async function generateMetadata({
       type: "website",
     },
     alternates: {
-      canonical: category
-        ? `/products?category=${category}`
-        : brand
-          ? `/products?brand=${brand}`
-          : "/products",
+      canonical: getCanonicalUrl(canonicalPath),
     },
   };
 }

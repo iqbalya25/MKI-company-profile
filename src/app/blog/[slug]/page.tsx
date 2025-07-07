@@ -27,6 +27,7 @@ import {
   ReactPortal,
   Key,
 } from "react";
+import { getCanonicalUrl } from "@/lib/url";
 
 interface BlogPageProps {
   params: Promise<{
@@ -127,7 +128,7 @@ export async function generateMetadata({
         : [],
     },
     alternates: {
-      canonical: `/blog/${blog.slug}`,
+      canonical: getCanonicalUrl(`/blog/${slug}`),
     },
   };
 }

@@ -32,6 +32,7 @@ import { Badge } from "@/components/ui/badge";
 import Breadcrumb from "@/components/common/Breadcrumb";
 import RelatedProducts from "@/app/products/RelatedProducts";
 import { documentToReactComponents } from "@contentful/rich-text-react-renderer";
+import { getCanonicalUrl } from "@/lib/url";
 
 export const dynamic = "force-dynamic"; // For immediate Contentful updates
 // OR
@@ -76,7 +77,7 @@ export async function generateMetadata({
       title,
       description,
       type: "website",
-      url: `/products/${product.slug}`,
+      url: getCanonicalUrl(`/products/${product.slug}`),
       images:
         product.images.length > 0
           ? [
@@ -90,7 +91,7 @@ export async function generateMetadata({
           : [],
     },
     alternates: {
-      canonical: `/products/${product.slug}`,
+      canonical: getCanonicalUrl(`/products/${product.slug}`),
     },
   };
 }

@@ -16,6 +16,7 @@ import ContactForm from "@/components/forms/ContactForm";
 import { SITE_CONFIG } from "@/lib/contants";
 import { generateLocalBusinessSchema } from "@/lib/schema";
 import Link from "next/link";
+import { getCanonicalUrl } from "@/lib/url";
 
 export const metadata: Metadata = {
   title:
@@ -35,6 +36,9 @@ export const metadata: Metadata = {
     description: "Get professional technical support for your automation needs",
     url: "/contact",
     type: "website",
+  },
+  alternates: {
+    canonical: getCanonicalUrl("/contact"),
   },
 };
 

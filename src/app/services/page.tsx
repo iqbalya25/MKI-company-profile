@@ -6,6 +6,7 @@ import Breadcrumb from "@/components/common/Breadcrumb";
 import { TARGET_KEYWORDS } from "@/lib/contants";
 import Link from "next/link";
 import { ArrowRight, Clock, Settings, Shield, Users } from "lucide-react";
+import { getCanonicalUrl } from "@/lib/url";
 
 export const metadata: Metadata = {
   title: "Engineering Services + Technical Support | Mederi Karya Indonesia",
@@ -29,7 +30,7 @@ export const metadata: Metadata = {
     type: "website",
   },
   alternates: {
-    canonical: "/services",
+    canonical: getCanonicalUrl("/services"),
   },
 };
 

@@ -14,6 +14,7 @@ import ServicesHighlight from "@/components/home/ServicesHighlight";
 // import ClientLogos from "@/components/home/ClientLogos";
 import CTASection from "@/components/home/CTASection";
 import BrandShowcase from "@/components/home/BrandShowcase";
+import { getCanonicalUrl } from "@/lib/url";
 
 export const metadata: Metadata = {
   title:
@@ -26,6 +27,9 @@ export const metadata: Metadata = {
     "mederi karya indonesia",
     "automation parts bekasi",
   ],
+  alternates: {
+    canonical: getCanonicalUrl('/')
+  }
 };
 
 export default async function HomePage() {
@@ -40,30 +44,6 @@ export default async function HomePage() {
     <>
       {/* SECTION 1: Hero Section */}
       <HeroSection />
-
-      {/* SECTION 2: Trust Indicators (Move up for credibility) */}
-      {/* <section className="py-8 bg-gray-50 border-b">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-            <div>
-              <div className="text-2xl font-bold text-teal-600">8+</div>
-              <div className="text-sm text-gray-600">Years Experience</div>
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-teal-600">500+</div>
-              <div className="text-sm text-gray-600">Products Available</div>
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-teal-600">24/7</div>
-              <div className="text-sm text-gray-600">Technical Support</div>
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-teal-600">100+</div>
-              <div className="text-sm text-gray-600">Happy Clients</div>
-            </div>
-          </div>
-        </div>
-      </section> */}
 
       {/* SECTION 2: brand Showcase */}
       <BrandShowcase />

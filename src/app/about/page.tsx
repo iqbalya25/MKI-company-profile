@@ -31,6 +31,7 @@ import {
   Brain,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { getCanonicalUrl } from "@/lib/url";
 
 // SEO Metadata with comprehensive keywords
 export const metadata: Metadata = {
@@ -63,7 +64,7 @@ export const metadata: Metadata = {
     locale: "id_ID",
   },
   alternates: {
-    canonical: "/about",
+    canonical: getCanonicalUrl("/about"),
   },
   robots: {
     index: true,

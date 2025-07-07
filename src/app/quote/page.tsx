@@ -5,6 +5,7 @@ import { Metadata } from "next";
 import { Suspense } from "react";
 import QuoteForm from "@/components/forms/QuoteForm";
 import { PRODUCT_CATEGORIES } from "@/lib/contants";
+import { getCanonicalUrl } from "@/lib/url";
 
 export const metadata: Metadata = {
   title:
@@ -24,6 +25,9 @@ export const metadata: Metadata = {
     description: "Get competitive pricing with technical support included",
     url: "/quote",
     type: "website",
+  },
+  alternates: {
+    canonical: getCanonicalUrl("/quote"),
   },
 };
 
