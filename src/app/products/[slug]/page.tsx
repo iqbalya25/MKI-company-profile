@@ -375,7 +375,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                   </div>
                   <div className="flex items-center gap-3 text-sm text-gray-600">
                     <Shield className="w-4 h-4 text-teal-600" />
-                    <span>Quality guarantee</span>
+                    <span>Quality Product</span>
                   </div>
 
                   <div className="pt-4 border-t">
