@@ -18,9 +18,9 @@ import { getCanonicalUrl } from "@/lib/url";
 
 export const metadata: Metadata = {
   title:
-    "Supplier Industrial Automation Parts + Technical Support | Mederi Karya Indonesia",
+    "One Stop Solution for Industrial Automation Supplier + Engineering Support | Mederi Karya Indonesia",
   description:
-    "Supplier automation parts terpercaya: PLC Mitsubishi, Inverter Schneider, HMI Proface, Safety Relay dengan technical support. Parameter setting, commissioning, engineering consultation Jakarta.",
+    "Solusi Industrial Automation lengkap, PLC Mitsubishi, Inverter Schneider, HMI Proface, Sensor , Servo dan Power meter dengan engineering support.Programming & Parameter setting, commissioning, engineering consultation Jakarta.",
   keywords: [
     ...TARGET_KEYWORDS.primary,
     ...TARGET_KEYWORDS.secondary.slice(0, 3),
@@ -28,8 +28,8 @@ export const metadata: Metadata = {
     "automation parts bekasi",
   ],
   alternates: {
-    canonical: getCanonicalUrl('/')
-  }
+    canonical: getCanonicalUrl("/"),
+  },
 };
 
 export default async function HomePage() {
