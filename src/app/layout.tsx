@@ -71,9 +71,6 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-  verification: {
-    google: "your-google-verification-code", // Replace with actual verification code
-  },
   alternates: {
     canonical: SITE_CONFIG.url,
   },
@@ -98,6 +95,10 @@ export default function RootLayout({
   return (
     <html lang="id" className="scroll-smooth">
       <head>
+        <meta
+          name="google-site-verification"
+          content="6RSRNqNO9wfsi4esBdtGY0Ggk1UGoSyaygOo5ayLXqM"
+        />
         {/* Additional SEO and Performance meta tags */}
         <meta name="theme-color" content="#4338ca" />
         <meta name="msapplication-TileColor" content="#4338ca" />
