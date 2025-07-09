@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // src/app/products/[slug]/page.tsx - UPDATED WITH SERVICE-LIKE LAYOUT
@@ -187,8 +188,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
               {/* Product Title & Model */}
               <div>
-                <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-3">
-                  {product.name}
+                <h1 className="text-xl lg:text-4xl font-bold text-gray-900 mb-3">
+                  Jual {product.name} | Supplier Automation Indonesia
                 </h1>
                 {/* <p className="text-lg text-gray-600 mb-4">
                   Model: <span className="font-semibold text-gray-900">{product.model}</span>
@@ -217,10 +218,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
               {/* Price Section */}
               <div className="bg-gray-50 p-4 rounded-lg border">
                 <h3 className="text-lg font-semibold mb-2 text-gray-900">
-                  Contact for Competitive Pricing
+                  Hubungi kami untuk harga terbaik
                 </h3>
                 <p className="text-sm text-gray-600 mb-4">
-                  We offer the best prices with comprehensive technical support
+                  Kami menawarkan harga terbaik dengan dukungan engineering
+                  support
                 </p>
                 {product.showPrice && product.price && (
                   <div className="text-2xl font-bold text-teal-600 mb-2">
@@ -363,7 +365,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             <div className="lg:col-span-1">
               <div className="bg-gray-50 border rounded-lg p-6 sticky top-8">
                 <h3 className="text-lg font-semibold mb-4 text-gray-900">
-                  Get Expert Support
+                  Get Technical Support
                 </h3>
                 <div className="space-y-4">
                   <div className="flex items-center gap-3 text-sm text-gray-600">
@@ -445,7 +447,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             </h2>
             <p className="text-lg text-teal-100 mb-8">
               Our engineering team can help you design complete automation
-              systems with compatible components. Get free consultation for your
+              systems with compatible components. Get consultation for your
               project requirements.
             </p>
 
@@ -457,7 +459,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 className="group relative inline-flex items-center justify-center px-8 py-3 bg-white text-teal-600 font-semibold rounded-lg hover:bg-gray-50 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
               >
                 <Settings className="h-5 w-5 mr-2" />
-                <span>Free System Design Consultation</span>
+                <span>System Design Consultation</span>
                 <ArrowRight className="h-5 w-5 ml-2 transition-transform duration-300 group-hover:translate-x-2" />
                 {/* Shine effect on hover */}
                 <div className="absolute inset-0 rounded-lg overflow-hidden">
