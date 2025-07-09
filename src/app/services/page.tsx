@@ -17,6 +17,7 @@ export const metadata: Metadata = {
     "automation services indonesia",
     "parameter setting service",
     "commissioning plc hmi",
+    "programming plc",
     "technical training automation",
     "engineering consultation jakarta",
     "troubleshooting support",
