@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     "industrial automation service",
   ],
   openGraph: {
-    title: "Engineering Services + Technical Support | Mederi Karya Indonesia",
+    title: "Engineering Services + Technical Support | Mederi Karya",
     description:
       "Professional automation services with expert technical support for industrial applications.",
     url: "/services",
@@ -57,7 +57,7 @@ export default async function ServicesPage() {
               Engineering Services
             </h1>
             <p className="text-xl text-teal-100 mb-4">
-              + Technical Support & Engineering Services
+              + Technical Support & Consultation
             </p>
             <p className="text-lg text-teal-200 max-w-2xl">
               Professional automation services with expert technical support.

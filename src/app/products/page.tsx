@@ -54,7 +54,8 @@ export async function generateMetadata({
   const params = await searchParams;
   const { category, brand, search } = params;
 
-  let title = "Industrial Automation Products + Technical Support | MKI";
+  let title =
+    "Industrial Automation Products + Technical Support | Mederi Karya";
   let description =
     "Complete catalog automation parts: PLC, HMI, Inverter, Servo , Power Meter & Sensors dengan technical support. Programming, Parameter setting, commissioning, & engineering consultation.";
 
@@ -64,20 +65,20 @@ export async function generateMetadata({
     );
     if (categoryData) {
       title = `${categoryData.name} + Technical Support | Mederi Karya Indonesia`;
-      description = `${categoryData.description}. Competitive pricing dengan engineering services komprehensif.`;
+      description = `${categoryData.description}. Harga terbaik dengan support engineering services.`;
     }
   }
 
   if (brand) {
     title = `${
       brand.charAt(0).toUpperCase() + brand.slice(1)
-    } Products + Technical Support | MKI`;
-    description = `${brand} automation products dengan programming, parameter setting dan commissioning service. Engineering consultation available.`;
+    } Products + Technical Support | Mederi Karya`;
+    description = `${brand} automation products dengan programming, parameter setting, commissioning service dan engineering services .`;
   }
 
   if (search) {
-    title = `Search: "${search}" - Automation Parts + Technical Support | MKI`;
-    description = `Search results for "${search}" - automation parts dengan engineering services. programming, Parameter setting, troubleshooting, consultation.`;
+    title = `Search: "${search}" - Automation Parts + Technical Support | Mederi Karya`;
+    description = `Search results for "${search}" - automation parts dengan engineering services. programming, Parameter setting, troubleshooting, konsultasi.`;
   }
 
   let canonicalPath = "/products";
@@ -320,7 +321,7 @@ export default async function ProductsPage({
               </h2>
               <p className="text-lg text-teal-100 mb-8">
                 Our engineering team provides parameter setting, commissioning,
-                and troubleshooting services for all products. Get free
+                and troubleshooting services for all products. Get best
                 consultation for your automation project.
               </p>
 
