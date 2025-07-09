@@ -5,6 +5,7 @@ import "./globals.css";
 
 import MainLayout from "@/components/layout/MainLayout";
 import { SITE_CONFIG } from "@/lib/contants";
+import GoogleAnalytics from "@/components/common/GoogleAnalytics";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -142,6 +143,7 @@ export default function RootLayout({
         />
       </head>
       <body className={inter.className}>
+        <GoogleAnalytics measurementId={process.env.NEXT_PUBLIC_GA_ID || ''} />
         <MainLayout>{children}</MainLayout>
       </body>
     </html>
