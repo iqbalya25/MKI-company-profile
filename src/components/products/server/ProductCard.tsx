@@ -332,7 +332,7 @@ export default function ProductCardServer({
               </div>
             ) : (
               <div className={productStyles.card.price.contact}>
-                Contact for competitive pricing
+                Hubungi Untuk Harga Terbaik
               </div>
             )}
           </div>

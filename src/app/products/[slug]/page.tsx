@@ -108,7 +108,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
   // Fetch related products (same category)
   const relatedProducts = await getProducts({
     category: product.category,
-    limit: 4,
+    limit: 5,
   });
 
   // Filter out current product from related

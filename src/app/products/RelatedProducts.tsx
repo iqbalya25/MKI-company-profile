@@ -1,7 +1,8 @@
-// src/components/products/RelatedProducts.tsx
+// src/app/products/RelatedProducts.tsx - UPDATED VERSION
+// Fixed height cards with bottom-aligned buttons
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, Package, ShoppingCart } from "lucide-react";
+import { ArrowRight, Package } from "lucide-react";
 import { Product } from "@/types/product";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -48,14 +49,14 @@ const RelatedProducts = ({
   );
 };
 
-// Individual Related Product Card
+// Individual Related Product Card - FIXED HEIGHT VERSION
 function RelatedProductCard({ product }: { product: Product }) {
   const hasImage = product.images && product.images.length > 0;
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-all duration-300 group">
-      {/* Product Image */}
-      <div className="aspect-square relative bg-gray-50 overflow-hidden">
+    <div className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-all duration-300 group flex flex-col min-h-[420px]">
+      {/* Product Image - Fixed Height */}
+      <div className="aspect-square relative bg-gray-50 overflow-hidden flex-shrink-0">
         {hasImage ? (
           <Image
             src={product.images[0]}
@@ -88,8 +89,8 @@ function RelatedProductCard({ product }: { product: Product }) {
         </div>
       </div>
 
-      {/* Product Info */}
-      <div className="p-4">
+      {/* Product Info - Flexible Content Area */}
+      <div className="p-4 flex flex-col flex-grow">
         {/* Brand */}
         <div className="mb-2">
           <Badge variant="outline" className="text-xs">
@@ -97,35 +98,60 @@ function RelatedProductCard({ product }: { product: Product }) {
           </Badge>
         </div>
 
-        {/* Product Name */}
-        <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-teal-600 transition-colors">
-          <Link href={`/products/${product.slug}`}>{product.name}</Link>
+        {/* Product Name - Flexible Height */}
+        <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-teal-600 transition-colors min-h-[48px] flex items-start">
+          <Link
+            href={`/products/${product.slug}`}
+            className="line-clamp-2 leading-6"
+          >
+            {product.name}
+          </Link>
         </h3>
 
         {/* Model */}
         <p className="text-xs text-gray-600 mb-3">Model: {product.model}</p>
 
         {/* Price */}
-        <div className="mb-3">
+        <div className="mb-4">
           {product.showPrice && product.price ? (
             <div className="text-lg font-bold text-gray-900">
               {formatPrice(product.price)}
             </div>
           ) : (
-            <div className="text-sm text-gray-600">Contact for pricing</div>
+            <div className="text-sm text-gray-600">
+              Hubungi untuk harga terbaik
+            </div>
           )}
         </div>
 
-        {/* Actions */}
-        <div className="flex gap-2">
-          <Button size="sm" className="flex-1 text-xs" asChild>
-            <Link href={`/products/${product.slug}`}>View Details</Link>
-          </Button>
-          <Button size="sm" variant="outline" asChild>
-            <Link href={`/quote?product=${product.slug}`}>
-              <ShoppingCart className="h-3 w-3" />
-            </Link>
-          </Button>
+        {/* Spacer to push buttons to bottom */}
+        <div className="flex-grow"></div>
+
+        {/* Bottom Section - Fixed at Bottom */}
+        <div className="mt-auto space-y-2">
+          {/* Action Buttons - Vertical Layout */}
+          <div className="flex flex-col gap-2">
+            {/* View Details Button - Primary with Hover Animation */}
+            <Button
+              size="sm"
+              className="w-full text-xs bg-black hover:bg-teal-600 text-white transition-all duration-300 transform hover:scale-102 hover:shadow-md"
+              asChild
+            >
+              <Link href={`/products/${product.slug}`}>Lihat Detail</Link>
+            </Button>
+
+            {/* Quote Button - Secondary with Hover Animation */}
+            <Button
+              size="sm"
+              variant="outline"
+              className="w-full text-xs border-black text-black hover:bg-teal-600 hover:text-white hover:border-teal-600 transition-all duration-300 transform hover:scale-102 hover:shadow-md"
+              asChild
+            >
+              <Link href={`/quote?product=${product.slug}`}>
+                Penawaran Harga
+              </Link>
+            </Button>
+          </div>
         </div>
       </div>
     </div>
