@@ -104,7 +104,7 @@ function RelatedProductCard({ product }: { product: Product }) {
             href={`/products/${product.slug}`}
             className="line-clamp-2 leading-6"
           >
-            {product.name}
+            Jual {product.name}
           </Link>
         </h3>
 
