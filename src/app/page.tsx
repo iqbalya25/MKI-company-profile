@@ -7,11 +7,10 @@ import {
   getProductCategories,
   getServices,
 } from "@/lib/contentful";
-import { TARGET_KEYWORDS } from "@/lib/contants";
+import { TARGET_KEYWORDS, SITE_CONFIG } from "@/lib/contants";
 import CategoryShowcase from "@/components/home/CategoryShowcase";
 import WhyChooseUs from "@/components/home/WhyChooseUs";
 import ServicesHighlight from "@/components/home/ServicesHighlight";
-// import ClientLogos from "@/components/home/ClientLogos";
 import CTASection from "@/components/home/CTASection";
 import BrandShowcase from "@/components/home/BrandShowcase";
 import { getCanonicalUrl } from "@/lib/url";
@@ -20,7 +19,7 @@ export const metadata: Metadata = {
   title:
     "One Stop Solution for Industrial Automation Supplier + Engineering Support | Mederi Karya Indonesia",
   description:
-    "Solusi Industrial Automation lengkap, PLC Mitsubishi, Inverter Schneider, HMI Proface, Sensor , Servo dan Power meter dengan engineering support.Programming & Parameter setting, commissioning, engineering consultation Jakarta.",
+    "Solusi Industrial Automation lengkap, PLC, Inverter, HMI, Sensor , Servo dan Power meter dengan engineering support Programming & Parameter setting, commissioning, engineering consultation Jakarta.",
   keywords: [
     ...TARGET_KEYWORDS.primary,
     ...TARGET_KEYWORDS.secondary.slice(0, 3),
@@ -37,7 +36,7 @@ export default async function HomePage() {
   const [featuredProducts, categories, services] = await Promise.all([
     getFeaturedProducts(6),
     getProductCategories(),
-    getServices({ limit: 10 }), // ADD THIS LINE
+    getServices({ limit: 10 }),
   ]);
 
   return (
@@ -62,31 +61,29 @@ export default async function HomePage() {
         <FeaturedProducts products={featuredProducts} />
       )}
 
-      {/* SECTION 7: Client Logos (Social Proof) */}
-      {/* <ClientLogos /> */}
-
-      {/* SECTION 8: Final CTA */}
+      {/* SECTION 7: Final CTA */}
       <CTASection />
 
-      {/* SEO Schema */}
+      {/* Simple SEO Schema */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
             "@context": "https://schema.org",
-            "@type": "WebPage",
-            name: "Supplier Industrial Automation Parts + Technical Support",
-            description:
-              "Supplier automation parts terpercaya dengan engineering services: PLC, HMI, Inverter, Safety Relay. Technical support, parameter setting, commissioning.",
-            url: "https://mederikaryaindonesia.com",
-            mainEntity: {
-              "@type": "Organization",
-              name: "Mederi Karya Indonesia",
-              description:
-                "Supplier automation parts dengan technical support profesional",
-              serviceArea: "Indonesia",
-              areaServed: ["Jakarta", "Surabaya", "Bandung", "Tangerang"],
+            "@type": "Organization",
+            name: "Mederi Karya Indonesia",
+            url: SITE_CONFIG.url,
+            telephone: SITE_CONFIG.company.phone,
+            address: {
+              "@type": "PostalAddress",
+              addressLocality: "Bekasi",
+              addressRegion: "West Java",
+              addressCountry: "ID",
             },
+            openingHours: "Mo-Fr 08:00-17:00",
+            areaServed: ["Jakarta", "Surabaya", "Bandung", "Tangerang", "Balikpapan"],
+            description:
+              "Supplier automation parts dengan technical support profesional",
           }),
         }}
       />

@@ -2,13 +2,13 @@ export const SITE_CONFIG = {
   name: "Mederi Karya Indonesia",
   description:
     "Supplier Automation Parts + Technical Support - PLC, HMI, Inverter, Safety Relay dengan Engineering Services Indonesia",
-  url: process.env.NEXT_PUBLIC_SITE_URL || "https://mederikaryaindonesia.com",
+  url: process.env.NEXT_PUBLIC_SITE_URL || "https://mederikarya.co.id",
   company: {
     name: "Mederi Karya Indonesia",
     phone: "+62-852-1006-7755",
     email: "iqbalya25@gmail.com",
     address: "Bekasi, Indonesia",
-    tagline: "Engineering Excellence in Automation",
+    tagline: "One Stop Solution Automation Provider",
   },
   pricing: {
     showPrices: false,
@@ -121,7 +121,7 @@ export const BRANDS = [
   "Delta",
   "Proface",
   "Weintek",
-  "Pilz",
+  "Fuji",
   "Phoenix Contact",
   "Sick",
   "Pepperl+Fuchs",
@@ -141,7 +141,7 @@ export const TARGET_KEYWORDS = {
     "hmi proface harga kompetitif",
     "troubleshooting automation jakarta",
     "engineering consultation plc",
-    "safety relay pilz indonesia",
+    "inverter fuji indonesia",
     "commissioning inverter service",
   ],
   longTail: [
@@ -215,7 +215,8 @@ export const TRUST_SIGNALS = [
   },
   {
     title: "Engineering Expertise",
-    description: "Tim engineering dengan sertifikasi technical support",
+    description:
+      "Tim engineering berpengalaman dan siap untuk technical support",
     icon: "Cog",
   },
   {
