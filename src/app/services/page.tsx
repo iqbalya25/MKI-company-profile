@@ -15,7 +15,9 @@ export const metadata: Metadata = {
   keywords: [
     ...TARGET_KEYWORDS.primary,
     "automation services indonesia",
-    "parameter setting service",
+    "parameter setting inverter",
+    "programming hmi",
+    "instalasi panel baru",
     "commissioning plc hmi",
     "programming plc",
     "technical training automation",
