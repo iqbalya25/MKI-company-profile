@@ -1,18 +1,18 @@
-// File: src/app/layout.tsx - SEO OPTIMIZED
+// File: src/app/layout.tsx - SEO OPTIMIZED WITH GOOGLE ANALYTICS
 import { Inter } from "next/font/google";
 import type { Metadata } from "next";
+import Script from "next/script";
 import "./globals.css";
 
 import MainLayout from "@/components/layout/MainLayout";
 import { SITE_CONFIG } from "@/lib/contants";
-import GoogleAnalytics from "@/components/common/GoogleAnalytics";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: SITE_CONFIG.name,
   description: SITE_CONFIG.description,
-  
+
   keywords: [
     // Primary Indonesian keywords
     "supplier automation parts indonesia",
@@ -109,6 +109,36 @@ export default function RootLayout({
           crossOrigin="anonymous"
         />
 
+        {/* Google Analytics 4 - Only load in production */}
+        {process.env.NODE_ENV === "production" &&
+          process.env.NEXT_PUBLIC_GA_ID && (
+            <>
+              <Script
+                src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`}
+                strategy="afterInteractive"
+              />
+              <Script id="google-analytics" strategy="afterInteractive">
+                {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${process.env.NEXT_PUBLIC_GA_ID}', {
+                  page_path: window.location.pathname,
+                  send_page_view: true,
+                  // Enhanced measurement settings for B2B
+                  enhanced_measurement: {
+                    scrolls: true,
+                    outbound_clicks: true,
+                    site_search: true,
+                    file_downloads: true,
+                    page_changes: true
+                  }
+                });
+              `}
+              </Script>
+            </>
+          )}
+
         {/* Structured Data for Organization */}
         <script
           type="application/ld+json"
@@ -143,7 +173,6 @@ export default function RootLayout({
         />
       </head>
       <body className={inter.className}>
-        <GoogleAnalytics measurementId={process.env.NEXT_PUBLIC_GA_ID || ''} />
         <MainLayout>{children}</MainLayout>
       </body>
     </html>

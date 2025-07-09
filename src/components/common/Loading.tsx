@@ -15,7 +15,7 @@ export function ProductCardSkeleton() {
     </div>
   );
 }
-
+//
 export function PageSkeleton() {
   return (
     <div className="animate-pulse">
