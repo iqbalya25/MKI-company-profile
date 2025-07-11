@@ -32,6 +32,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getCanonicalUrl } from "@/lib/url";
+import { SITE_CONFIG } from "@/lib/contants";
 
 // SEO Metadata with comprehensive keywords
 export const metadata: Metadata = {
@@ -549,7 +550,7 @@ export default function AboutPage() {
                 <div className="space-y-4 mb-8">
                   <div className="flex items-center gap-3 text-teal-100">
                     <MapPin className="w-5 h-5" />
-                    <span>Based in Bekasi, serving all Indonesia</span>
+                    <span>{SITE_CONFIG.company.address}</span>
                   </div>
                   <div className="flex items-center gap-3 text-teal-100">
                     <Phone className="w-5 h-5" />
@@ -566,7 +567,7 @@ export default function AboutPage() {
                       href="mailto:iqbalya25@gmail.com"
                       className="hover:text-white transition-colors"
                     >
-                      iqbalya25@gmail.com
+                      {SITE_CONFIG.company.email}
                     </a>
                   </div>
                 </div>
@@ -580,7 +581,7 @@ export default function AboutPage() {
                   className="group relative inline-flex items-center justify-center w-full px-8 py-4 bg-white text-teal-600 font-semibold rounded-lg hover:bg-gray-50 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                 >
                   <Users className="h-5 w-5 mr-2" />
-                  <span>Get Free Consultation</span>
+                  <span>Get Engineering Consultation</span>
                   <ArrowRight className="h-5 w-5 ml-2 transition-transform duration-300 group-hover:translate-x-2" />
 
                   {/* Shine effect on hover */}
@@ -591,13 +592,13 @@ export default function AboutPage() {
 
                 {/* Secondary Button - WhatsApp */}
                 <a
-                  href="https://wa.me/6285210067755?text=Halo MKI, saya tertarik untuk berdiskusi tentang kebutuhan automation perusahaan kami."
+                  href="https://wa.me/6285210067755?text=Halo Mederi Karya, saya tertarik untuk berdiskusi tentang kebutuhan automation perusahaan kami."
                   target="_blank"
                   rel="noopener noreferrer"
                   className="group relative inline-flex items-center justify-center w-full px-8 py-4 bg-transparent text-white font-semibold rounded-lg border-2 border-white hover:bg-white hover:text-teal-600 transition-all duration-300 transform hover:-translate-y-0.5"
                 >
                   <MessageSquare className="h-5 w-5 mr-2" />
-                  <span>WhatsApp Contact</span>
+                  <span>WhatsApp - Iqbal (Sales Engineer)</span>
                   <ArrowRight className="h-5 w-5 ml-2 transition-transform duration-300 group-hover:translate-x-2" />
                 </a>
 

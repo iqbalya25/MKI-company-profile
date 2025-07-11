@@ -391,17 +391,26 @@ export default async function ProductPage({ params }: ProductPageProps) {
                   </div>
 
                   {/* Quick Contact */}
-                  <div className="pt-4 border-t">
+                  <div className="pt-4 border-t font-semibold">
                     <h4 className="font-medium text-gray-900 mb-3">
                       Direct Contact:
                     </h4>
-                    <div className="space-y-2">
+                    <div className="space-y-4">
                       <a
                         href={`tel:${SITE_CONFIG.company.phone}`}
                         className="flex items-center gap-2 text-sm text-gray-700 hover:text-teal-600 transition-colors"
                       >
                         <Phone className="h-4 w-4" />
                         <span>{SITE_CONFIG.company.phone}</span>
+                      </a>
+                      <a
+                        href="https://wa.me/6285210067755?text=Halo Mederi Karya, saya membutuhkan informasi mengenai produk"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 text-sm font-semibold text-gray-700 hover:text-teal-600 transition-colors"
+                      >
+                        <Phone className="h-4 w-4" />
+                        <span> WhatsApp : Iqbal - 085210067755</span>
                       </a>
                       <a
                         href={`mailto:${SITE_CONFIG.company.email}`}
@@ -479,7 +488,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             </div>
 
             {/* Contact Information Card */}
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 max-w-3xl mx-auto">
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 max-w-5xl mx-auto">
               <h3 className="text-white font-semibold mb-6 text-lg">
                 Direct Contact Information
               </h3>
@@ -536,7 +545,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                       WhatsApp
                     </p>
                     <p className="font-semibold text-white text-sm group-hover:text-teal-100 transition-colors">
-                      Quick Response
+                      Iqbal - 085210067755
                     </p>
                   </div>
                 </a>

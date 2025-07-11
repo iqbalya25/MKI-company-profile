@@ -353,7 +353,7 @@ export default async function ProductsPage({
               </div>
 
               {/* Contact Information Card - Professional & Clean */}
-              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 max-w-3xl mx-auto">
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 max-w-5xl mx-auto">
                 <h3 className="text-white font-semibold mb-6 text-lg">
                   Direct Contact Information
                 </h3>
@@ -410,7 +410,7 @@ export default async function ProductsPage({
                         WhatsApp
                       </p>
                       <p className="font-semibold text-white text-sm group-hover:text-teal-100 transition-colors">
-                        Quick Response
+                        Iqbal - 085210067755
                       </p>
                     </div>
                   </a>

@@ -3,9 +3,18 @@ import { Metadata } from "next";
 import { getServices } from "@/lib/contentful";
 import ServiceCard from "@/components/services/ServiceCard";
 import Breadcrumb from "@/components/common/Breadcrumb";
-import { TARGET_KEYWORDS } from "@/lib/contants";
+import { SITE_CONFIG, TARGET_KEYWORDS } from "@/lib/contants";
 import Link from "next/link";
-import { ArrowRight, Clock, Settings, Shield, Users } from "lucide-react";
+import {
+  ArrowRight,
+  Clock,
+  Mail,
+  MessageSquare,
+  Phone,
+  Settings,
+  Shield,
+  Users,
+} from "lucide-react";
 import { getCanonicalUrl } from "@/lib/url";
 
 export const metadata: Metadata = {
@@ -117,13 +126,13 @@ export default async function ServicesPage() {
               today.
             </p>
 
-            {/* Enhanced Single Button */}
+            {/* Enhanced Single Button with proper spacing */}
             <Link
               href="/contact"
-              className="group relative inline-flex items-center justify-center px-8 py-4 bg-white text-teal-600 font-semibold rounded-lg hover:bg-gray-50 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              className="group relative inline-flex items-center justify-center px-8 py-4 bg-white text-teal-600 font-semibold rounded-lg hover:bg-gray-50 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 mb-10"
             >
               <Settings className="h-5 w-5 mr-2" />
-              <span>Get Expert Consultation</span>
+              <span>Get Engineering Consultation</span>
               <ArrowRight className="h-5 w-5 ml-2 transition-transform duration-300 group-hover:translate-x-2" />
 
               {/* Shine effect on hover */}
@@ -132,19 +141,88 @@ export default async function ServicesPage() {
               </div>
             </Link>
 
-            {/* Trust Indicators */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-8 mt-12 text-teal-100">
-              <div className="flex items-center gap-2">
-                <Clock className="h-5 w-5" />
-                <span className="text-sm">Response within 2 hours</span>
+            {/* Contact Information Card */}
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 max-w-5xl mx-auto">
+              <h3 className="text-white font-semibold mb-6 text-lg">
+                Direct Contact Information
+              </h3>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* Phone Contact */}
+                <a
+                  href={`tel:${SITE_CONFIG.company.phone}`}
+                  className="group flex items-center gap-3 p-4 rounded-lg hover:bg-white/10 transition-all duration-300 transform hover:scale-105"
+                >
+                  <div className="flex-shrink-0">
+                    <Phone className="h-6 w-6 text-teal-200 group-hover:rotate-12 transition-transform duration-300" />
+                  </div>
+                  <div className="text-left min-w-0">
+                    <p className="text-xs text-teal-200 uppercase tracking-wide mb-1">
+                      Call Direct
+                    </p>
+                    <p className="font-semibold text-white text-sm group-hover:text-teal-100 transition-colors">
+                      {SITE_CONFIG.company.phone}
+                    </p>
+                  </div>
+                </a>
+
+                {/* Email Contact */}
+                <a
+                  href={`mailto:${SITE_CONFIG.company.email}`}
+                  className="group flex items-center gap-3 p-4 rounded-lg hover:bg-white/10 transition-all duration-300 transform hover:scale-105"
+                >
+                  <div className="flex-shrink-0">
+                    <Mail className="h-6 w-6 text-teal-200 group-hover:rotate-12 transition-transform duration-300" />
+                  </div>
+                  <div className="text-left min-w-0">
+                    <p className="text-xs text-teal-200 uppercase tracking-wide mb-1">
+                      Email Us
+                    </p>
+                    <p className="font-semibold text-white text-sm group-hover:text-teal-100 transition-colors truncate">
+                      {SITE_CONFIG.company.email}
+                    </p>
+                  </div>
+                </a>
+
+                {/* WhatsApp Contact */}
+                <a
+                  href="https://wa.me/6285210067755?text=Halo Mederi Karya, saya membutuhkan technical support untuk automation"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex items-center gap-3 p-4 rounded-lg hover:bg-white/10 transition-all duration-300 transform hover:scale-105"
+                >
+                  <div className="flex-shrink-0">
+                    <MessageSquare className="h-6 w-6 text-teal-200 group-hover:rotate-12 transition-transform duration-300" />
+                  </div>
+                  <div className="text-left min-w-0">
+                    <p className="text-xs text-teal-200 uppercase tracking-wide mb-1">
+                      WhatsApp
+                    </p>
+                    <p className="font-semibold text-white text-sm group-hover:text-teal-100 transition-colors">
+                      Iqbal - 085210067755
+                    </p>
+                  </div>
+                </a>
               </div>
-              {/* <div className="flex items-center gap-2">
-                <Users className="h-5 w-5" />
-                <span className="text-sm">8+ Years Experience</span>
-              </div> */}
-              <div className="flex items-center gap-2">
-                <Shield className="h-5 w-5" />
-                <span className="text-sm">Experienced Engineer</span>
+
+              {/* Additional Info */}
+              <div className="mt-6 pt-6 border-t border-white/20">
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-6 text-sm text-teal-100">
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-4 w-4" />
+                    <span>Response within 2 hours</span>
+                  </div>
+                  <div className="hidden sm:block w-1 h-1 bg-teal-200 rounded-full"></div>
+                  <div className="flex items-center gap-2">
+                    <Users className="h-4 w-4" />
+                    <span>8+ Years Experience</span>
+                  </div>
+                  <div className="hidden sm:block w-1 h-1 bg-teal-200 rounded-full"></div>
+                  <div className="flex items-center gap-2">
+                    <Shield className="h-4 w-4" />
+                    <span>Certified Solutions</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

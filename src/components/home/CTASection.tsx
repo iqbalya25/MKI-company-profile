@@ -90,12 +90,12 @@ const CTASection = () => {
           </div> */}
 
           {/* Quick Contact Info - Card Style */}
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 max-w-3xl mx-auto">
+          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 max-w-5xl mx-auto">
             <h3 className="text-white font-semibold mb-4">
               Direct Contact Information
             </h3>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-white">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-white">
               <a
                 href={`tel:${SITE_CONFIG.company.phone}`}
                 className="group flex items-center justify-center gap-3 p-3 rounded-lg hover:bg-white/10 transition-colors"
@@ -105,6 +105,9 @@ const CTASection = () => {
                   <p className="text-xs text-teal-200">Call Us</p>
                   <p className="font-semibold text-sm">
                     {SITE_CONFIG.company.phone}
+                  </p>
+                  <p className="font-semibold text-sm">
+                    ( WhatsApp Available )
                   </p>
                 </div>
               </a>
@@ -126,7 +129,7 @@ const CTASection = () => {
                 <MapPin className="h-5 w-5 text-teal-200" />
                 <div className="text-left">
                   <p className="text-xs text-teal-200">Location</p>
-                  <p className="font-semibold text-sm">
+                  <p className="font-semibold text-xs">
                     {SITE_CONFIG.company.address}
                   </p>
                 </div>
