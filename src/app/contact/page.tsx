@@ -66,9 +66,9 @@ export default function ContactPage() {
       icon: MessageSquare,
       title: "WhatsApp",
       description: "Quick response via WhatsApp",
-      value: "+62 852-1006-7755",
+      value: "Iqbal - 085210067755",
       action:
-        "https://wa.me/6285210067755?text=Halo MKI, saya membutuhkan technical support untuk automation",
+        "https://wa.me/6285210067755?text=Halo Mederi Karya, saya membutuhkan technical support untuk automation",
       color: "text-green-600",
       bgColor: "bg-green-50",
     },
@@ -76,7 +76,7 @@ export default function ContactPage() {
 
   const services = [
     {
-      title: "Parameter Setting",
+      title: "Programming & Parameter Setting",
       description: "Inverter configuration, PLC programming, HMI setup",
       icon: "⚙️",
     },
@@ -307,7 +307,7 @@ export default function ContactPage() {
               className="group relative inline-flex items-center justify-center px-8 py-4 bg-white text-teal-600 font-semibold rounded-lg hover:bg-gray-50 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
             >
               <Phone className="h-5 w-5 mr-2" />
-              <span>Call Now: {SITE_CONFIG.company.phone}</span>
+              <span>Iqbal: {SITE_CONFIG.company.phone}</span>
               <ArrowRight className="h-5 w-5 ml-2 transition-transform duration-300 group-hover:translate-x-2" />
 
               {/* Shine effect on hover */}

@@ -12,6 +12,13 @@ import {
   Tag,
   BookOpen,
   ArrowRight,
+  Shield,
+  Users,
+  MessageSquare,
+  Mail,
+  Phone,
+  Package,
+  Headphones,
 } from "lucide-react";
 import { getBlogPostBySlug, getBlogPosts } from "@/lib/contentful";
 import { generateBreadcrumbSchema } from "@/lib/schema";
@@ -61,7 +68,7 @@ function extractBlogFields(entry: any) {
             fields.featuredImage.fields?.file?.details?.image?.height || 600,
         }
       : null,
-    author: fields.author || "MKI Engineering Team",
+    author: fields.author || "Mederi Karya Engineering Team",
     publishDate: fields.publishDate || sys.createdAt,
     tags: Array.isArray(fields.tags) ? fields.tags : [],
     seoTitle: fields.seoTitle || "",
@@ -391,28 +398,148 @@ export default async function BlogPostPage({ params }: BlogPageProps) {
       )}
 
       {/* CTA Section */}
-      <section className="py-16 bg-teal-600">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center text-white">
-            <h2 className="text-3xl font-bold mb-4">Need Technical Support?</h2>
-            <p className="text-xl text-teal-100 mb-8">
+      {/* Full CTA Section - Blog Page Style */}
+      <section className="py-16 bg-teal-600 relative overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage: `radial-gradient(circle at 20% 50%, white 1px, transparent 1px),
+                         radial-gradient(circle at 80% 80%, white 1px, transparent 1px)`,
+              backgroundSize: "50px 50px",
+            }}
+          />
+        </div>
+
+        {/* Decorative Elements */}
+        <div className="absolute top-10 right-10 w-64 h-64 bg-teal-500 rounded-full blur-3xl opacity-20 animate-pulse" />
+        <div className="absolute bottom-10 left-10 w-80 h-80 bg-teal-400 rounded-full blur-3xl opacity-20 animate-pulse" />
+
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="max-w-4xl mx-auto text-center">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+              Need Technical Support?
+            </h2>
+            <p className="text-xl text-teal-100 mb-10 leading-relaxed">
               Our engineering team provides direct technical consultation and
               troubleshooting services for your automation projects.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+
+            {/* Two Enhanced Buttons with proper spacing */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-10">
               <Link
                 href="/contact"
-                className="inline-flex items-center justify-center px-6 py-3 bg-white text-teal-600 font-semibold rounded-lg hover:bg-teal-50 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
+                className="group relative inline-flex items-center justify-center px-8 py-4 bg-white text-teal-600 font-semibold rounded-lg hover:bg-gray-50 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
               >
-                Contact Engineers
-                <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                <Headphones className="h-5 w-5 mr-2" />
+                <span>Contact Engineers</span>
+                <ArrowRight className="h-5 w-5 ml-2 transition-transform duration-300 group-hover:translate-x-2" />
+
+                {/* Shine effect on hover */}
+                <div className="absolute inset-0 rounded-lg overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+                </div>
               </Link>
+
               <Link
-                href="/services"
-                className="inline-flex items-center justify-center px-6 py-3 border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-teal-600 hover:scale-105 transition-all duration-300"
+                href="/products"
+                className="group relative inline-flex items-center justify-center px-8 py-4 border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-teal-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
               >
-                Technical Services
+                <Package className="h-5 w-5 mr-2" />
+                <span>Browse Products</span>
+                <ArrowRight className="h-5 w-5 ml-2 transition-transform duration-300 group-hover:translate-x-2" />
+
+                {/* Shine effect on hover */}
+                <div className="absolute inset-0 rounded-lg overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+                </div>
               </Link>
+            </div>
+
+            {/* Contact Information Card */}
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 max-w-5xl mx-auto">
+              <h3 className="text-white font-semibold mb-6 text-lg">
+                Direct Contact Information
+              </h3>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* Phone Contact */}
+                <a
+                  href={`tel:${SITE_CONFIG.company.phone}`}
+                  className="group flex items-center gap-3 p-4 rounded-lg hover:bg-white/10 transition-all duration-300 transform hover:scale-105"
+                >
+                  <div className="flex-shrink-0">
+                    <Phone className="h-6 w-6 text-teal-200 group-hover:rotate-12 transition-transform duration-300" />
+                  </div>
+                  <div className="text-left min-w-0">
+                    <p className="text-xs text-teal-200 uppercase tracking-wide mb-1">
+                      Call Direct
+                    </p>
+                    <p className="font-semibold text-white text-sm group-hover:text-teal-100 transition-colors">
+                      {SITE_CONFIG.company.phone}
+                    </p>
+                  </div>
+                </a>
+
+                {/* Email Contact */}
+                <a
+                  href={`mailto:${SITE_CONFIG.company.email}`}
+                  className="group flex items-center gap-3 p-4 rounded-lg hover:bg-white/10 transition-all duration-300 transform hover:scale-105"
+                >
+                  <div className="flex-shrink-0">
+                    <Mail className="h-6 w-6 text-teal-200 group-hover:rotate-12 transition-transform duration-300" />
+                  </div>
+                  <div className="text-left min-w-0">
+                    <p className="text-xs text-teal-200 uppercase tracking-wide mb-1">
+                      Email Us
+                    </p>
+                    <p className="font-semibold text-white text-sm group-hover:text-teal-100 transition-colors truncate">
+                      {SITE_CONFIG.company.email}
+                    </p>
+                  </div>
+                </a>
+
+                {/* WhatsApp Contact */}
+                <a
+                  href="https://wa.me/6285210067755?text=Halo Mederi Karya, saya membutuhkan technical support untuk automation"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex items-center gap-3 p-4 rounded-lg hover:bg-white/10 transition-all duration-300 transform hover:scale-105"
+                >
+                  <div className="flex-shrink-0">
+                    <MessageSquare className="h-6 w-6 text-teal-200 group-hover:rotate-12 transition-transform duration-300" />
+                  </div>
+                  <div className="text-left min-w-0">
+                    <p className="text-xs text-teal-200 uppercase tracking-wide mb-1">
+                      WhatsApp
+                    </p>
+                    <p className="font-semibold text-white text-sm group-hover:text-teal-100 transition-colors">
+                      Iqbal - 085210067755
+                    </p>
+                  </div>
+                </a>
+              </div>
+
+              {/* Additional Info */}
+              <div className="mt-6 pt-6 border-t border-white/20">
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-6 text-sm text-teal-100">
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-4 w-4" />
+                    <span>Response within 2 hours</span>
+                  </div>
+                  <div className="hidden sm:block w-1 h-1 bg-teal-200 rounded-full"></div>
+                  <div className="flex items-center gap-2">
+                    <Users className="h-4 w-4" />
+                    <span>8+ Years Experience</span>
+                  </div>
+                  <div className="hidden sm:block w-1 h-1 bg-teal-200 rounded-full"></div>
+                  <div className="flex items-center gap-2">
+                    <Shield className="h-4 w-4" />
+                    <span>Certified Solutions</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
