@@ -1,7 +1,7 @@
 export const SITE_CONFIG = {
   name: "Mederi Karya Indonesia",
   description:
-    "Supplier Automation Parts + Technical Support - PLC, HMI, Inverter, Safety Relay dengan Engineering Services Indonesia",
+    "Solusi Industrial Automation lengkap, PLC, Inverter, HMI, Sensor , Servo dan Power meter dengan engineering support Programming & Parameter setting, commissioning, engineering consultation Jakarta.",
   url: process.env.NEXT_PUBLIC_SITE_URL || "https://mederikarya.co.id",
   company: {
     name: "Mederi Karya Indonesia",

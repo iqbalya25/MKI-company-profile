@@ -27,39 +27,39 @@ const nextConfig = {
   async headers() {
     return [
       {
-        source: '/(.*)',
+        source: "/(.*)",
         headers: [
           {
-            key: 'X-DNS-Prefetch-Control',
-            value: 'on'
+            key: "X-DNS-Prefetch-Control",
+            value: "on",
           },
           {
-            key: 'Strict-Transport-Security',
-            value: 'max-age=63072000; includeSubDomains; preload'
+            key: "Strict-Transport-Security",
+            value: "max-age=63072000; includeSubDomains; preload",
           },
           {
-            key: 'X-Frame-Options',
-            value: 'DENY'
+            key: "X-Frame-Options",
+            value: "DENY",
           },
           {
-            key: 'X-Content-Type-Options',
-            value: 'nosniff'
+            key: "X-Content-Type-Options",
+            value: "nosniff",
           },
           {
-            key: 'Referrer-Policy',
-            value: 'origin-when-cross-origin'
-          }
-        ]
+            key: "Referrer-Policy",
+            value: "origin-when-cross-origin",
+          },
+        ],
       },
       {
-        source: '/_next/static/(.*)',
+        source: "/_next/static/(.*)",
         headers: [
           {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable'
-          }
-        ]
-      }
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
     ];
   },
 
@@ -67,13 +67,15 @@ const nextConfig = {
   async redirects() {
     return [
       {
-        source: "/vfd",
-        destination: "/products?category=inverter",
-        permanent: true, // 301 redirect for SEO
+        source: "/",
+        has: [{ type: "host", value: "mederikaryaindonesia.vercel.app" }],
+        destination: "https://mederikarya.co.id/",
+        permanent: true,
       },
       {
-        source: "/products/vfd/:slug*",
-        destination: "/products/inverter/:slug*",
+        source: "/products/:path*",
+        has: [{ type: "host", value: "mederikaryaindonesia.vercel.app" }],
+        destination: "https://mederikarya.co.id/products/:path*",
         permanent: true,
       },
     ];
