@@ -7,7 +7,7 @@ export const SITE_CONFIG = {
     name: "Mederi Karya Indonesia",
     phone: "+62-852-1006-7755",
     email: "sales@mederikarya.co.id",
-    address: "Komplek Pergudangan Bizpark 3, Blok D51A, Bekasi ,Jawa Barat",
+    address: "Komplek Pergudangan Bizpark 3 , Blok D51A , Bekasi , Jawa Barat",
     tagline: "One Stop Solution Automation Provider",
   },
   pricing: {
@@ -22,7 +22,7 @@ export const PRODUCT_CATEGORIES = [
     slug: "plc",
     name: "PLC (Programmable Logic Controller)",
     description:
-      "Automation controller dengan technical support dan programming service - Mitsubishi, Omron, Siemens",
+      "Supplier Automation controller dengan technical support dan programming service - Mitsubishi, Omron, Siemens",
     keywords: [
       "jual plc",
       "supplier plc mitsubishi",
@@ -33,7 +33,7 @@ export const PRODUCT_CATEGORIES = [
     slug: "inverter", // ✅ CHANGED FROM "vfd"
     name: "Inverter (Variable Frequency Drive)",
     description:
-      "Pengontrol kecepatan motor dengan parameter setting dan commissioning - Schneider, ABB, Danfoss",
+      "Supplier Pengontrol kecepatan motor dengan parameter setting dan commissioning - Schneider, ABB, Danfoss",
     keywords: [
       "jual inverter",
       "parameter setting inverter",
@@ -44,7 +44,7 @@ export const PRODUCT_CATEGORIES = [
     slug: "hmi",
     name: "HMI (Human Machine Interface)",
     description:
-      "Touch panel operator dengan configuration dan troubleshooting support - Mitsubishi, Proface, Weintek, Omron",
+      "Supplier HMI dengan technical support, programming dan troubleshooting support - Mitsubishi, Proface, Weintek, Omron",
     keywords: [
       "hmi proface",
       "touchscreen industrial",
@@ -55,7 +55,7 @@ export const PRODUCT_CATEGORIES = [
     slug: "power-meter",
     name: "Power Meter & Monitoring",
     description:
-      "Energy monitoring devices dengan installation support - Schneider, ABB, Phoenix Contact",
+      "Supplier Power Meter untuk Energy monitoring dengan instalasi dan programming - Schneider, ABB, Phoenix Contact",
     keywords: [
       "power meter schneider",
       "energy monitoring",
