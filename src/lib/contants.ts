@@ -6,8 +6,8 @@ export const SITE_CONFIG = {
   company: {
     name: "Mederi Karya Indonesia",
     phone: "+62-852-1006-7755",
-    email: "iqbalya25@gmail.com",
-    address: "Bekasi, Indonesia",
+    email: "sales@mederikarya.co.id",
+    address: "Komplek Pergudangan Bizpark 3, Blok D51A, Bekasi ,Jawa Barat",
     tagline: "One Stop Solution Automation Provider",
   },
   pricing: {
