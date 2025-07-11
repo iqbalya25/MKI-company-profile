@@ -95,6 +95,10 @@ export default function RootLayout({
   return (
     <html lang="id" className="scroll-smooth">
       <head>
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" href="/favicon-16x16.png" sizes="16x16" />
+        <link rel="icon" href="/favicon-32x32.png" sizes="32x32" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <meta
           name="google-site-verification"
           content="6RSRNqNO9wfsi4esBdtGY0Ggk1UGoSyaygOo5ayLXqM"
@@ -109,7 +113,6 @@ export default function RootLayout({
           href="https://fonts.gstatic.com"
           crossOrigin="anonymous"
         />
-
         {/* Google Analytics 4 - Only load in production */}
         {process.env.NODE_ENV === "production" &&
           process.env.NEXT_PUBLIC_GA_ID && (
@@ -139,7 +142,6 @@ export default function RootLayout({
               </Script>
             </>
           )}
-
         {/* Structured Data for Organization */}
         <script
           type="application/ld+json"
@@ -147,7 +149,7 @@ export default function RootLayout({
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "Organization",
-              name: SITE_CONFIG.company.name,
+              name: "PT. Mederi Karya Indonesia",
               url: SITE_CONFIG.url,
               logo: `${SITE_CONFIG.url}/logo.png`,
               description: SITE_CONFIG.description,
