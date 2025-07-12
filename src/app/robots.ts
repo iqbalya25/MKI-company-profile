@@ -1,13 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-// src/app/robots.ts - OPTIMIZED FOR SEO & PERFORMANCE
 import { MetadataRoute } from "next";
 import { SITE_CONFIG } from "@/lib/contants";
 
 export default function robots(): MetadataRoute.Robots {
-  const isProduction = process.env.NODE_ENV === "production";
-  
   return {
     rules: [
+      // Main rule for all crawlers
       {
         userAgent: "*",
         allow: "/",
@@ -22,28 +19,26 @@ export default function robots(): MetadataRoute.Robots {
           "/*.json$",
           "/*.xml$",
           "/*.txt$",
-          // Allow specific query parameters for SEO
-          "/*?*",
+          // Block only problematic query params that create duplicate content
+          "/*?search=*", // Search results pages
+          "/*?sort=*", // Sorting variations
+          "/*?view=*", // View mode variations (grid/list)
+          "/*?utm_*", // Marketing tracking parameters
         ],
-        // Add crawl delay to prevent server overload
-        crawlDelay: 1,
       },
+
+      // Specific rules for Google (most important)
       {
         userAgent: "Googlebot",
         allow: [
           "/",
-          "/products",
-          "/products/",
-          "/products?category=*",
-          "/products/*/", // Allow product detail pages
-          "/blog",
-          "/blog/",
-          "/blog/*/", // Allow blog post pages
-          "/services",
+          "/products*", // All product pages, categories, pagination, slugs
+          "/blog*", // All blog pages and posts
+          "/services*", // All service pages and slugs
           "/about",
           "/contact",
           "/quote",
-          "/location/*",
+          "/location/*", // Location-based pages
         ],
         disallow: [
           "/api/",
@@ -51,50 +46,50 @@ export default function robots(): MetadataRoute.Robots {
           "/_next/",
           "/static/",
           "/private/",
-          "/*?sort=*", // Prevent duplicate sorting URLs
-          "/*?page=*", // Prevent pagination indexing
-          "/*?search=*", // Prevent search result indexing
+          "/*?search=*", // Avoid indexing search results
+          "/*?sort=*", // Avoid duplicate sorted content
+          "/*?utm_*", // Block tracking parameters
         ],
       },
+
+      // Specific rules for Bing
       {
         userAgent: "Bingbot",
         allow: [
           "/",
-          "/products",
-          "/products/",
-          "/products?category=*",
-          "/products/*/",
-          "/blog",
-          "/blog/",
-          "/blog/*/",
-          "/services",
+          "/products*",
+          "/blog*",
+          "/services*",
           "/about",
           "/contact",
           "/quote",
           "/location/*",
         ],
-        disallow: [
-          "/api/",
-          "/admin/",
-          "/_next/",
-          "/static/",
-          "/private/",
-        ],
-        crawlDelay: 2,
+        disallow: ["/api/", "/admin/", "/_next/", "/static/", "/private/"],
+        crawlDelay: 1,
       },
-      // Block aggressive crawlers
+
+      // Block AI training crawlers (protect your content)
       {
         userAgent: [
           "CCBot",
           "ChatGPT-User",
           "GPTBot",
           "Google-Extended",
-          "FacebookBot",
-          "facebookexternalhit",
+          "anthropic-ai",
+          "Claude-Web",
         ],
         disallow: "/",
       },
+
+      // Block aggressive/problematic crawlers
+      {
+        userAgent: ["SemrushBot", "AhrefsBot", "MJ12bot", "DotBot"],
+        disallow: "/",
+      },
     ],
+
+    // Sitemap and host declaration
     sitemap: `${SITE_CONFIG.url}/sitemap.xml`,
     host: SITE_CONFIG.url,
   };
