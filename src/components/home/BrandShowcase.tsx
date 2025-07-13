@@ -40,7 +40,7 @@ const BrandShowcase = () => {
     {
       name: "Fuji Electric",
       logo: "/images/brands/Fuji electric.png",
-      slug: "fuji-electric",
+      slug: "fuji",
       description: "Power & energy systems",
     },
     {
