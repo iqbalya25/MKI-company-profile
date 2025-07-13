@@ -27,6 +27,7 @@ export default function ProductSearchServer({
     currentCategory || currentBrand || currentSearch
   );
 
+  const resetKey = `${currentCategory || "all"}-${currentBrand || "all"}-${currentSearch || "all"}`;
   // Generate URL for removing specific filter
   const buildRemoveFilterUrl = (
     removeType: "category" | "brand" | "search"
@@ -310,6 +311,7 @@ export default function ProductSearchServer({
               name="category"
               defaultValue={currentCategory || ""}
               className={productStyles.search.form.select}
+              key={`category-${resetKey}`}
             >
               <option value="">All Categories</option>
               {PRODUCT_CATEGORIES.map((category) => (
@@ -327,6 +329,7 @@ export default function ProductSearchServer({
               name="brand"
               defaultValue={currentBrand || ""}
               className={productStyles.search.form.select}
+              key={`brand-${resetKey}`}
             >
               <option value="">All Brands</option>
               {BRANDS.map((brand) => (
