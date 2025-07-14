@@ -558,7 +558,18 @@ export default function AboutPage() {
                       href="tel:+6285210067755"
                       className="hover:text-white transition-colors"
                     >
-                      +62-852-1006-7755
+                      {SITE_CONFIG.company.phone}
+                    </a>
+                  </div>
+                  <div className="flex items-center gap-3 text-teal-100">
+                    <Phone className="w-5 h-5" />
+                    <a
+                      href="https://wa.me/6285210067755?text=Halo Mederi Karya, saya membutuhkan informasi mengenai produk / technical support"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:text-white transition-colors"
+                    >
+                      Iqbal - 085210067755
                     </a>
                   </div>
                   <div className="flex items-center gap-3 text-teal-100">

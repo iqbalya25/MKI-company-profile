@@ -5,7 +5,7 @@ export const SITE_CONFIG = {
   url: process.env.NEXT_PUBLIC_SITE_URL || "https://mederikarya.co.id",
   company: {
     name: "Mederi Karya Indonesia",
-    phone: "+62-852-1006-7755",
+    phone: "021-38317238",
     email: "sales@mederikarya.co.id",
     address: "Komplek Pergudangan Bizpark 3 , Blok D51A , Bekasi , Jawa Barat",
     tagline: "One Stop Solution Automation Provider",

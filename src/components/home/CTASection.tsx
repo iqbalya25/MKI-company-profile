@@ -107,7 +107,7 @@ const CTASection = () => {
                     {SITE_CONFIG.company.phone}
                   </p>
                   <p className="font-semibold text-sm">
-                    ( WhatsApp Available )
+                    085210067755 (WhatsApp)
                   </p>
                 </div>
               </a>
@@ -126,7 +126,7 @@ const CTASection = () => {
               </a>
 
               <div className="flex items-center justify-center gap-3 p-3">
-                <MapPin className="h-5 w-5 text-teal-200" />
+                <MapPin className="h-7 w-7 text-teal-200" />
                 <div className="text-left">
                   <p className="text-xs text-teal-200">Location</p>
                   <p className="font-semibold text-xs">

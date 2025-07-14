@@ -23,6 +23,7 @@ import {
   ShoppingCart,
   Download,
   Package,
+  MapPin,
 } from "lucide-react";
 import { getProductBySlug, getProducts } from "@/lib/contentful";
 import { generateProductSchema, generateBreadcrumbSchema } from "@/lib/schema";
@@ -419,6 +420,14 @@ export default async function ProductPage({ params }: ProductPageProps) {
                         <Mail className="h-4 w-4" />
                         <span>{SITE_CONFIG.company.email}</span>
                       </a>
+                      <br />
+                      <h4 className="font-medium text-gray-900 mb-3">
+                        Address :
+                      </h4>
+                      <div className="flex items-center gap-2 text-sm text-gray-700 hover:text-teal-600 transition-colors">
+                        <MapPin className="h-6 w-6" />
+                        <span>{SITE_CONFIG.company.address}</span>
+                      </div>
                     </div>
                   </div>
                 </div>

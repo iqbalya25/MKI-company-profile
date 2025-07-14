@@ -4,7 +4,7 @@
 import { Metadata } from "next";
 import { Suspense } from "react";
 import QuoteForm from "@/components/forms/QuoteForm";
-import { PRODUCT_CATEGORIES } from "@/lib/contants";
+import { PRODUCT_CATEGORIES, SITE_CONFIG } from "@/lib/contants";
 import { getCanonicalUrl } from "@/lib/url";
 
 export const metadata: Metadata = {
@@ -209,7 +209,7 @@ export default async function QuotePage({ searchParams }: QuotePageProps) {
                     </div>
                     <div>
                       <div className="font-medium">Call Direct</div>
-                      <div className="text-sm">+62 852-1006-7755</div>
+                      <div className="text-sm">{SITE_CONFIG.company.phone}</div>
                     </div>
                   </a>
                   <a
