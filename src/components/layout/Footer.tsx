@@ -14,7 +14,7 @@ const Footer = () => {
           {/* Company & Contact */}
           <div className="text-center lg:text-left">
             <p className="font-semibold text-white mb-2">
-              Mederi Karya Indonesia
+              PT. Mederi Karya Indonesia
             </p>
             <div className="flex flex-col md:flex-row gap-4 text-sm">
               <a

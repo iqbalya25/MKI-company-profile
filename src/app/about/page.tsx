@@ -329,7 +329,7 @@ export default function AboutPage() {
               <div className="max-w-4xl mx-auto text-lg text-gray-700 leading-relaxed space-y-6">
                 <p>
                   <strong className="text-teal-600">
-                    Mederi Karya Indonesia (MKI)
+                    PT. Mederi Karya Indonesia (MKI)
                   </strong>{" "}
                   adalah Engineering Services Company yang menghadirkan solusi
                   lengkap untuk kebutuhan industrial automation Anda. Didukung
