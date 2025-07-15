@@ -9,18 +9,19 @@ interface ServiceCardProps {
 }
 
 export default function ServiceCard({ service }: ServiceCardProps) {
+  // Get the first image from the images array
+  const primaryImage =
+    service.images && service.images.length > 0 ? service.images[0] : null;
+
   return (
-    <Link href={`/services/${service.slug}`} className="group block">
-      {/* Just add these 3 simple classes: h-full flex flex-col */}
+    <Link href={`/services/${service.slug}`} className="group block h-full">
+      {/* Card with Full Height and Flex Layout */}
       <div className="border rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300 bg-white h-full flex flex-col">
-        {service.images && service.images.length > 0 && (
-          <div className="relative h-48 overflow-hidden">
+        {/* Image Section - Fixed Height */}
+        {primaryImage && (
+          <div className="relative h-48 overflow-hidden flex-shrink-0">
             <Image
-              src={
-                service.images[0].startsWith("//")
-                  ? `https:${service.images[0]}`
-                  : service.images[0]
-              }
+              src={primaryImage}
               alt={service.name}
               fill
               className="object-cover group-hover:scale-105 transition-transform duration-300"
@@ -33,17 +34,25 @@ export default function ServiceCard({ service }: ServiceCardProps) {
           </div>
         )}
 
-        {/* Add flex-1 to this div so it takes remaining space */}
-        <div className="p-6 flex-1">
-          <h3 className="text-xl font-semibold mb-2 group-hover:text-teal-600 transition-colors">
-            {service.name}
-          </h3>
-          <p className="text-gray-600 mb-4 line-clamp-3">
-            {service.shortDescription}
-          </p>
+        {/* Content Section - Flexible Height */}
+        <div className="p-6 flex flex-col flex-1">
+          {/* Title - Fixed Space */}
+          <div className="mb-3">
+            <h3 className="text-xl font-semibold group-hover:text-teal-600 transition-colors leading-tight">
+              {service.name}
+            </h3>
+          </div>
 
-          {service.features && service.features.length > 0 && (
-            <div className="mb-4">
+          {/* Description - Fixed Space */}
+          <div className="mb-4">
+            <p className="text-gray-600 line-clamp-3 leading-relaxed text-sm">
+              {service.shortDescription}
+            </p>
+          </div>
+
+          {/* Features Section - Flexible Space */}
+          <div className="flex-1 mb-4">
+            {service.features && service.features.length > 0 && (
               <div className="flex flex-wrap gap-2">
                 {service.features.slice(0, 3).map((feature, index) => (
                   <span
@@ -59,12 +68,15 @@ export default function ServiceCard({ service }: ServiceCardProps) {
                   </span>
                 )}
               </div>
+            )}
+          </div>
+
+          {/* Learn More Button - Always at Bottom */}
+          <div className="mt-auto">
+            <div className="flex items-center text-teal-600 font-medium group-hover:gap-2 transition-all">
+              Learn More
+              <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
             </div>
-          )}
-          {/**/}
-          <div className="flex items-center text-teal-600 font-medium group-hover:gap-2 transition-all">
-            Learn More
-            <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
           </div>
         </div>
       </div>

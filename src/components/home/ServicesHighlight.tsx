@@ -58,23 +58,23 @@ const ServicesHighlight = ({ services }: ServicesHighlightProps) => {
           </p>
         </div>
 
-        {/* Services Grid - Premium Card Design */}
+        {/* Services Grid - Equal Height Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
           {services.slice(0, 4).map((service, index) => {
-            // ✅ Use services directly
             const isEven = index % 2 === 0;
             return (
-              <div key={service.slug} className="group relative">
-                {/* Card */}
-                <div className="bg-white rounded-2xl overflow-hidden h-full shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100 hover:border-gray-200 transform hover:-translate-y-2">
-                  <div className="h-48 relative overflow-hidden bg-gradient-to-br from-gray-100 to-gray-50">
-                    {service.images && service.images.length > 0 ? ( // ✅ Updated condition
+              <div key={service.slug} className="group relative h-full">
+                {/* Card with Full Height and Flex Layout */}
+                <div className="bg-white rounded-2xl overflow-hidden h-full flex flex-col shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100 hover:border-gray-200 transform hover:-translate-y-2">
+                  {/* Image Section - Fixed Height */}
+                  <div className="h-48 relative overflow-hidden bg-gradient-to-br from-gray-100 to-gray-50 flex-shrink-0">
+                    {service.images && service.images.length > 0 ? (
                       <Image
                         src={
                           service.images[0].startsWith("//")
                             ? `https:${service.images[0]}`
                             : service.images[0]
-                        } // ✅ Use first image
+                        }
                         alt={service.name}
                         fill
                         className="object-cover group-hover:scale-110 transition-transform duration-700"
@@ -84,7 +84,7 @@ const ServicesHighlight = ({ services }: ServicesHighlightProps) => {
                       <div className="w-full h-full flex items-center justify-center">
                         <Settings
                           className={`h-16 w-16 ${isEven ? "text-teal-200" : "text-blue-200"}`}
-                        />{" "}
+                        />
                       </div>
                     )}
 
@@ -96,51 +96,57 @@ const ServicesHighlight = ({ services }: ServicesHighlightProps) => {
                     />
                   </div>
 
-                  {/* Content Section */}
-                  <div className="p-6">
-                    {/* Title */}
-                    <div className="flex items-start gap-3 mb-4">
-                      <h3 className="font-bold text-lg text-gray-900 group-hover:text-teal-600 transition-colors flex-1">
+                  {/* Content Section - Flexible Height */}
+                  <div className="p-6 flex flex-col flex-1">
+                    {/* Title - Fixed Space */}
+                    <div className="mb-4">
+                      <h3 className="font-bold text-lg text-gray-900 group-hover:text-teal-600 transition-colors leading-tight">
                         {service.name}
                       </h3>
                     </div>
 
-                    {/* Description */}
-                    <p className="text-sm text-gray-600 mb-4 line-clamp-2">
-                      {service.shortDescription}
-                    </p>
+                    {/* Description - Fixed Space */}
+                    <div className="mb-4">
+                      <p className="text-sm text-gray-600 line-clamp-2 leading-relaxed">
+                        {service.shortDescription}
+                      </p>
+                    </div>
 
-                    {/* Features List */}
-                    {service.features && service.features.length > 0 && (
-                      <ul className="space-y-2 mb-4">
-                        {service.features.slice(0, 3).map((feature, idx) => (
-                          <li
-                            key={idx}
-                            className="flex items-start gap-2 text-xs text-gray-600"
-                          >
-                            <CheckCircle
-                              className={`h-3 w-3 mt-0.5 ${
-                                isEven ? "text-teal-500" : "text-blue-500"
-                              }`}
-                            />
-                            <span className="line-clamp-1">{feature}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
+                    {/* Features List - Flexible Space */}
+                    <div className="flex-1 mb-4">
+                      {service.features && service.features.length > 0 && (
+                        <ul className="space-y-2">
+                          {service.features.slice(0, 3).map((feature, idx) => (
+                            <li
+                              key={idx}
+                              className="flex items-start gap-2 text-xs text-gray-600"
+                            >
+                              <CheckCircle
+                                className={`h-3 w-3 mt-0.5 flex-shrink-0 ${
+                                  isEven ? "text-teal-500" : "text-blue-500"
+                                }`}
+                              />
+                              <span className="line-clamp-1">{feature}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
 
-                    {/* CTA Link */}
-                    <Link
-                      href={`/services/${service.slug}`}
-                      className={`inline-flex items-center text-sm font-medium ${
-                        isEven
-                          ? "text-teal-600 hover:text-teal-700"
-                          : "text-blue-600 hover:text-blue-700"
-                      } group/link`}
-                    >
-                      <span>Learn More</span>
-                      <ArrowRight className="h-3 w-3 ml-1 group-hover/link:translate-x-1 transition-transform" />
-                    </Link>
+                    {/* CTA Link - Always at Bottom */}
+                    <div className="mt-auto">
+                      <Link
+                        href={`/services/${service.slug}`}
+                        className={`inline-flex items-center text-sm font-medium ${
+                          isEven
+                            ? "text-teal-600 hover:text-teal-700"
+                            : "text-blue-600 hover:text-blue-700"
+                        } group/link`}
+                      >
+                        <span>Learn More</span>
+                        <ArrowRight className="h-3 w-3 ml-1 group-hover/link:translate-x-1 transition-transform" />
+                      </Link>
+                    </div>
                   </div>
 
                   {/* Bottom Accent Line */}

@@ -17,6 +17,8 @@ import {
 } from "lucide-react";
 import { getCanonicalUrl } from "@/lib/url";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Engineering Services + Technical Support | Mederi Karya Indonesia",
   description:
@@ -48,6 +50,7 @@ export const metadata: Metadata = {
 
 export default async function ServicesPage() {
   const services = await getServices();
+
   const featuredServices = services.filter((service) => service.featured);
   const regularServices = services.filter((service) => !service.featured);
 
