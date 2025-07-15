@@ -28,6 +28,7 @@ export const metadata: Metadata = {
     "automation services indonesia",
     "parameter setting inverter",
     "programming hmi",
+    "programming hmi proface",
     "instalasi panel baru",
     "instalasi panel PLC",
     "instalasi panel Inverter",
