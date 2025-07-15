@@ -55,7 +55,7 @@ export default function ServiceCard({ service }: ServiceCardProps) {
                 ))}
                 {service.features.length > 3 && (
                   <span className="text-xs text-gray-500">
-                    +{service.features.length - 3} mores
+                    +{service.features.length - 3} more
                   </span>
                 )}
               </div>
