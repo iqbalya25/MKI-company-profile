@@ -31,13 +31,13 @@ export default function ServiceDetail({ service }: ServiceDetailProps) {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
           {/* Left Side - Image */}
           <div className="lg:col-span-1">
-            {service.image && (
+            {service.images && service.images.length > 0 && (
               <div className="relative h-100 lg:h-100 w-full rounded-lg overflow-hidden">
                 <Image
                   src={
-                    service.image.startsWith("//")
-                      ? `https:${service.image}`
-                      : service.image
+                    service.images[0].startsWith("//")
+                      ? `https:${service.images[0]}`
+                      : service.images[0]
                   }
                   alt={service.name}
                   fill
@@ -241,6 +241,33 @@ export default function ServiceDetail({ service }: ServiceDetailProps) {
           </div>
         </div>
       </div>
+
+      {service.images && service.images.length > 0 && (
+        <div className="container mx-auto px-4 py-12">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+            More Action From This Project
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {service.images.map((image, index) => (
+              <div key={index} className="group relative">
+                <div className="relative h-72 rounded-lg overflow-hidden bg-gray-100">
+                  <Image
+                    src={image}
+                    alt={`${service.name} - Action ${index + 1}`}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                  />
+                  <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded">
+                    {index + 1} / {service.images.length}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Full CTA Section - Products Page Style */}
       <section className="py-16 bg-teal-600 relative overflow-hidden">

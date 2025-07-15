@@ -18,77 +18,6 @@ interface ServicesHighlightProps {
 }
 
 const ServicesHighlight = ({ services }: ServicesHighlightProps) => {
-  // Default services if none from Contentful
-  const defaultServices = [
-    {
-      id: "1",
-      name: "Parameter Setting",
-      slug: "parameter-setting",
-      shortDescription:
-        "Professional configuration for inverters, PLCs, and HMIs",
-      description: "Expert parameter configuration and optimization services",
-      image: "/images/parameter-setting.jpg",
-      features: [
-        "Inverter frequency setup",
-        "PLC programming",
-        "HMI configuration",
-        "System optimization",
-      ],
-      icon: Settings,
-    },
-    {
-      id: "2",
-      name: "Commissioning Service",
-      slug: "commissioning",
-      shortDescription:
-        "Complete testing, startup, and validation for automation systems",
-      description: "End-to-end commissioning for industrial automation",
-      image: "/images/commissioning.jpg",
-      features: [
-        "System installation",
-        "Function testing",
-        "Performance validation",
-        "Documentation",
-      ],
-      icon: PlayCircle,
-    },
-    {
-      id: "3",
-      name: "Technical Support",
-      slug: "technical-support",
-      shortDescription:
-        "24/7 engineering consultation and troubleshooting assistance",
-      description: "Round-the-clock technical support from experts",
-      image: "/images/tech-support.jpg",
-      features: [
-        "Remote assistance",
-        "On-site support",
-        "Emergency response",
-        "Preventive maintenance",
-      ],
-      icon: Wrench,
-    },
-    {
-      id: "4",
-      name: "Training Program",
-      slug: "training",
-      shortDescription:
-        "Comprehensive operator and maintenance training programs",
-      description: "Professional training for your technical team",
-      image: "/images/training.jpg",
-      features: [
-        "Operator training",
-        "Maintenance procedures",
-        "Safety protocols",
-        "Best practices",
-      ],
-      icon: GraduationCap,
-    },
-  ];
-
-  // Use default services if none from Contentful
-  const displayServices = services.length > 0 ? services : defaultServices;
-
   return (
     <section className="py-20 bg-gradient-to-b from-white via-gray-50 to-white relative overflow-hidden">
       {/* Background Pattern - Diagonal Lines */}
@@ -131,19 +60,21 @@ const ServicesHighlight = ({ services }: ServicesHighlightProps) => {
 
         {/* Services Grid - Premium Card Design */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-          {displayServices.slice(0, 4).map((service, index) => {
-            const IconComponent = defaultServices[index]?.icon || Settings;
+          {services.slice(0, 4).map((service, index) => {
+            // ✅ Use services directly
             const isEven = index % 2 === 0;
-
             return (
               <div key={service.slug} className="group relative">
                 {/* Card */}
                 <div className="bg-white rounded-2xl overflow-hidden h-full shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100 hover:border-gray-200 transform hover:-translate-y-2">
-                  {/* Image Section with Overlay */}
                   <div className="h-48 relative overflow-hidden bg-gradient-to-br from-gray-100 to-gray-50">
-                    {service.image ? (
+                    {service.images && service.images.length > 0 ? ( // ✅ Updated condition
                       <Image
-                        src={service.image}
+                        src={
+                          service.images[0].startsWith("//")
+                            ? `https:${service.images[0]}`
+                            : service.images[0]
+                        } // ✅ Use first image
                         alt={service.name}
                         fill
                         className="object-cover group-hover:scale-110 transition-transform duration-700"
@@ -151,11 +82,9 @@ const ServicesHighlight = ({ services }: ServicesHighlightProps) => {
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
-                        <IconComponent
-                          className={`h-16 w-16 ${
-                            isEven ? "text-teal-200" : "text-blue-200"
-                          }`}
-                        />
+                        <Settings
+                          className={`h-16 w-16 ${isEven ? "text-teal-200" : "text-blue-200"}`}
+                        />{" "}
                       </div>
                     )}
 

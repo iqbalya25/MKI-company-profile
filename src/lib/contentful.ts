@@ -376,15 +376,25 @@ export async function getServiceBySlug(slug: string): Promise<Service | null> {
 function transformService(item: any): Service {
   const fields = item.fields || {};
 
+  const getField = (fieldName: string, defaultValue: any = "") => {
+    return fields[fieldName] ?? defaultValue;
+  };
+
+  const getImages = (images: any[]): string[] => {
+    if (!Array.isArray(images)) return [];
+    return images
+      .filter((img) => img && img.fields && img.fields.file)
+      .map((img) => `https:${img.fields.file.url}`);
+  };
+
+
   return {
     id: item.sys?.id || "",
     name: fields.name || "",
     slug: fields.slug || "",
     shortDescription: fields.shortDescription || "",
     description: fields.description || "",
-    image: fields.image?.fields?.file?.url
-      ? `https:${fields.image.fields.file.url}`
-      : "",
+    images: getImages(getField("images", [])),
     features: fields.features || [],
     featured: Boolean(fields.featured || false),
     seoTitle: fields.seoTitle || "",

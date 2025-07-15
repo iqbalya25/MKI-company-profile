@@ -54,18 +54,19 @@ export async function generateMetadata({
       description,
       url: `/services/${service.slug}`,
       type: "website",
-      images: service.image
-        ? [
-            {
-              url: service.image.startsWith("//")
-                ? `https:${service.image}`
-                : service.image,
-              width: 1200,
-              height: 630,
-              alt: service.name,
-            },
-          ]
-        : [],
+      images:
+        service.images && service.images.length > 0 // 🟢 Changed condition
+          ? [
+              {
+                url: service.images[0].startsWith("//") // 🟢 Use first image
+                  ? `https:${service.images[0]}`
+                  : service.images[0],
+                width: 1200,
+                height: 630,
+                alt: service.name,
+              },
+            ]
+          : [],
     },
     alternates: {
       canonical: getCanonicalUrl(`/services/${service.slug}`),

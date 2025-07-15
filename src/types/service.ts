@@ -4,7 +4,7 @@ export interface Service {
   slug: string;
   shortDescription: string;
   description: string;
-  image: string;
+  images: string[];
   features?: string[];
   featured: boolean;
   seoTitle?: string;

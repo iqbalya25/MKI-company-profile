@@ -13,13 +13,13 @@ export default function ServiceCard({ service }: ServiceCardProps) {
     <Link href={`/services/${service.slug}`} className="group block">
       {/* Just add these 3 simple classes: h-full flex flex-col */}
       <div className="border rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300 bg-white h-full flex flex-col">
-        {service.image && (
+        {service.images && service.images.length > 0 && (
           <div className="relative h-48 overflow-hidden">
             <Image
               src={
-                service.image.startsWith("//")
-                  ? `https:${service.image}`
-                  : service.image
+                service.images[0].startsWith("//")
+                  ? `https:${service.images[0]}`
+                  : service.images[0]
               }
               alt={service.name}
               fill
