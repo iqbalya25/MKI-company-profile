@@ -35,6 +35,7 @@ export const metadata: Metadata = {
     "instalasi panel HMI",
     "commissioning plc hmi",
     "programming plc",
+     "programming hmi",
     "technical training automation",
     "engineering consultation jakarta",
     "troubleshooting support",
