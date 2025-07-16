@@ -68,22 +68,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       },
     ];
 
-    // Product category pages - Higher priority for main categories
+    // Product category pages - LOWER than individual products
     const categoryPages: MetadataRoute.Sitemap = PRODUCT_CATEGORIES.map(
       (category) => ({
         url: `${baseUrl}/products?category=${category.slug}`,
         lastModified: currentDate,
         changeFrequency: "daily" as const, // ← CHANGED from "weekly" to "daily"
-        priority: 0.9, // ← HIGHER PRIORITY (was 0.85)
+        priority: 0.85, // ← LOWER than product pages (was 0.9)
       })
     );
 
-    // Individual product pages - LOWER PRIORITY than service pages
+    // Individual product pages - HIGH PRIORITY SEO GOLDMINE
     const productPages: MetadataRoute.Sitemap = products.map((product) => ({
       url: `${baseUrl}/products/${product.slug}`,
       lastModified: product.updateAt || currentDate,
-      changeFrequency: "daily" as const, // ← CHANGED from "weekly" to "daily"
-      priority: product.feature ? 0.85 : 0.8, // ← LOWER than service pages (was 0.9/0.85)
+      changeFrequency: "daily" as const, // ← DAILY for active updates
+      priority: product.feature ? 0.95 : 0.92, // ← MUCH HIGHER (was 0.85/0.8)
     }));
 
     // DYNAMIC SERVICE PAGES from Contentful - HIGHEST SEO PRIORITY
