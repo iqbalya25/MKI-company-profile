@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// src/app/sitemap.ts - TYPE-SAFE VERSION
+// src/app/sitemap.ts - OPTIMIZED FOR ACTIVE DEVELOPMENT
 import { MetadataRoute } from "next";
-import { getProducts, getBlogPosts } from "@/lib/contentful";
+import { getProducts, getBlogPosts, getServices } from "@/lib/contentful";
 import {
   SITE_CONFIG,
   PRODUCT_CATEGORIES,
@@ -14,10 +15,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const currentDate = new Date().toISOString();
 
   try {
-    // Fetch dynamic content with error handling
-    const [products, blogPosts] = await Promise.all([
+    // Fetch dynamic content with error handling - ADD SERVICES
+    const [products, blogPosts, services] = await Promise.all([
       getProducts({ limit: 1000 }).catch(() => []),
       getBlogPosts(200).catch(() => []),
+      getServices().catch(() => []), // ← ADD THIS
     ]);
 
     // Static pages with proper priorities and change frequencies
@@ -31,14 +33,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       {
         url: `${baseUrl}/products`,
         lastModified: currentDate,
-        changeFrequency: "daily",
-        priority: 0.9,
+        changeFrequency: "daily", // ← KEEP DAILY for active updates
+        priority: 0.95, // ← HIGHER PRIORITY
       },
       {
         url: `${baseUrl}/services`,
         lastModified: currentDate,
-        changeFrequency: "weekly",
-        priority: 0.8,
+        changeFrequency: "daily", // ← CHANGED from "weekly" to "daily"
+        priority: 0.9, // ← LOWER than individual service pages (was 0.95)
       },
       {
         url: `${baseUrl}/about`,
@@ -71,22 +73,30 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       (category) => ({
         url: `${baseUrl}/products?category=${category.slug}`,
         lastModified: currentDate,
-        changeFrequency: "weekly" as const,
-        priority: 0.85,
+        changeFrequency: "daily" as const, // ← CHANGED from "weekly" to "daily"
+        priority: 0.9, // ← HIGHER PRIORITY (was 0.85)
       })
     );
 
-    // Individual product pages - Using actual Product type from project
+    // Individual product pages - LOWER PRIORITY than service pages
     const productPages: MetadataRoute.Sitemap = products.map((product) => ({
       url: `${baseUrl}/products/${product.slug}`,
-      lastModified: product.updateAt || currentDate, // Using updateAt from Product interface
-      changeFrequency: "weekly" as const,
-      priority: product.feature ? 0.85 : 0.8, // Higher priority for featured products
+      lastModified: product.updateAt || currentDate,
+      changeFrequency: "daily" as const, // ← CHANGED from "weekly" to "daily"
+      priority: product.feature ? 0.85 : 0.8, // ← LOWER than service pages (was 0.9/0.85)
+    }));
+
+    // DYNAMIC SERVICE PAGES from Contentful - HIGHEST SEO PRIORITY
+    const dynamicServicePages: MetadataRoute.Sitemap = services.map((service) => ({
+      url: `${baseUrl}/services/${service.slug}`,
+      lastModified: service.updatedAt || currentDate, // Use actual update date
+      changeFrequency: "daily" as const, // ← DAILY for active updates
+      priority: service.featured ? 0.98 : 0.95, // ← HIGHEST PRIORITY (SEO weapon!)
     }));
 
     // Blog post pages - Safe handling of Contentful entries
     const blogPages: MetadataRoute.Sitemap = blogPosts
-      .filter((post: any) => post?.fields?.slug) // Only include posts with valid slugs
+      .filter((post: any) => post?.fields?.slug)
       .map((post: any) => ({
         url: `${baseUrl}/blog/${post.fields.slug}`,
         lastModified: post.sys?.updatedAt || currentDate,
@@ -99,15 +109,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${baseUrl}/location/${location.slug}`,
       lastModified: currentDate,
       changeFrequency: "monthly" as const,
-      priority: 0.7, // Higher priority for local SEO
-    }));
-
-    // Service detail pages - Full pages, not fragments
-    const servicePages: MetadataRoute.Sitemap = SERVICES.map((service) => ({
-      url: `${baseUrl}/services/${service.slug}`, // Changed from #anchor to full page
-      lastModified: currentDate,
-      changeFrequency: "monthly" as const,
-      priority: 0.75,
+      priority: 0.7,
     }));
 
     // Additional technical pages for SEO
@@ -132,7 +134,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       },
     ];
 
-    // Brand-specific pages for better SEO
+    // Brand-specific pages for better SEO - HIGHER PRIORITY
     const brandPages: MetadataRoute.Sitemap = [
       "mitsubishi",
       "schneider",
@@ -145,24 +147,30 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ].map((brand) => ({
       url: `${baseUrl}/products?brand=${brand}`,
       lastModified: currentDate,
-      changeFrequency: "weekly" as const,
-      priority: 0.75,
+      changeFrequency: "daily" as const, // ← CHANGED from "weekly" to "daily"
+      priority: 0.8, // ← HIGHER PRIORITY (was 0.75)
     }));
 
-    // Combine all pages
+    // Combine all pages - PRIORITIZE DYNAMIC CONTENT
     const allPages = [
       ...staticPages,
       ...categoryPages,
       ...productPages,
+      ...dynamicServicePages, // ← ONLY dynamic services from Contentful
       ...blogPages,
       ...locationPages,
-      ...servicePages,
+      // Removed staticServicePages - all services are from Contentful now
       ...technicalPages,
       ...brandPages,
     ];
 
+    // Remove duplicate service pages (in case of any overlaps)
+    const uniquePages = allPages.filter((page, index, self) =>
+      index === self.findIndex((p) => p.url === page.url)
+    );
+
     // Sort by priority (highest first) for better crawling
-    return allPages.sort((a, b) => (b.priority || 0) - (a.priority || 0));
+    return uniquePages.sort((a, b) => (b.priority || 0) - (a.priority || 0));
   } catch (error) {
     console.error("Error generating sitemap:", error);
 
@@ -178,7 +186,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         url: `${baseUrl}/products`,
         lastModified: currentDate,
         changeFrequency: "daily",
-        priority: 0.9,
+        priority: 0.95,
+      },
+      {
+        url: `${baseUrl}/services`,
+        lastModified: currentDate,
+        changeFrequency: "daily",
+        priority: 0.95,
       },
       {
         url: `${baseUrl}/contact`,
