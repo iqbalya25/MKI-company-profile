@@ -63,6 +63,19 @@ export const PRODUCT_CATEGORIES = [
     ],
   },
   {
+    slug: "plc-module",
+    name: "PLC Module",
+    description:
+      "Complete PLC Module : Input/Output Unit, Power Supply Unit, Base Unit, Communication & Network Module",
+    keywords: [
+      "Input Unit PLC",
+      "Output Unit PLC",
+      "Power Supply Unit PLC",
+      "Ethernet Module PLC",
+      "Positioning Module PLC",
+    ],
+  },
+  {
     slug: "power-supply",
     name: "Power Supply",
     description:
@@ -88,18 +101,6 @@ export const PRODUCT_CATEGORIES = [
       "Vision Sensor",
       "Safety Sensor",
       "Encoder",
-    ],
-  },
-  {
-    slug: "breaker",
-    name: "Circuit Breaker",
-    description:
-      "Berbagai pengaman circuit breaker untuk safety industrial automation",
-    keywords: [
-      "Circuit Breaker",
-      "MCCB",
-      "Molded Case Circuit Breaker",
-      "Motor Starter",
     ],
   },
   {
