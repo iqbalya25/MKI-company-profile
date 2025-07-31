@@ -115,7 +115,7 @@ const CategoryShowcase = ({ categories }: CategoryShowcaseProps) => {
                   <div className="bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full flex items-center gap-2 shadow-sm">
                     <CategoryIcon className="h-4 w-4 text-teal-600" />
                     <span className="text-xs font-medium text-gray-700">
-                      {productCount > 0 ? `${productCount} Products` : "New"}
+                      View All
                     </span>
                   </div>
                 </div>
@@ -205,11 +205,7 @@ const CategoryShowcase = ({ categories }: CategoryShowcaseProps) => {
                       </div>
 
                       {/* Count - Fixed at Bottom */}
-                      <div className="text-xs text-gray-500">
-                        {productCount > 0
-                          ? `${productCount} items`
-                          : "View all"}
-                      </div>
+                      <div className="text-xs text-gray-500">View All</div>
                     </div>
                   </Link>
                 );

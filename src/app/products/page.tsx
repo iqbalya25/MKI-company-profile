@@ -133,7 +133,7 @@ export default async function ProductsPage({
 
   // ✅ SERVER-SIDE DATA FETCHING
   const [allProducts, categories] = await Promise.all([
-    getProducts({ limit: 500 }),
+    getProducts({ limit: 1000 }),
     getProductCategories(),
   ]);
 
