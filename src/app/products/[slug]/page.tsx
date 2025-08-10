@@ -107,13 +107,72 @@ export default async function ProductPage({ params }: ProductPageProps) {
   }
 
   // Fetch related products (same category)
-  const relatedProducts = await getProducts({
-    category: product.category,
-    limit: 5,
-  });
+  // const relatedProducts = await getProducts({
+  //   category: product.category,
+  //   limit: 5,
+  // });
 
-  // Filter out current product from related
-  const filteredRelated = relatedProducts.filter((p) => p.id !== product.id);
+  // // Filter out current product from related
+  // const filteredRelated = relatedProducts.filter((p) => p.id !== product.id);
+
+  // Fetch all products for smart related logic
+  const allProducts = await getProducts({ limit: 1000 });
+
+  // STRATEGY: Category dulu, baru brand - dengan urutan PLC, HMI, Inverter
+  let relatedProducts = allProducts
+    .filter((p) => p.id !== product.id && p.category === product.category)
+    .sort((a, b) => {
+      let scoreA = 0;
+      let scoreB = 0;
+
+      // Brand yang sama dalam category = +10 poin
+      if (a.brand === product.brand) scoreA += 10;
+      if (b.brand === product.brand) scoreB += 10;
+
+      // Model series yang mirip = +5 poin
+      const productModelPrefix = product.model.substring(0, 4);
+      if (a.model.startsWith(productModelPrefix)) scoreA += 5;
+      if (b.model.startsWith(productModelPrefix)) scoreB += 5;
+
+      return scoreB - scoreA;
+    })
+    .slice(0, 4);
+
+  // Jika hasil kurang dari 4, tambah dari category terdekat
+  if (relatedProducts.length < 4) {
+    // Urutan priority: current category dulu, lalu PLC, HMI, Inverter
+    const categoryPriority = [product.category, "PLC", "HMI", "Inverter"];
+
+    const otherCategories = allProducts
+      .filter(
+        (p) =>
+          p.id !== product.id &&
+          p.category !== product.category &&
+          ["PLC", "HMI", "Inverter"].includes(p.category) &&
+          !relatedProducts.some((rp) => rp.id === p.id)
+      )
+      .sort((a, b) => {
+        let scoreA = 0;
+        let scoreB = 0;
+
+        // Brand yang sama = +10 poin (prioritas tertinggi)
+        if (a.brand === product.brand) scoreA += 10;
+        if (b.brand === product.brand) scoreB += 10;
+
+        // Category priority: PLC > HMI > Inverter
+        const aCategoryIndex = categoryPriority.indexOf(a.category);
+        const bCategoryIndex = categoryPriority.indexOf(b.category);
+        scoreA += (4 - aCategoryIndex) * 2; // PLC=6, HMI=4, Inverter=2
+        scoreB += (4 - bCategoryIndex) * 2;
+
+        return scoreB - scoreA;
+      })
+      .slice(0, 4 - relatedProducts.length);
+
+    relatedProducts = [...relatedProducts, ...otherCategories];
+  }
+
+  const filteredRelated = relatedProducts;
 
   // Breadcrumb data
   const breadcrumbItems = [
