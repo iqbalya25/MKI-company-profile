@@ -309,7 +309,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 <h2 className="text-2xl font-semibold mb-6 text-gray-900">
                   Product Details
                 </h2>
-                <div className="prose prose-lg max-w-none">
+                <div className="prose prose-lg max-w-none product-descriptiongi">
                   {typeof product.description === "string" ? (
                     <div className="text-gray-700 leading-relaxed">
                       {product.description

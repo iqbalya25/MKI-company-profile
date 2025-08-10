@@ -129,3 +129,10 @@
   margin-bottom: 1rem;
   line-height: 1.6;
 }
+.product-description.prose p {
+  text-align: justify !important;
+}
+
+.product-description.prose div {
+  text-align: justify !important;
+}
