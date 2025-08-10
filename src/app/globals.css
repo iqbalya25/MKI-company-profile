@@ -136,3 +136,15 @@
 .product-description.prose div {
   text-align: justify !important;
 }
+
+@media (max-width: 768px) {
+  .product-description.prose p {
+    word-break: break-all !important;
+    line-height: 1.6 !important;
+  }
+
+  .product-description.prose div {
+    word-break: break-all !important;
+    line-height: 1.6 !important;
+  }
+}
