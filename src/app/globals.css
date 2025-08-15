@@ -143,3 +143,15 @@
     word-break: keep-all !important;
   }
 }
+
+/* .product-description.prose h3 {
+  text-align: justify !important;
+} */
+
+/* H3 word breaking untuk mobile */
+@media (max-width: 768px) {
+  .product-description.prose h3 {
+    overflow-wrap: anywhere !important;
+    word-break: keep-all !important;
+  }
+}
