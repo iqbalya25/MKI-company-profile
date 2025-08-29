@@ -470,7 +470,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
                         className="flex items-center gap-2 text-sm font-semibold text-gray-700 hover:text-teal-600 transition-colors"
                       >
                         <Phone className="h-4 w-4" />
-                        <span> WhatsApp : Iqbal - 085210067755</span>
+                        <span>
+                          {" "}
+                          WhatsApp : <br />
+                          Maulana - 087850524390
+                          <br />
+                          Iqbal - 085210067755
+                        </span>
                       </a>
                       <a
                         href={`mailto:${SITE_CONFIG.company.email}`}
