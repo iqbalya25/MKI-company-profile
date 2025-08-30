@@ -193,7 +193,7 @@ export default async function ServicesPage() {
 
                 {/* WhatsApp Contact */}
                 <a
-                  href="https://wa.me/6285210067755?text=Halo Mederi Karya, saya membutuhkan technical support untuk automation"
+                  href="https://wa.me/6285717278739?text=Halo Mederi Karya, saya membutuhkan technical support untuk automation"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="group flex items-center gap-3 p-4 rounded-lg hover:bg-white/10 transition-all duration-300 transform hover:scale-105"

@@ -219,7 +219,7 @@ export default function ServiceDetail({ service }: ServiceDetailProps) {
                         WhatsApp
                       </p>
                       <a
-                        href="https://wa.me/6285210067755"
+                        href="https://wa.me/6285717278739"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-sm font-medium text-gray-900 hover:text-teal-600 transition-colors"
