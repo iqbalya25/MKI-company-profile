@@ -224,7 +224,7 @@ export default function ServiceDetail({ service }: ServiceDetailProps) {
                         rel="noopener noreferrer"
                         className="text-sm font-medium text-gray-900 hover:text-teal-600 transition-colors"
                       >
-                        Maulana - 087850524390 <br />
+                        Iksan - 085717278739 <br />
                         Iqbal - 085210067755
                       </a>
                     </div>

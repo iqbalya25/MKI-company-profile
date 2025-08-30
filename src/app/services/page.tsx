@@ -206,7 +206,7 @@ export default async function ServicesPage() {
                       WhatsApp
                     </p>
                     <p className="font-semibold text-white text-sm group-hover:text-teal-100 transition-colors">
-                      Maulana - 087850524390 <br /> Iqbal - 085210067755
+                      Iksan - 085717278739 <br /> Iqbal - 085210067755
                     </p>
                   </div>
                 </a>

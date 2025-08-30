@@ -473,7 +473,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                         <span>
                           {" "}
                           WhatsApp : <br />
-                          Maulana - 087850524390
+                          Iksan - 085717278739
                           <br />
                           Iqbal - 085210067755
                         </span>
