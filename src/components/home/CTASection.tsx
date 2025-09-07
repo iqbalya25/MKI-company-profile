@@ -107,8 +107,8 @@ const CTASection = () => {
                     {SITE_CONFIG.company.phone}
                   </p>
                   <p className="font-semibold text-sm">
-                    085717278739 (WhatsApp) <br />
-                    085210067755 (WhatsApp)
+                    085210067755 (WhatsApp) <br />
+                    085717278739 (WhatsApp)
                   </p>
                 </div>
               </a>

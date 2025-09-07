@@ -219,13 +219,13 @@ export default function ServiceDetail({ service }: ServiceDetailProps) {
                         WhatsApp
                       </p>
                       <a
-                        href="https://wa.me/6285717278739"
+                        href="https://wa.me/6285210067755"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-sm font-medium text-gray-900 hover:text-teal-600 transition-colors"
                       >
-                        Iksan - 085717278739 <br />
-                        Iqbal - 085210067755
+                        Iqbal - 085210067755 <br />
+                        Iksan - 085717278739
                       </a>
                     </div>
                   </div>

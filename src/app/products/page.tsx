@@ -410,8 +410,8 @@ export default async function ProductsPage({
                         WhatsApp
                       </p>
                       <p className="font-semibold text-white text-sm group-hover:text-teal-100 transition-colors">
-                        Iksan - 085717278739 <br />
-                        Iqbal - 085210067755
+                        Iqbal - 085210067755 <br />
+                        Iksan - 085717278739
                       </p>
                     </div>
                   </a>

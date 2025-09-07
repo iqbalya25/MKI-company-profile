@@ -464,7 +464,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                         <span>{SITE_CONFIG.company.phone}</span>
                       </a>
                       <a
-                        href="https://wa.me/6285717278739?text=Halo Mederi Karya, saya membutuhkan informasi mengenai produk"
+                        href="https://wa.me/6285210067755?text=Halo Mederi Karya, saya membutuhkan informasi mengenai produk"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center gap-2 text-sm font-semibold text-gray-700 hover:text-teal-600 transition-colors"
@@ -473,9 +473,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
                         <span>
                           {" "}
                           WhatsApp : <br />
-                          Iksan - 085717278739
-                          <br />
                           Iqbal - 085210067755
+                          <br />
+                          Iksan - 085717278739
                         </span>
                       </a>
                       <a
